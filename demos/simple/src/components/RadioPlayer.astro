@@ -243,6 +243,63 @@ const defaultTrack = playlist.length > 0 ? playlist[0] : {
 
 		if (!audio || !currentTrackTitle || !playlistContainer) return;
 
+		// Khôi phục trạng thái phát nhạc từ localStorage
+		const savedStateStr = localStorage.getItem('minhhue_radio_state');
+		if (savedStateStr) {
+			try {
+				const savedState = JSON.parse(savedStateStr);
+				if (savedState.url && savedState.title) {
+					audio.src = `/api/audio-proxy?url=${encodeURIComponent(savedState.url)}`;
+					currentTrackTitle.textContent = savedState.title;
+					
+					// Đặt lại thời gian khi metadata đã tải xong
+					const setSavedTime = () => {
+						if (savedState.time) {
+							audio.currentTime = savedState.time;
+						}
+						audio.removeEventListener('loadedmetadata', setSavedTime);
+					};
+					audio.addEventListener('loadedmetadata', setSavedTime);
+
+					// Đánh dấu active trên danh sách
+					const playlistItemsForRestoration = Array.from(playlistContainer.querySelectorAll('li'));
+					playlistItemsForRestoration.forEach(i => i.classList.remove('active'));
+					const targetItem = playlistItemsForRestoration.find(i => i.getAttribute('data-url') === savedState.url);
+					if (targetItem) {
+						targetItem.classList.add('active');
+						// Scroll delay nhẹ để đảm bảo DOM đã hiện danh sách
+						setTimeout(() => targetItem.scrollIntoView({ behavior: 'smooth', block: 'center' }), 800);
+					}
+				}
+			} catch (e) {
+				console.error("Failed to parse saved state", e);
+			}
+		}
+
+		// Lưu trạng thái phát nhạc định kỳ (2s / lần)
+		let lastSaveTime = 0;
+		const saveState = () => {
+			const activeItem = playlistContainer.querySelector('li.active');
+			if (activeItem) {
+				const url = activeItem.getAttribute('data-url');
+				const title = activeItem.getAttribute('data-title');
+				if (url && title) {
+					localStorage.setItem('minhhue_radio_state', JSON.stringify({
+						url,
+						title,
+						time: audio.currentTime
+					}));
+				}
+			}
+		};
+
+		audio.addEventListener('timeupdate', () => {
+			if (Date.now() - lastSaveTime > 2000) {
+				saveState();
+				lastSaveTime = Date.now();
+			}
+		});
+
 		// Tự động kiểm tra tham số filter từ URL khi load trang để kích hoạt lọc danh mục
 		const urlParams = new URLSearchParams(window.location.search);
 		const filterParam = urlParams.get('filter');
