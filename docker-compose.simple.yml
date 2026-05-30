@@ -1,0 +1,14 @@
+version: '3.8'
+
+services:
+  minhhue-radio:
+    build:
+      context: .
+      dockerfile: Dockerfile.simple
+    container_name: minhhue-radio
+    ports:
+      - "4321:4321"
+    volumes:
+      # Mount thư mục lưu trữ persistent data (database sqlite và các file ảnh tải lên)
+      - ./data-prod:/app/data
+    restart: always

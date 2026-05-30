@@ -1,108 +1,79 @@
 /*
-  theme.css -- override any :root variable here to retheme the blog.
-
-  This is the only file you need to edit to customize the site's visual
-  appearance. All defaults are listed below as comments. Uncomment and
-  change any value to override it.
-
-  Base.astro puts its defaults inside @layer base, so declarations here
-  (which are unlayered) always take priority -- no specificity tricks needed.
-
-  Note: this template defines explicit dark mode colors in Base.astro.
-  Overriding light-mode --color-* variables here won't affect dark mode.
-  To customize dark mode, also override --color-* variables inside a
-  @media (prefers-color-scheme: dark) block and/or in the :root.dark rule.
+  theme.css -- Cấu hình giao diện siêu cao cấp "Emdash Prime / Cyber-Lux Media"
+  Được thiết kế tỉ mỉ với typography Serif cổ điển kết hợp hình học tinh tế, 
+  hiệu ứng kính mờ, bóng đổ phát quang và các dải gradient mềm mại lôi cuốn.
 */
 
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400..900;1,400..900&family=Plus+Jakarta+Sans:ital,wght@0,200..800;1,200..800&display=swap');
+
 :root {
-	/* --- Colors ---
-	--color-bg: #ffffff;
-	--color-bg-subtle: #fafafa;
-	--color-text: #1a1a1a;
-	--color-text-secondary: #525252;
-	--color-muted: #8b8b8b;
-	--color-border: #e5e5e5;
-	--color-border-subtle: #f0f0f0;
-	--color-surface: #f7f7f7;
-	--color-accent: #0066cc;
+	/* --- Bảng màu Emdash Prime siêu sang trọng (Light Mode) --- */
+	--color-bg: #faf9f6;          /* Nền trắng ngà Alabaster cát mịn cực kỳ dễ chịu */
+	--color-bg-subtle: #f4f3ef;   /* Màu nền phụ êm dịu */
+	--color-text: #1c1917;        /* Màu chữ đen than đá sâu thẳm */
+	--color-text-secondary: #44403c; /* Màu chữ phụ ấm áp */
+	--color-muted: #78716c;       /* Màu chữ mờ tinh tế */
+	--color-border: #e7e5e4;      /* Đường viền xám đá siêu mảnh */
+	--color-border-subtle: #f5f5f4;
+	--color-surface: #ffffff;     /* Nền thẻ trắng tinh khiết */
+	
+	/* Tông màu nhấn gradient nghệ thuật */
+	--color-accent: #0066cc;      /* Xanh lam cát tường làm chủ đạo */
 	--color-accent-hover: #0052a3;
-	--color-on-accent: white;
-	--color-accent-ring: color-mix(in srgb, var(--color-accent) 25%, transparent);
-	*/
+	--color-on-accent: #ffffff;
+	--gradient-accent: linear-gradient(135deg, #007cf0 0%, #00dfd8 50%, #f59e0b 100%);
+	--gradient-premium: linear-gradient(135deg, #007cf0, #00dfd8, #f59e0b);
 
-	/* --- Type scale ---
-	--font-size-xs: 0.8125rem;
-	--font-size-sm: 0.875rem;
-	--font-size-base: 1rem;
-	--font-size-lg: 1.125rem;
-	--font-size-xl: 1.25rem;
-	--font-size-2xl: 1.5rem;
-	--font-size-3xl: 2rem;
-	--font-size-4xl: 2.5rem;
-	--font-size-5xl: 3.5rem;
-	*/
+	/* --- Typography nâng cấp chất lượng cao --- */
+	--font-serif: "Playfair Display", Georgia, Cambria, "Times New Roman", Times, serif;
+	--font-sans: "Plus Jakarta Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+	
+	/* Thiết lập phông mặc định */
+	--font-family-headings: var(--font-serif);
+	--font-family-body: var(--font-sans);
 
-	/* --- Line heights ---
-	--leading-tight: 1.15;
-	--leading-snug: 1.3;
-	--leading-normal: 1.5;
-	--leading-relaxed: 1.7;
-	*/
+	/* --- Thiết kế bo tròn hiện đại & Glassmorphic --- */
+	--radius: 12px;
+	--radius-lg: 24px;
+	--radius-sm: 8px;
 
-	/* --- Letter spacing ---
-	--tracking-tight: -0.03em;    used on h1 and large titles
-	--tracking-snug: -0.02em;     used on h2–h6, site/card titles
-	--tracking-wide: 0.06em;      used on meta labels, TOC/widget titles
-	--tracking-wider: 0.08em;     used on footer headings, section labels
-	*/
-
-	/* --- Spacing ---
+	/* --- Khoảng cách hoàn hảo --- */
 	--spacing-1: 0.25rem;
 	--spacing-2: 0.5rem;
 	--spacing-3: 0.75rem;
-	--spacing-4: 1rem;
+	--spacing-4: 1.0rem;
 	--spacing-5: 1.25rem;
 	--spacing-6: 1.5rem;
-	--spacing-8: 2rem;
+	--spacing-8: 2.0rem;
 	--spacing-10: 2.5rem;
-	--spacing-12: 3rem;
-	--spacing-16: 4rem;
-	--spacing-20: 5rem;
-	--spacing-24: 6rem;
-	*/
+	--spacing-12: 3.0rem;
+	--spacing-16: 4.0rem;
 
-	/* --- Layout ---
-	--content-width: 680px;       article/page body column width
-	--wide-width: 1200px;         max container width (home, archives)
-	--gutter-width: 200px;        right sidebar column (TOC) on article pages
-	--meta-col-width: 180px;      left meta column on article pages
-	--nav-height: 64px;           sticky header height
-	--search-input-width: 180px;  nav search box width
-	*/
+	/* --- Layout rộng rãi đẳng cấp --- */
+	--wide-width: 1280px;
+	--content-width: 740px;
+	
+	/* --- Hiệu ứng đổ bóng có chiều sâu --- */
+	--shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.04);
+	--shadow-md: 0 10px 30px -10px rgba(0, 102, 204, 0.06);
+	--shadow-lg: 0 20px 40px -15px rgba(0, 0, 0, 0.05);
+	--shadow-glow: 0 0 25px rgba(0, 102, 204, 0.15);
+	
+	/* --- Tốc độ chuyển động siêu mượt --- */
+	--transition-fast: 200ms cubic-bezier(0.16, 1, 0.3, 1);
+	--transition-base: 350ms cubic-bezier(0.16, 1, 0.3, 1);
+}
 
-	/* --- Borders & radius ---
-	--radius: 4px;
-	--radius-lg: 8px;
-	*/
+/* Áp dụng phông chữ trên toàn trang */
+body {
+	font-family: var(--font-family-body);
+	background-color: var(--color-bg);
+	color: var(--color-text);
+	transition: background-color var(--transition-base), color var(--transition-base);
+}
 
-	/* --- Transitions ---
-	--transition-fast: 120ms ease;
-	--transition-base: 180ms ease;
-	*/
-
-	/* --- Avatars ---
-	--avatar-size-xs: 18px;    card byline avatars
-	--avatar-size-sm: 20px;    post list byline avatars
-	--avatar-size-md: 24px;    featured post byline avatars
-	--avatar-size-lg: 32px;    single post byline avatars
-	*/
-
-	/* --- Shadows ---
-	--shadow-dropdown: 0 8px 30px rgba(0, 0, 0, 0.12);
-	--shadow-btn-active: 0 1px 2px rgba(0, 0, 0, 0.05);
-	*/
-
-	/* --- Misc ---
-	--tag-padding-y: 2px;    vertical padding on tag pills
-	*/
+h1, h2, h3, h4, h5, h6 {
+	font-family: var(--font-family-headings);
+	font-weight: 700;
+	letter-spacing: -0.02em;
 }

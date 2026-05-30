@@ -77,7 +77,7 @@ const isLoggedIn = !!Astro.locals.user;
 ---
 
 <!doctype html>
-<html lang="en">
+<html lang="en" class="light">
 	<head>
 		<meta charset="UTF-8" />
 		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -85,55 +85,57 @@ const isLoggedIn = !!Astro.locals.user;
 		<Font cssVariable="--font-mono" />
 		<title>{fullTitle}</title>
 		<EmDashHead page={pageCtx} />
-		<script is:inline>
-			// Apply theme immediately to prevent flash
-			(function () {
-				var c = document.cookie;
-				var i = c.indexOf("theme=");
-				var theme = i >= 0 ? c.slice(i + 6).split(";")[0] : null;
-				if (theme === "dark" || theme === "light") {
-					document.documentElement.classList.add(theme);
-				} else if (window.matchMedia("(prefers-color-scheme: dark)").matches) {
-					document.documentElement.classList.add("dark");
-				}
-			})();
-		</script>
 	</head>
 	<body>
 		<EmDashBodyStart page={pageCtx} />
 		<header class="site-header">
+			{/* 2. Header chính */}
 			<nav class="nav">
-				<a href="/" class="site-title">
-					{siteLogo
-						? <img src={siteLogo.url} alt={siteLogo.alt || siteTitle} class="site-logo-img" />
-						: siteTitle
-					}
+				<a href="/" class="site-logo-premium">
+					<span class="logo-badge-premium">M</span>
+					<span class="logo-text-premium">MINH HUỆ <span class="logo-serif-sub">RADIO</span></span>
 				</a>
+				
+				<div class="nav-links">
+					<a href="/" class="nav-item">Trang chủ</a>
+					<div class="nav-item-dropdown">
+						<span class="nav-item dropdown-toggle">
+							Chuyên mục phát thanh
+							<span class="dropdown-arrow"></span>
+						</span>
+						<div class="dropdown-menu-premium">
+							<a href="/?filter=all" class="dropdown-menu-item">Tất cả phát thanh</a>
+							<a href="/?filter=tru-bo-chap-truoc-vao-dien-thoai" class="dropdown-menu-item">Trừ bỏ chấp trước vào điện thoại</a>
+							<a href="/?filter=ngay-phap-luan-dai-phap-the-gioi-radio" class="dropdown-menu-item">Ngày Pháp Luân Đại Pháp Thế giới</a>
+							<a href="/?filter=phap-hoi-trung-quoc-radio" class="dropdown-menu-item">Pháp hội Trung Quốc</a>
+							<a href="/?filter=tin-tuc-tai-dai-luc" class="dropdown-menu-item">Tin tức tại Đại Lục</a>
+							<a href="/?filter=tin-tuc-tren-the-gioi" class="dropdown-menu-item">Tin tức trên thế giới</a>
+							<a href="/?filter=thien-am-tinh-nhac" class="dropdown-menu-item">Thiên Âm Tịnh Nhạc</a>
+							<a href="/?filter=kien-tri-hoc-thuoc-phap" class="dropdown-menu-item">Kiên trì học thuộc Pháp</a>
+							<a href="/?filter=tin-tuc-tong-hop" class="dropdown-menu-item">Tin tức tổng hợp</a>
+							<a href="/?filter=cau-chuyen-tu-luyen" class="dropdown-menu-item">Câu chuyện tu luyện</a>
+							<a href="/?filter=giai-the-van-hoa-dang" class="dropdown-menu-item">Giải thể văn hóa đảng</a>
+							<a href="/?filter=radio-hoi-uc-ve-su-phu" class="dropdown-menu-item">Hồi ức về Sư Phụ</a>
+							<a href="/?filter=tuyen-tap-bai-chia-se-cua-tieu-de-tu-dai-phap" class="dropdown-menu-item">Tiểu đệ tử Đại Pháp</a>
+							<a href="/?filter=tuyen-tap-cac-bai-chia-se-cua-de-tu-dai-phap-tre-tuoi" class="dropdown-menu-item">Đệ tử Đại Pháp trẻ tuổi</a>
+							<a href="/?filter=tuyen-tap-cac-bai-chia-se-tu-luyen-chinh-phap" class="dropdown-menu-item">Tu luyện Chính Pháp</a>
+							<a href="/?filter=dot-pha-gia-tuong-nghiep-benh" class="dropdown-menu-item">Đột phá giả tướng nghiệp bệnh</a>
+							<a href="/?filter=mot-niem-giua-thien-va-ac" class="dropdown-menu-item">Một niệm giữa thiện và ác</a>
+							<a href="/?filter=cuoc-song-va-hy-vong-da-quay-tro-lai" class="dropdown-menu-item">Cuộc sống và hy vọng đã quay trở lại</a>
+							<a href="/?filter=bai-chia-se-co-loi-binh-cua-su-phu" class="dropdown-menu-item">Bài chia sẻ có lời bình của Sư phụ</a>
+						</div>
+					</div>
+				</div>
+
 				<div class="nav-right">
 					<LiveSearch
-						placeholder="Search..."
+						placeholder="Tìm kiếm tin tức..."
 						class="site-search"
 						inputClass="site-search-input"
 						resultsClass="site-search-results"
 						resultClass="site-search-result"
 						collections={["posts", "pages"]}
 					/>
-					<div class="nav-links">
-						{
-							menu?.items.map((item) => (
-								<a href={item.url} target={item.target}>
-									{item.label}
-								</a>
-							))
-						}
-					</div>
-					{
-						isLoggedIn && (
-							<a href="/_emdash/admin" class="nav-admin">
-								Admin
-							</a>
-						)
-					}
 				</div>
 			</nav>
 		</header>
@@ -146,28 +148,20 @@ const isLoggedIn = !!Astro.locals.user;
 			<div class="footer-inner">
 				<div class="footer-grid">
 					<div class="footer-brand">
-						<a href="/" class="footer-logo">
-							{siteLogo
-								? <img src={siteLogo.url} alt={siteLogo.alt || siteTitle} class="footer-logo-img" />
-								: siteTitle
-							}
+						<a href="/" class="site-logo-premium footer-logo-premium">
+							<span class="logo-badge-premium">M</span>
+							<span class="logo-text-premium">MINH HUỆ <span class="logo-serif-sub">RADIO</span></span>
 						</a>
-						<p class="footer-tagline">{siteTagline}</p>
+						<p class="footer-tagline">Trang phát thanh chia sẻ trải nghiệm tu luyện và tin tức Pháp Luân Đại Pháp trên toàn thế giới.</p>
 					</div>
 					<div class="footer-nav">
-						<h4 class="footer-heading">Navigate</h4>
+						<h4 class="footer-heading">Chuyên mục chính</h4>
 						<ul class="footer-links">
-							<li><a href="/">Home</a></li>
-							<li><a href="/posts">All Posts</a></li>
-							{
-								pages.slice(0, 3).map((page) => (
-									<li>
-										<a href={`/pages/${page.data.slug || page.id}`}>
-											{page.data.title}
-										</a>
-									</li>
-								))
-							}
+							<li><a href="/?filter=all">Tất cả phát thanh</a></li>
+							<li><a href="/?filter=tru-bo-chap-truoc-vao-dien-thoai">Trừ bỏ chấp trước vào điện thoại</a></li>
+							<li><a href="/?filter=ngay-phap-luan-dai-phap-the-gioi-radio">Ngày Pháp Luân Đại Pháp</a></li>
+							<li><a href="/?filter=phap-hoi-trung-quoc-radio">Pháp hội Trung Quốc</a></li>
+							<li><a href="/?filter=cau-chuyen-tu-luyen">Câu chuyện tu luyện</a></li>
 						</ul>
 					</div>
 					<div class="footer-nav">
@@ -200,151 +194,21 @@ const isLoggedIn = !!Astro.locals.user;
 				<div class="footer-bottom">
 					<p class="footer-copyright">
 						Powered by <a href="https://emdashcms.com">EmDash</a>
+						{
+							isLoggedIn && (
+								<>
+									{" | "}
+									<a href="/_emdash/admin" style="font-weight: 700; color: var(--color-accent); margin-left: 5px;">Admin Dashboard</a>
+								</>
+							)
+						}
 					</p>
-					<div class="theme-switcher">
-						<button
-							type="button"
-							class="theme-btn"
-							data-theme="light"
-							aria-label="Light mode"
-						>
-							<svg
-								width="16"
-								height="16"
-								viewBox="0 0 24 24"
-								fill="none"
-								stroke="currentColor"
-								stroke-width="2"
-								stroke-linecap="round"
-								stroke-linejoin="round"
-								><circle cx="12" cy="12" r="5"></circle><line
-									x1="12"
-									y1="1"
-									x2="12"
-									y2="3"></line><line x1="12" y1="21" x2="12" y2="23"
-								></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"
-								></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"
-								></line><line x1="1" y1="12" x2="3" y2="12"></line><line
-									x1="21"
-									y1="12"
-									x2="23"
-									y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"
-								></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"
-								></line></svg
-							>
-						</button>
-						<button
-							type="button"
-							class="theme-btn"
-							data-theme="dark"
-							aria-label="Dark mode"
-						>
-							<svg
-								width="16"
-								height="16"
-								viewBox="0 0 24 24"
-								fill="none"
-								stroke="currentColor"
-								stroke-width="2"
-								stroke-linecap="round"
-								stroke-linejoin="round"
-								><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"
-								></path></svg
-							>
-						</button>
-						<button
-							type="button"
-							class="theme-btn"
-							data-theme="system"
-							aria-label="System theme"
-						>
-							<svg
-								width="16"
-								height="16"
-								viewBox="0 0 24 24"
-								fill="none"
-								stroke="currentColor"
-								stroke-width="2"
-								stroke-linecap="round"
-								stroke-linejoin="round"
-								><rect x="2" y="3" width="20" height="14" rx="2" ry="2"
-								></rect><line x1="8" y1="21" x2="16" y2="21"></line><line
-									x1="12"
-									y1="17"
-									x2="12"
-									y2="21"></line></svg
-							>
-						</button>
-					</div>
+
 				</div>
 			</div>
 		</footer>
 
-		<script>
-			// Theme switcher
-			const THEME_REGEX = /theme=([^;]+)/;
-			const themeBtns =
-				document.querySelectorAll<HTMLButtonElement>(".theme-btn");
-			const root = document.documentElement;
 
-			function setCookie(
-				name: string,
-				value: string,
-				maxAge: number = 31536000
-			) {
-				const secure = location.protocol === "https:" ? "; Secure" : "";
-				if (value === "") {
-					document.cookie = `${name}=; path=/; max-age=0; SameSite=Lax${secure}`;
-				} else {
-					document.cookie = `${name}=${value}; path=/; max-age=${maxAge}; SameSite=Lax${secure}`;
-				}
-			}
-
-			function setTheme(theme: string) {
-				if (theme === "system") {
-					setCookie("theme", "");
-					root.classList.remove("light", "dark");
-					if (window.matchMedia("(prefers-color-scheme: dark)").matches) {
-						root.classList.add("dark");
-					}
-				} else {
-					setCookie("theme", theme);
-					root.classList.remove("light", "dark");
-					root.classList.add(theme);
-				}
-				updateActiveBtn(theme);
-			}
-
-			function updateActiveBtn(theme: string) {
-				themeBtns.forEach((btn) => {
-					btn.classList.toggle("active", btn.dataset.theme === theme);
-				});
-			}
-
-			function getStoredTheme(): string {
-				const match = document.cookie.match(THEME_REGEX);
-				return match ? match[1] : "system";
-			}
-
-			// Initialize
-			const storedTheme = getStoredTheme();
-			setTheme(storedTheme);
-
-			themeBtns.forEach((btn) => {
-				btn.addEventListener("click", () => {
-					setTheme(btn.dataset.theme || "system");
-				});
-			});
-
-			// Listen for system preference changes
-			window
-				.matchMedia("(prefers-color-scheme: dark)")
-				.addEventListener("change", (e) => {
-					if (getStoredTheme() === "system") {
-						root.classList.toggle("dark", e.matches);
-					}
-				});
-		</script>
 
 		<style is:global>
 			/*
@@ -491,35 +355,7 @@ const isLoggedIn = !!Astro.locals.user;
 					--shadow-btn-active: 0 1px 2px rgba(0, 0, 0, 0.05);
 				}
 
-				/* Dark mode via system preference (when no explicit class) */
-				@media (prefers-color-scheme: dark) {
-					:root:not(.light) {
-						--color-bg: #0d0d0d;
-						--color-bg-subtle: #141414;
-						--color-text: #ededed;
-						--color-text-secondary: #a0a0a0;
-						--color-muted: #6b6b6b;
-						--color-border: #2a2a2a;
-						--color-border-subtle: #1f1f1f;
-						--color-surface: #181818;
-						--color-accent: #4d9fff;
-						--color-accent-hover: #6eb0ff;
-					}
-				}
 
-				/* Explicit dark mode */
-				:root.dark {
-					--color-bg: #0d0d0d;
-					--color-bg-subtle: #141414;
-					--color-text: #ededed;
-					--color-text-secondary: #a0a0a0;
-					--color-muted: #6b6b6b;
-					--color-border: #2a2a2a;
-					--color-border-subtle: #1f1f1f;
-					--color-surface: #181818;
-					--color-accent: #4d9fff;
-					--color-accent-hover: #6eb0ff;
-				}
 
 				html {
 					scroll-behavior: smooth;
@@ -577,15 +413,72 @@ const isLoggedIn = !!Astro.locals.user;
 		</style>
 
 		<style>
+			/* Top Bar */
+			.top-bar {
+				background-color: var(--color-bg-subtle);
+				border-bottom: 1px solid var(--color-border);
+				font-size: 11px;
+				color: var(--color-muted);
+				padding: 8px var(--spacing-6);
+				transition: all var(--transition-base);
+			}
+			.top-bar-inner {
+				max-width: var(--wide-width);
+				margin: 0 auto;
+				display: flex;
+				justify-content: space-between;
+				align-items: center;
+			}
+			.live-date {
+				font-weight: 700;
+				letter-spacing: 0.05em;
+				color: var(--color-text-secondary);
+				text-transform: uppercase;
+			}
+			.top-bar-right {
+				display: flex;
+				align-items: center;
+				gap: 12px;
+			}
+			.top-bar-link {
+				color: var(--color-muted) !important;
+				text-decoration: none;
+				transition: color var(--transition-fast);
+				font-weight: 600;
+				text-transform: uppercase;
+				letter-spacing: 0.03em;
+			}
+			.top-bar-link:hover {
+				color: var(--color-accent) !important;
+			}
+			.top-bar-admin {
+				color: var(--color-accent) !important;
+				text-decoration: none;
+				font-weight: 700;
+				text-transform: uppercase;
+				transition: color var(--transition-fast);
+				letter-spacing: 0.03em;
+			}
+			.top-bar-admin:hover {
+				color: var(--color-accent-hover) !important;
+			}
+			.divider {
+				color: var(--color-border);
+			}
+
 			.site-header {
 				position: sticky;
 				top: 0;
 				z-index: 100;
-				background: color-mix(in srgb, var(--color-bg) 65%, transparent);
-				backdrop-filter: blur(12px);
-				-webkit-backdrop-filter: blur(12px);
-				border-bottom: 1px solid var(--color-border-subtle);
+				background: rgba(250, 249, 246, 0.8) !important; /* Mờ đục nhẹ tinh khiết */
+				backdrop-filter: blur(20px);
+				-webkit-backdrop-filter: blur(20px);
+				border-bottom: 2px solid transparent !important;
+				border-image: var(--gradient-accent) 1 !important;
+				box-shadow: var(--shadow-md);
+				transition: all var(--transition-base);
 			}
+
 
 			.nav {
 				display: flex;
@@ -593,27 +486,60 @@ const isLoggedIn = !!Astro.locals.user;
 				align-items: center;
 				max-width: var(--wide-width);
 				margin: 0 auto;
-				padding: var(--spacing-4) var(--spacing-6);
-				height: var(--nav-height);
+				padding: 0 var(--spacing-6);
+				height: 72px; /* Rộng rãi hơn chút */
+				transition: all var(--transition-base);
 			}
 
-			.site-title {
-				font-size: var(--font-size-lg);
-				font-weight: 600;
+			/* Logo phong cách Emdash Prime siêu sang trọng */
+			.site-logo-premium {
+				display: flex;
+				align-items: center;
+				text-decoration: none !important;
+				gap: var(--spacing-2);
+				transition: transform 0.3s ease;
+			}
+			.site-logo-premium:hover {
+				transform: scale(1.02);
+			}
+			.site-logo-premium .logo-badge-premium {
+				background: var(--gradient-premium);
+				color: #ffffff;
+				font-family: var(--font-sans);
+				font-weight: 900;
+				font-size: 20px;
+				line-height: 1;
+				width: 36px;
+				height: 36px;
+				display: inline-flex;
+				align-items: center;
+				justify-content: center;
+				border-radius: 10px;
+				box-shadow: 0 4px 15px rgba(139, 92, 246, 0.3);
+			}
+			.site-logo-premium .logo-text-premium {
 				color: var(--color-text);
-				text-decoration: none;
-				letter-spacing: var(--tracking-snug);
+				font-family: var(--font-sans);
+				font-weight: 800;
+				font-size: 20px;
+				letter-spacing: -0.04em;
+				display: flex;
+				align-items: center;
+				gap: 4px;
+				transition: color var(--transition-fast);
 			}
-
-			.site-title:hover {
-				color: var(--color-accent);
+			.site-logo-premium .logo-serif-sub {
+				font-family: var(--font-serif);
+				font-weight: 700;
+				font-style: italic;
+				font-size: 18px;
+				background: var(--gradient-accent);
+				-webkit-background-clip: text;
+				-webkit-text-fill-color: transparent;
+				letter-spacing: 0.05em;
 			}
-
-			.site-logo-img {
-				height: 48px;
-				width: auto;
-				display: block;
-				margin: -8px 0;
+			.footer-logo-premium .logo-text-premium {
+				color: #ffffff !important;
 			}
 
 			.nav-right {
@@ -622,52 +548,158 @@ const isLoggedIn = !!Astro.locals.user;
 				gap: var(--spacing-6);
 			}
 
+			/* Menu tin tức chuyên nghiệp */
 			.nav-links {
 				display: flex;
-				gap: var(--spacing-5);
-				font-size: var(--font-size-sm);
+				gap: var(--spacing-6);
+				align-items: center;
+				height: 100%;
 			}
 
-			.nav-links a {
+			.nav-item {
 				text-decoration: none;
-				color: var(--color-text);
+				color: var(--color-text-secondary) !important;
+				font-weight: 700;
+				font-size: 13.5px;
+				text-transform: uppercase;
+				letter-spacing: 0.05em;
 				transition: color var(--transition-fast);
+				display: flex;
+				align-items: center;
+				height: 100%;
+				position: relative;
+				padding: var(--spacing-2) 0;
 			}
 
-			.nav-links a:hover {
-				color: var(--color-accent);
+			.nav-item::after {
+				content: "";
+				position: absolute;
+				bottom: 0;
+				left: 0;
+				width: 100%;
+				height: 3px;
+				background: var(--gradient-premium);
+				border-radius: 2px;
+				transform: scaleX(0);
+				transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+			}
+
+			.nav-item:hover {
+				color: var(--color-text) !important;
+			}
+
+			.nav-item:hover::after {
+				transform: scaleX(1);
+			}
+
+			/* Premium Header Dropdown */
+			.nav-item-dropdown {
+				position: relative;
+				display: inline-block;
+				height: 100%;
+			}
+
+			.dropdown-toggle {
+				cursor: pointer;
+				display: flex;
+				align-items: center;
+				gap: 4px;
+				user-select: none;
+			}
+
+			.dropdown-arrow {
+				display: inline-block;
+				width: 0;
+				height: 0;
+				margin-left: 2px;
+				vertical-align: middle;
+				border-top: 4px solid var(--color-text-secondary);
+				border-right: 4px solid transparent;
+				border-left: 4px solid transparent;
+				transition: transform var(--transition-fast);
+			}
+
+			.nav-item-dropdown:hover .dropdown-arrow {
+				transform: rotate(180deg);
+				border-top-color: var(--color-accent);
+			}
+
+			.dropdown-menu-premium {
+				position: absolute;
+				top: 100%;
+				left: 50%;
+				transform: translateX(-50%) translateY(10px);
+				background: rgba(250, 249, 246, 0.95);
+				backdrop-filter: blur(20px);
+				-webkit-backdrop-filter: blur(20px);
+				border: 1px solid var(--color-border);
+				border-radius: var(--radius);
+				box-shadow: var(--shadow-dropdown);
+				padding: var(--spacing-2) 0;
+				min-width: 250px;
+				max-height: 380px;
+				overflow-y: auto;
+				z-index: 1000;
+				opacity: 0;
+				visibility: hidden;
+				transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+			}
+
+			.nav-item-dropdown:hover .dropdown-menu-premium {
+				opacity: 1;
+				visibility: visible;
+				transform: translateX(-50%) translateY(0);
+			}
+
+			.dropdown-menu-item {
+				display: block;
+				padding: 10px 20px;
+				font-size: 12.5px;
+				font-weight: 700;
+				color: var(--color-text-secondary) !important;
+				text-decoration: none;
+				transition: all var(--transition-fast);
+				text-align: left;
+			}
+
+			.dropdown-menu-item:hover {
+				background: rgba(0, 102, 204, 0.05);
+				color: var(--color-accent) !important;
+				padding-left: 24px;
+			}
+
+			/* Custom scrollbar cho dropdown */
+			.dropdown-menu-premium::-webkit-scrollbar {
+				width: 4px;
+			}
+			.dropdown-menu-premium::-webkit-scrollbar-track {
+				background: transparent;
+			}
+			.dropdown-menu-premium::-webkit-scrollbar-thumb {
+				background: var(--color-border);
+				border-radius: 10px;
 			}
 
 			.nav-admin {
-				font-size: var(--font-size-sm);
-				color: var(--color-text-secondary);
-				text-decoration: none;
-				transition: color var(--transition-fast);
-			}
-
-			.nav-admin:hover {
-				color: var(--color-text);
+				display: none;
 			}
 
 			/* Search styling */
 			.site-search {
 				position: relative;
 				width: var(--search-input-width);
-				--emdash-search-border-focus: var(--color-accent);
 			}
 
 			:global(.site-search-input) {
 				width: var(--search-input-width);
-				padding: var(--spacing-2) var(--spacing-3);
+				padding: var(--spacing-2) var(--spacing-4) !important;
 				font-family: var(--font-sans);
 				font-size: var(--font-size-sm);
-				border: 1px solid var(--color-border);
-				border-radius: var(--radius);
-				background: var(--color-bg);
-				color: var(--color-text);
-				transition:
-					border-color var(--transition-fast),
-					box-shadow var(--transition-fast);
+				border: 1px solid var(--color-border) !important;
+				border-radius: 20px !important; /* Bo cong hình viên thuốc */
+				background: var(--color-bg) !important;
+				color: var(--color-text) !important;
+				transition: all var(--transition-base);
 			}
 
 			:global(.site-search-input)::placeholder {
@@ -678,7 +710,7 @@ const isLoggedIn = !!Astro.locals.user;
 			:global(.site-search-input):focus-visible {
 				outline: none;
 				border-color: var(--color-accent) !important;
-				box-shadow: 0 0 0 3px var(--color-accent-ring);
+				box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.15) !important;
 			}
 
 			:global(.site-search-results) {
@@ -687,13 +719,14 @@ const isLoggedIn = !!Astro.locals.user;
 				left: 0;
 				right: 0;
 				margin-top: var(--spacing-2);
-				background: var(--color-bg);
+				background: var(--color-surface);
 				border: 1px solid var(--color-border);
 				border-radius: var(--radius-lg);
-				box-shadow: var(--shadow-dropdown);
+				box-shadow: var(--shadow-lg);
 				max-height: 400px;
 				overflow-y: auto;
 				z-index: 1000;
+				backdrop-filter: blur(10px);
 			}
 
 			:global(.site-search-results .emdash-live-search-loading),
@@ -720,36 +753,38 @@ const isLoggedIn = !!Astro.locals.user;
 			:global(.site-search-result):hover,
 			:global(.site-search-result):focus,
 			:global(.site-search-result.focused) {
-				background: var(--color-surface);
+				background: var(--color-bg-subtle);
 				outline: none;
 			}
 
 			:global(.site-search-result .emdash-live-search-result-title) {
 				display: block;
-				font-weight: 500;
+				font-weight: 600;
 				font-size: var(--font-size-sm);
 			}
 
 			:global(.site-search-result .emdash-live-search-result-collection) {
 				display: block;
 				font-size: var(--font-size-xs);
-				color: var(--color-muted);
+				color: var(--color-accent);
 				text-transform: uppercase;
 				letter-spacing: var(--tracking-wide);
 				margin-top: 2px;
+				font-weight: 700;
 			}
 
 			:global(.site-search-result .emdash-live-search-result-snippet) {
 				display: block;
 				font-size: var(--font-size-sm);
-				color: var(--color-muted);
+				color: var(--color-text-secondary);
 				margin-top: var(--spacing-1);
 				line-height: var(--leading-snug);
 			}
 
 			:global(.site-search-result .emdash-live-search-result-snippet mark) {
 				font-weight: 600;
-				color: var(--color-text);
+				color: var(--color-accent);
+				background: transparent;
 			}
 
 			main {
@@ -758,8 +793,11 @@ const isLoggedIn = !!Astro.locals.user;
 
 			/* Footer */
 			.site-footer {
-				background: var(--color-bg-subtle);
-				border-top: 1px solid var(--color-border-subtle);
+				background: #09090b !important; /* Luôn đen sâu sang trọng */
+				border-top: 2px solid transparent !important;
+				border-image: var(--gradient-accent) 1 !important;
+				color: #a1a1aa !important;
+				transition: all var(--transition-base);
 			}
 
 			.footer-inner {
@@ -782,7 +820,7 @@ const isLoggedIn = !!Astro.locals.user;
 			.footer-logo {
 				font-size: var(--font-size-lg);
 				font-weight: 600;
-				color: var(--color-text);
+				color: #ffffff !important;
 				text-decoration: none;
 				letter-spacing: var(--tracking-snug);
 			}
@@ -795,7 +833,7 @@ const isLoggedIn = !!Astro.locals.user;
 			.footer-tagline {
 				margin-top: var(--spacing-3);
 				font-size: var(--font-size-sm);
-				color: var(--color-muted);
+				color: #71717a !important;
 				line-height: var(--leading-relaxed);
 			}
 
@@ -805,10 +843,10 @@ const isLoggedIn = !!Astro.locals.user;
 
 			.footer-heading {
 				font-size: var(--font-size-xs);
-				font-weight: 500;
+				font-weight: 700;
 				text-transform: uppercase;
 				letter-spacing: var(--tracking-wider);
-				color: var(--color-muted);
+				color: #ffffff !important;
 				margin-bottom: var(--spacing-4);
 			}
 
@@ -821,14 +859,14 @@ const isLoggedIn = !!Astro.locals.user;
 			}
 
 			.footer-links a {
-				color: var(--color-text-secondary);
+				color: #a1a1aa !important;
 				text-decoration: none;
 				font-size: var(--font-size-sm);
 				transition: color var(--transition-fast);
 			}
 
 			.footer-links a:hover {
-				color: var(--color-text);
+				color: var(--color-accent) !important;
 			}
 
 			.footer-widgets-section :global(.widget-area) {
@@ -871,43 +909,7 @@ const isLoggedIn = !!Astro.locals.user;
 				color: var(--color-text-secondary);
 			}
 
-			/* Theme switcher */
-			.theme-switcher {
-				display: flex;
-				gap: var(--spacing-1);
-				padding: var(--spacing-1);
-				background: var(--color-surface);
-				border-radius: var(--radius);
-			}
 
-			.theme-btn {
-				display: flex;
-				align-items: center;
-				justify-content: center;
-				width: 32px;
-				height: 28px;
-				background: transparent;
-				border: none;
-				color: var(--color-muted);
-				border-radius: var(--radius);
-				cursor: pointer;
-				transition: all var(--transition-fast);
-			}
-
-			.theme-btn:hover {
-				color: var(--color-text-secondary);
-			}
-
-			.theme-btn.active {
-				background: var(--color-bg);
-				color: var(--color-text);
-				box-shadow: var(--shadow-btn-active);
-			}
-
-			.theme-btn svg {
-				width: 16px;
-				height: 16px;
-			}
 
 			@media (max-width: 900px) {
 				.footer-grid {

@@ -1,778 +1,2346 @@
 {
-	"$schema": "https://emdashcms.com/seed.schema.json",
-	"version": "1",
-	"meta": {
-		"name": "Blog Starter",
-		"description": "A blog with posts and pages",
-		"author": "EmDash"
-	},
-
-	"settings": {
-		"title": "My Blog",
-		"tagline": "Thoughts on building for the web"
-	},
-
-	"collections": [
-		{
-			"slug": "posts",
-			"label": "Posts",
-			"labelSingular": "Post",
-			"supports": ["drafts", "revisions", "search", "seo"],
-			"commentsEnabled": true,
-			"fields": [
-				{
-					"slug": "title",
-					"label": "Title",
-					"type": "string",
-					"required": true,
-					"searchable": true
-				},
-				{
-					"slug": "featured_image",
-					"label": "Featured Image",
-					"type": "image"
-				},
-				{
-					"slug": "content",
-					"label": "Content",
-					"type": "portableText",
-					"searchable": true
-				},
-				{
-					"slug": "excerpt",
-					"label": "Excerpt",
-					"type": "text"
-				}
-			]
-		},
-		{
-			"slug": "pages",
-			"label": "Pages",
-			"labelSingular": "Page",
-			"supports": ["drafts", "revisions", "search"],
-			"fields": [
-				{
-					"slug": "title",
-					"label": "Title",
-					"type": "string",
-					"required": true,
-					"searchable": true
-				},
-				{
-					"slug": "content",
-					"label": "Content",
-					"type": "portableText",
-					"searchable": true
-				}
-			]
-		}
-	],
-
-	"taxonomies": [
-		{
-			"name": "category",
-			"label": "Categories",
-			"labelSingular": "Category",
-			"hierarchical": true,
-			"collections": ["posts"],
-			"terms": [
-				{ "slug": "development", "label": "Development" },
-				{ "slug": "design", "label": "Design" },
-				{ "slug": "notes", "label": "Notes" }
-			]
-		},
-		{
-			"name": "tag",
-			"label": "Tags",
-			"labelSingular": "Tag",
-			"hierarchical": false,
-			"collections": ["posts"],
-			"terms": [
-				{ "slug": "webdev", "label": "Web Development" },
-				{ "slug": "opinion", "label": "Opinion" },
-				{ "slug": "tools", "label": "Tools" },
-				{ "slug": "creativity", "label": "Creativity" }
-			]
-		}
-	],
-
-	"bylines": [
-		{
-			"id": "byline-editorial",
-			"slug": "emdash-editorial",
-			"displayName": "EmDash Editorial"
-		},
-		{
-			"id": "byline-guest",
-			"slug": "guest-contributor",
-			"displayName": "Guest Contributor",
-			"isGuest": true
-		}
-	],
-
-	"menus": [
-		{
-			"name": "primary",
-			"label": "Primary Navigation",
-			"items": [
-				{ "type": "custom", "label": "Home", "url": "/" },
-				{ "type": "custom", "label": "About", "url": "/pages/about" },
-				{ "type": "custom", "label": "Posts", "url": "/posts" }
-			]
-		}
-	],
-
-	"widgetAreas": [
-		{
-			"name": "sidebar",
-			"label": "Sidebar",
-			"description": "Widget area displayed on single post pages",
-			"widgets": [
-				{
-					"type": "component",
-					"componentId": "core:search",
-					"title": "Search"
-				},
-				{
-					"type": "component",
-					"componentId": "core:categories",
-					"title": "Categories"
-				},
-				{
-					"type": "component",
-					"componentId": "core:tags",
-					"title": "Tags"
-				},
-				{
-					"type": "component",
-					"componentId": "core:recent-posts",
-					"title": "Recent Posts",
-					"settings": {
-						"count": 5,
-						"showDate": true
-					}
-				},
-				{
-					"type": "component",
-					"componentId": "core:archives",
-					"title": "Archives",
-					"settings": {
-						"type": "monthly",
-						"limit": 6
-					}
-				}
-			]
-		},
-		{
-			"name": "footer",
-			"label": "Footer",
-			"description": "Widget area displayed in the site footer",
-			"widgets": [
-				{
-					"type": "content",
-					"title": "About",
-					"content": [
-						{
-							"_type": "block",
-							"style": "normal",
-							"children": [
-								{
-									"_type": "span",
-									"text": "A blog about software, design, and the occasional stray thought."
-								}
-							]
-						}
-					]
-				}
-			]
-		}
-	],
-
-	"sections": [
-		{
-			"slug": "newsletter-signup",
-			"title": "Newsletter Signup",
-			"description": "A call-to-action block for newsletter subscriptions",
-			"keywords": ["newsletter", "subscribe", "email", "cta"],
-			"source": "theme",
-			"content": [
-				{
-					"_type": "block",
-					"style": "h3",
-					"children": [{ "_type": "span", "text": "Stay in the loop" }]
-				},
-				{
-					"_type": "block",
-					"style": "normal",
-					"children": [
-						{
-							"_type": "span",
-							"text": "Get notified when new posts are published. No spam, unsubscribe anytime."
-						}
-					]
-				}
-			]
-		},
-		{
-			"slug": "about-author",
-			"title": "About the Author",
-			"description": "Brief author bio for use in posts or pages",
-			"keywords": ["author", "bio", "about"],
-			"source": "theme",
-			"content": [
-				{
-					"_type": "block",
-					"style": "normal",
-					"children": [
-						{
-							"_type": "span",
-							"text": "A software developer who writes about building things on the web. Based somewhere with good coffee and reliable internet."
-						}
-					]
-				}
-			]
-		}
-	],
-
-	"content": {
-		"pages": [
-			{
-				"id": "about",
-				"slug": "about",
-				"status": "published",
-				"data": {
-					"title": "About",
-					"content": [
-						{
-							"_type": "block",
-							"style": "normal",
-							"children": [
-								{
-									"_type": "span",
-									"text": "A place for writing about software, design, and the occasional stray thought. No posting schedule, no newsletter funnel. Just things I wanted to write down."
-								}
-							]
-						},
-						{
-							"_type": "block",
-							"style": "normal",
-							"children": [
-								{
-									"_type": "span",
-									"text": "Built with Astro and EmDash. The source is open if you want to see how it works."
-								}
-							]
-						}
-					]
-				}
-			}
-		],
-		"posts": [
-			{
-				"id": "post-1",
-				"slug": "building-for-the-long-term",
-				"status": "published",
-				"data": {
-					"title": "Building for the Long Term",
-					"excerpt": "The frameworks will change. The databases will change. What survives is the clarity of your thinking.",
-					"featured_image": {
-						"$media": {
-							"url": "https://images.unsplash.com/photo-1461749280684-dccba630e2f6?w=1200&h=800&fit=crop",
-							"alt": "Code on a monitor in a dark room",
-							"filename": "building-long-term.jpg"
-						}
-					},
-					"content": [
-						{
-							"_type": "block",
-							"style": "normal",
-							"children": [
-								{
-									"_type": "span",
-									"text": "Every few years the industry collectively decides that everything we've been doing is wrong and there's a better way. New frameworks, new paradigms, new build tools. The churn is relentless, and if you're not careful, you spend more time migrating than building."
-								}
-							]
-						},
-						{
-							"_type": "block",
-							"style": "normal",
-							"children": [
-								{
-									"_type": "span",
-									"text": "I've been writing software long enough to have seen several of these cycles. jQuery to Backbone to Angular to React to whatever comes next. Each transition felt urgent at the time. Looking back, the things that actually mattered were rarely about the framework."
-								}
-							]
-						},
-						{
-							"_type": "block",
-							"style": "h2",
-							"children": [{ "_type": "span", "text": "What survives" }]
-						},
-						{
-							"_type": "block",
-							"style": "normal",
-							"children": [
-								{
-									"_type": "span",
-									"text": "Clean data models survive. Clear boundaries between systems survive. Good naming survives. The decision to keep things simple when you could have made them clever - that definitely survives."
-								}
-							]
-						},
-						{
-							"_type": "block",
-							"style": "normal",
-							"children": [
-								{
-									"_type": "span",
-									"text": "What doesn't survive is code that was written to impress, abstractions built for problems that never materialized, and architectures designed around a framework's opinions rather than the domain's reality."
-								}
-							]
-						},
-						{
-							"_type": "block",
-							"style": "normal",
-							"children": [
-								{
-									"_type": "span",
-									"text": "The best code I've written is boring. It reads like prose, does one thing well, and doesn't require a PhD in category theory to understand. The worst code I've written was technically impressive at the time."
-								}
-							]
-						}
-					]
-				},
-				"bylines": [
-					{ "byline": "byline-editorial" },
-					{ "byline": "byline-guest", "roleLabel": "Guest essay" }
-				],
-				"taxonomies": {
-					"category": ["development"],
-					"tag": ["opinion"]
-				}
-			},
-			{
-				"id": "post-2",
-				"slug": "the-case-for-static",
-				"status": "published",
-				"data": {
-					"title": "The Case for Static",
-					"excerpt": "Static sites aren't a step backwards. They're what you get when you take performance and simplicity seriously.",
-					"featured_image": {
-						"$media": {
-							"url": "https://images.unsplash.com/photo-1499750310107-5fef28a66643?w=1200&h=800&fit=crop",
-							"alt": "Laptop and coffee on a wooden table",
-							"filename": "case-for-static.jpg"
-						}
-					},
-					"content": [
-						{
-							"_type": "block",
-							"style": "normal",
-							"children": [
-								{
-									"_type": "span",
-									"text": "There's a certain irony in the fact that the web started static, went dynamic, and is now swinging back toward static again. But the static sites of today aren't the hand-coded HTML pages of 1998. They're generated, optimized, and deployed to edge networks that serve them in milliseconds."
-								}
-							]
-						},
-						{
-							"_type": "block",
-							"style": "normal",
-							"children": [
-								{
-									"_type": "span",
-									"text": "The pitch for server-rendered everything was compelling: dynamic content, personalization, real-time data. But most sites don't need most of that most of the time. A blog post doesn't need to be rendered on every request. A product page doesn't change every second."
-								}
-							]
-						},
-						{
-							"_type": "block",
-							"style": "h2",
-							"children": [{ "_type": "span", "text": "The performance argument" }]
-						},
-						{
-							"_type": "block",
-							"style": "normal",
-							"children": [
-								{
-									"_type": "span",
-									"text": "A static file served from a CDN is as fast as the web gets. No cold starts, no database queries, no server-side rendering overhead. The Time to First Byte is essentially the network latency to your nearest edge node. You can't beat physics."
-								}
-							]
-						},
-						{
-							"_type": "block",
-							"style": "normal",
-							"children": [
-								{
-									"_type": "span",
-									"text": "And when you do need dynamic behavior, you can add it surgically. An island of interactivity in a sea of static HTML. The best of both worlds, without paying the cost of either at all times."
-								}
-							]
-						}
-					]
-				},
-				"bylines": [{ "byline": "byline-editorial" }],
-				"taxonomies": {
-					"category": ["development"],
-					"tag": ["webdev", "opinion"]
-				}
-			},
-			{
-				"id": "post-3",
-				"slug": "learning-in-public",
-				"status": "published",
-				"data": {
-					"title": "Learning in Public",
-					"excerpt": "Writing about what you're learning is the fastest way to find out what you don't actually understand.",
-					"featured_image": {
-						"$media": {
-							"url": "https://images.unsplash.com/photo-1432821596592-e2c18b78144f?w=1200&h=800&fit=crop",
-							"alt": "Notebook and pen on a desk",
-							"filename": "learning-in-public.jpg"
-						}
-					},
-					"content": [
-						{
-							"_type": "block",
-							"style": "normal",
-							"children": [
-								{
-									"_type": "span",
-									"text": "I started writing about things I was learning not because I had anything original to say, but because I kept forgetting what I'd figured out. The blog posts were notes to my future self, published publicly more out of laziness than courage."
-								}
-							]
-						},
-						{
-							"_type": "block",
-							"style": "normal",
-							"children": [
-								{
-									"_type": "span",
-									"text": "What I didn't expect was how much the writing itself would accelerate the learning. There's a particular kind of clarity that comes from trying to explain something to someone else. The gaps in your understanding, which you can happily ignore when the knowledge lives only in your head, become painfully obvious when you try to put it into sentences."
-								}
-							]
-						},
-						{
-							"_type": "block",
-							"style": "h2",
-							"children": [{ "_type": "span", "text": "The fear of being wrong" }]
-						},
-						{
-							"_type": "block",
-							"style": "normal",
-							"children": [
-								{
-									"_type": "span",
-									"text": "The biggest barrier isn't time or writing skill. It's the fear of publishing something that turns out to be wrong. But here's the thing: being wrong publicly is one of the most efficient ways to learn. Someone will correct you, often kindly, and you'll remember that correction forever."
-								}
-							]
-						},
-						{
-							"_type": "block",
-							"style": "normal",
-							"children": [
-								{
-									"_type": "span",
-									"text": "The posts that helped me most weren't written by experts. They were written by people one step ahead of me on the same path, in language that hadn't yet been polished into abstraction. There's a place for that kind of writing, and it's more valuable than most people realize."
-								}
-							]
-						}
-					]
-				},
-				"taxonomies": {
-					"category": ["notes"],
-					"tag": ["opinion"]
-				}
-			},
-			{
-				"id": "post-4",
-				"slug": "small-tools-big-impact",
-				"status": "published",
-				"data": {
-					"title": "Small Tools, Big Impact",
-					"excerpt": "The best developer tools do one thing well and get out of your way. A love letter to focused software.",
-					"featured_image": {
-						"$media": {
-							"url": "https://images.unsplash.com/photo-1575026615908-666710ae5e47?w=1200&h=800&fit=crop",
-							"alt": "Wrenches and hand tools hanging on a workshop wall",
-							"filename": "small-tools.jpg"
-						}
-					},
-					"content": [
-						{
-							"_type": "block",
-							"style": "normal",
-							"children": [
-								{
-									"_type": "span",
-									"text": "There's a class of software that doesn't get enough appreciation. Not the frameworks or the platforms or the IDEs, but the small, sharp tools that solve one problem so well you stop thinking about them. They become invisible, which is the highest compliment you can pay a tool."
-								}
-							]
-						},
-						{
-							"_type": "block",
-							"style": "normal",
-							"children": [
-								{
-									"_type": "span",
-									"text": "I'm talking about things like ripgrep, which searches code so fast it changed how I think about searching. Or jq, which makes JSON feel like a first-class data format in the terminal. Or curl, which has been quietly powering the internet's plumbing for decades."
-								}
-							]
-						},
-						{
-							"_type": "block",
-							"style": "h2",
-							"children": [{ "_type": "span", "text": "The Unix philosophy, revisited" }]
-						},
-						{
-							"_type": "block",
-							"style": "normal",
-							"children": [
-								{
-									"_type": "span",
-									"text": "Do one thing well. The advice is old enough to be a cliche, but the best modern tools still follow it. They don't try to be platforms. They don't have plugin ecosystems or configuration languages or startup wizards. They do their job and they compose with other tools that do theirs."
-								}
-							]
-						},
-						{
-							"_type": "block",
-							"style": "normal",
-							"children": [
-								{
-									"_type": "span",
-									"text": "The temptation is always to add more. One more feature, one more option, one more integration. But every addition is a decision someone has to make, a path through the code that has to be maintained, a thing that can break. The best tools resist this. They stay small, and in staying small, they stay reliable."
-								}
-							]
-						}
-					]
-				},
-				"taxonomies": {
-					"category": ["development"],
-					"tag": ["tools"]
-				}
-			},
-			{
-				"id": "post-5",
-				"slug": "designing-with-constraints",
-				"status": "published",
-				"data": {
-					"title": "Designing with Constraints",
-					"excerpt": "Limitations aren't obstacles to creativity. They're the structure that makes creativity possible.",
-					"featured_image": {
-						"$media": {
-							"url": "https://images.unsplash.com/photo-1513542789411-b6a5d4f31634?w=1200&h=800&fit=crop",
-							"alt": "Pencils and design tools on a desk",
-							"filename": "designing-with-constraints.jpg"
-						}
-					},
-					"content": [
-						{
-							"_type": "block",
-							"style": "normal",
-							"children": [
-								{
-									"_type": "span",
-									"text": "Give a designer a blank canvas and unlimited time, and they'll often produce something mediocre. Give them a tight brief, a small screen, and a deadline, and they'll surprise you. This isn't a paradox - it's how creativity actually works."
-								}
-							]
-						},
-						{
-							"_type": "block",
-							"style": "normal",
-							"children": [
-								{
-									"_type": "span",
-									"text": "Constraints force decisions. When you can't use more than two typefaces, you have to choose carefully. When the page has to load in under a second, every element earns its place. When the interface has to work on a 320px screen, you discover what's truly essential."
-								}
-							]
-						},
-						{
-							"_type": "block",
-							"style": "h2",
-							"children": [{ "_type": "span", "text": "Embracing the box" }]
-						},
-						{
-							"_type": "block",
-							"style": "normal",
-							"children": [
-								{
-									"_type": "span",
-									"text": "The web itself is a constraint. HTML flows in one direction. CSS has a box model. Browsers have viewport sizes and font rendering quirks. You can fight these constraints or you can work with them, and the results are dramatically different."
-								}
-							]
-						},
-						{
-							"_type": "block",
-							"style": "normal",
-							"children": [
-								{
-									"_type": "span",
-									"text": "The designs I admire most don't look like they were forced through a framework. They look like they grew naturally from the medium, respecting its grain rather than working against it. That only happens when you treat constraints as creative partners rather than enemies."
-								}
-							]
-						}
-					]
-				},
-				"taxonomies": {
-					"category": ["design"],
-					"tag": ["creativity"]
-				}
-			},
-			{
-				"id": "post-6",
-				"slug": "a-weekend-with-a-side-project",
-				"status": "published",
-				"data": {
-					"title": "A Weekend with a Side Project",
-					"excerpt": "No stakeholders, no deadlines, no Jira tickets. Just you and a dumb idea that might turn into something.",
-					"featured_image": {
-						"$media": {
-							"url": "https://images.unsplash.com/photo-1542831371-29b0f74f9713?w=1200&h=800&fit=crop",
-							"alt": "Code on a screen with a dark theme",
-							"filename": "weekend-side-project.jpg"
-						}
-					},
-					"content": [
-						{
-							"_type": "block",
-							"style": "normal",
-							"children": [
-								{
-									"_type": "span",
-									"text": "Saturday morning. Coffee's made, the house is quiet, and I've got an idea that's been nagging at me all week. Not a good idea, necessarily - just a persistent one. A small tool that does a thing I keep doing manually. How hard could it be?"
-								}
-							]
-						},
-						{
-							"_type": "block",
-							"style": "normal",
-							"children": [
-								{
-									"_type": "span",
-									"text": "This is the best kind of programming. No requirements document, no sprint planning, no pull request reviews. Just a text editor and a problem. The freedom to make terrible architectural decisions, rewrite everything twice, and follow tangents that turn out to be dead ends."
-								}
-							]
-						},
-						{
-							"_type": "block",
-							"style": "h2",
-							"children": [{ "_type": "span", "text": "Why side projects matter" }]
-						},
-						{
-							"_type": "block",
-							"style": "normal",
-							"children": [
-								{
-									"_type": "span",
-									"text": "Side projects are where you learn things your day job would never teach you. Not because the problems are harder, but because you're free to take risks. Try a language you've never used. Build something without a framework. Deploy to a platform you've only read about. The stakes are zero, which makes the learning maximum."
-								}
-							]
-						},
-						{
-							"_type": "block",
-							"style": "normal",
-							"children": [
-								{
-									"_type": "span",
-									"text": "By Sunday evening, the thing sort of works. It's rough, the error handling is nonexistent, and the README is a single sentence. But it solves the problem I set out to solve, and I learned three things I didn't know on Friday. Not a bad weekend."
-								}
-							]
-						}
-					]
-				},
-				"taxonomies": {
-					"category": ["development"],
-					"tag": ["creativity"]
-				}
-			},
-			{
-				"id": "post-7",
-				"slug": "notes-on-simplicity",
-				"status": "published",
-				"data": {
-					"title": "Notes on Simplicity",
-					"excerpt": "Simplicity isn't the absence of complexity. It's the result of understanding a problem well enough to solve it cleanly.",
-					"featured_image": {
-						"$media": {
-							"url": "https://images.unsplash.com/photo-1559051668-e1fa58f25786?w=1200&h=800&fit=crop",
-							"alt": "Geometric pattern carved into white paper",
-							"filename": "notes-on-simplicity.jpg"
-						}
-					},
-					"content": [
-						{
-							"_type": "block",
-							"style": "normal",
-							"children": [
-								{
-									"_type": "span",
-									"text": "Every piece of software starts simple. A few files, a clear purpose, a small surface area. Then features get added, edge cases get handled, and before long you're looking at something that requires a diagram to understand. This isn't inevitable, but it takes discipline to prevent."
-								}
-							]
-						},
-						{
-							"_type": "block",
-							"style": "normal",
-							"children": [
-								{
-									"_type": "span",
-									"text": "The hard part of simplicity isn't the initial design. It's the ongoing resistance to complication. Every feature request, every bug fix, every refactor is an opportunity to add complexity. Saying no is the most important design skill, and the least celebrated."
-								}
-							]
-						},
-						{
-							"_type": "block",
-							"style": "h2",
-							"children": [{ "_type": "span", "text": "Removing as a feature" }]
-						},
-						{
-							"_type": "block",
-							"style": "normal",
-							"children": [
-								{
-									"_type": "span",
-									"text": "The best version of a product often has fewer features than the previous one. Not because features were missing, but because someone had the courage to remove things that weren't earning their keep. Every feature has a cost - in maintenance, in cognitive load, in the weight of the interface."
-								}
-							]
-						},
-						{
-							"_type": "block",
-							"style": "normal",
-							"children": [
-								{
-									"_type": "span",
-									"text": "Simplicity is a practice, not a destination. You never arrive at simple. You just keep asking: is this necessary? Could this be clearer? Is there a way to solve this problem by removing something instead of adding something? The answer is yes more often than you'd expect."
-								}
-							]
-						}
-					]
-				},
-				"taxonomies": {
-					"category": ["notes"],
-					"tag": ["opinion"]
-				}
-			},
-			{
-				"id": "post-draft",
-				"slug": "work-in-progress",
-				"status": "draft",
-				"data": {
-					"title": "Work in Progress",
-					"excerpt": "This post is still being written.",
-					"content": [
-						{
-							"_type": "block",
-							"style": "normal",
-							"children": [
-								{
-									"_type": "span",
-									"text": "This is a draft post that won't appear in the public listing."
-								}
-							]
-						}
-					]
-				}
-			}
-		]
-	}
+  "$schema": "https://emdashcms.com/seed.schema.json",
+  "version": "1",
+  "meta": {
+    "name": "Blog Starter",
+    "description": "A blog with posts and pages",
+    "author": "EmDash"
+  },
+  "settings": {
+    "title": "My Blog",
+    "tagline": "Thoughts on building for the web"
+  },
+  "collections": [
+    {
+      "slug": "posts",
+      "label": "Posts",
+      "labelSingular": "Post",
+      "supports": [
+        "drafts",
+        "revisions",
+        "search",
+        "seo"
+      ],
+      "commentsEnabled": true,
+      "fields": [
+        {
+          "slug": "title",
+          "label": "Title",
+          "type": "string",
+          "required": true,
+          "searchable": true
+        },
+        {
+          "slug": "featured_image",
+          "label": "Featured Image",
+          "type": "image"
+        },
+        {
+          "slug": "content",
+          "label": "Content",
+          "type": "portableText",
+          "searchable": true
+        },
+        {
+          "slug": "excerpt",
+          "label": "Excerpt",
+          "type": "text"
+        }
+      ]
+    },
+    {
+      "slug": "pages",
+      "label": "Pages",
+      "labelSingular": "Page",
+      "supports": [
+        "drafts",
+        "revisions",
+        "search"
+      ],
+      "fields": [
+        {
+          "slug": "title",
+          "label": "Title",
+          "type": "string",
+          "required": true,
+          "searchable": true
+        },
+        {
+          "slug": "content",
+          "label": "Content",
+          "type": "portableText",
+          "searchable": true
+        }
+      ]
+    }
+  ],
+  "taxonomies": [
+    {
+      "name": "category",
+      "label": "Categories",
+      "labelSingular": "Category",
+      "hierarchical": true,
+      "collections": [
+        "posts"
+      ],
+      "terms": [
+        {
+          "slug": "world",
+          "label": "Thế giới"
+        },
+        {
+          "slug": "tech",
+          "label": "Công nghệ"
+        },
+        {
+          "slug": "business",
+          "label": "Kinh doanh"
+        },
+        {
+          "slug": "lifestyle",
+          "label": "Đời sống"
+        },
+        {
+          "slug": "travel",
+          "label": "Du lịch"
+        }
+      ]
+    },
+    {
+      "name": "tag",
+      "label": "Tags",
+      "labelSingular": "Tag",
+      "hierarchical": false,
+      "collections": [
+        "posts"
+      ],
+      "terms": [
+        {
+          "slug": "webdev",
+          "label": "Web Development"
+        },
+        {
+          "slug": "opinion",
+          "label": "Opinion"
+        },
+        {
+          "slug": "tools",
+          "label": "Tools"
+        },
+        {
+          "slug": "creativity",
+          "label": "Creativity"
+        }
+      ]
+    }
+  ],
+  "bylines": [
+    {
+      "id": "byline-editorial",
+      "slug": "emdash-editorial",
+      "displayName": "EmDash Editorial"
+    },
+    {
+      "id": "byline-guest",
+      "slug": "guest-contributor",
+      "displayName": "Guest Contributor",
+      "isGuest": true
+    }
+  ],
+  "menus": [
+    {
+      "name": "primary",
+      "label": "Primary Navigation",
+      "items": [
+        {
+          "type": "custom",
+          "label": "Home",
+          "url": "/"
+        },
+        {
+          "type": "custom",
+          "label": "About",
+          "url": "/pages/about"
+        },
+        {
+          "type": "custom",
+          "label": "Posts",
+          "url": "/posts"
+        }
+      ]
+    }
+  ],
+  "widgetAreas": [
+    {
+      "name": "sidebar",
+      "label": "Sidebar",
+      "description": "Widget area displayed on single post pages",
+      "widgets": [
+        {
+          "type": "component",
+          "componentId": "core:search",
+          "title": "Search"
+        },
+        {
+          "type": "component",
+          "componentId": "core:categories",
+          "title": "Categories"
+        },
+        {
+          "type": "component",
+          "componentId": "core:tags",
+          "title": "Tags"
+        },
+        {
+          "type": "component",
+          "componentId": "core:recent-posts",
+          "title": "Recent Posts",
+          "settings": {
+            "count": 5,
+            "showDate": true
+          }
+        },
+        {
+          "type": "component",
+          "componentId": "core:archives",
+          "title": "Archives",
+          "settings": {
+            "type": "monthly",
+            "limit": 6
+          }
+        }
+      ]
+    },
+    {
+      "name": "footer",
+      "label": "Footer",
+      "description": "Widget area displayed in the site footer",
+      "widgets": [
+        {
+          "type": "content",
+          "title": "About",
+          "content": [
+            {
+              "_type": "block",
+              "style": "normal",
+              "children": [
+                {
+                  "_type": "span",
+                  "text": "A blog about software, design, and the occasional stray thought."
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "sections": [
+    {
+      "slug": "newsletter-signup",
+      "title": "Newsletter Signup",
+      "description": "A call-to-action block for newsletter subscriptions",
+      "keywords": [
+        "newsletter",
+        "subscribe",
+        "email",
+        "cta"
+      ],
+      "source": "theme",
+      "content": [
+        {
+          "_type": "block",
+          "style": "h3",
+          "children": [
+            {
+              "_type": "span",
+              "text": "Stay in the loop"
+            }
+          ]
+        },
+        {
+          "_type": "block",
+          "style": "normal",
+          "children": [
+            {
+              "_type": "span",
+              "text": "Get notified when new posts are published. No spam, unsubscribe anytime."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "slug": "about-author",
+      "title": "About the Author",
+      "description": "Brief author bio for use in posts or pages",
+      "keywords": [
+        "author",
+        "bio",
+        "about"
+      ],
+      "source": "theme",
+      "content": [
+        {
+          "_type": "block",
+          "style": "normal",
+          "children": [
+            {
+              "_type": "span",
+              "text": "A software developer who writes about building things on the web. Based somewhere with good coffee and reliable internet."
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "content": {
+    "pages": [
+      {
+        "id": "about",
+        "slug": "about",
+        "status": "published",
+        "data": {
+          "title": "About",
+          "content": [
+            {
+              "_type": "block",
+              "style": "normal",
+              "children": [
+                {
+                  "_type": "span",
+                  "text": "A place for writing about software, design, and the occasional stray thought. No posting schedule, no newsletter funnel. Just things I wanted to write down."
+                }
+              ]
+            },
+            {
+              "_type": "block",
+              "style": "normal",
+              "children": [
+                {
+                  "_type": "span",
+                  "text": "Built with Astro and EmDash. The source is open if you want to see how it works."
+                }
+              ]
+            }
+          ]
+        }
+      }
+    ],
+    "posts": [
+      {
+        "id": "post-1",
+        "slug": "building-for-the-long-term",
+        "status": "published",
+        "data": {
+          "title": "Building for the Long Term",
+          "excerpt": "The frameworks will change. The databases will change. What survives is the clarity of your thinking.",
+          "featured_image": {
+            "$media": {
+              "url": "https://images.unsplash.com/photo-1461749280684-dccba630e2f6?w=1200&h=800&fit=crop",
+              "alt": "Code on a monitor in a dark room",
+              "filename": "building-long-term.jpg"
+            }
+          },
+          "content": [
+            {
+              "_type": "block",
+              "style": "normal",
+              "children": [
+                {
+                  "_type": "span",
+                  "text": "Every few years the industry collectively decides that everything we've been doing is wrong and there's a better way. New frameworks, new paradigms, new build tools. The churn is relentless, and if you're not careful, you spend more time migrating than building."
+                }
+              ]
+            },
+            {
+              "_type": "block",
+              "style": "normal",
+              "children": [
+                {
+                  "_type": "span",
+                  "text": "I've been writing software long enough to have seen several of these cycles. jQuery to Backbone to Angular to React to whatever comes next. Each transition felt urgent at the time. Looking back, the things that actually mattered were rarely about the framework."
+                }
+              ]
+            },
+            {
+              "_type": "block",
+              "style": "h2",
+              "children": [
+                {
+                  "_type": "span",
+                  "text": "What survives"
+                }
+              ]
+            },
+            {
+              "_type": "block",
+              "style": "normal",
+              "children": [
+                {
+                  "_type": "span",
+                  "text": "Clean data models survive. Clear boundaries between systems survive. Good naming survives. The decision to keep things simple when you could have made them clever - that definitely survives."
+                }
+              ]
+            },
+            {
+              "_type": "block",
+              "style": "normal",
+              "children": [
+                {
+                  "_type": "span",
+                  "text": "What doesn't survive is code that was written to impress, abstractions built for problems that never materialized, and architectures designed around a framework's opinions rather than the domain's reality."
+                }
+              ]
+            },
+            {
+              "_type": "block",
+              "style": "normal",
+              "children": [
+                {
+                  "_type": "span",
+                  "text": "The best code I've written is boring. It reads like prose, does one thing well, and doesn't require a PhD in category theory to understand. The worst code I've written was technically impressive at the time."
+                }
+              ]
+            }
+          ]
+        },
+        "bylines": [
+          {
+            "byline": "byline-editorial"
+          },
+          {
+            "byline": "byline-guest",
+            "roleLabel": "Guest essay"
+          }
+        ],
+        "taxonomies": {
+          "category": [
+            "lifestyle"
+          ],
+          "tag": [
+            "opinion"
+          ]
+        }
+      },
+      {
+        "id": "post-2",
+        "slug": "the-case-for-static",
+        "status": "published",
+        "data": {
+          "title": "The Case for Static",
+          "excerpt": "Static sites aren't a step backwards. They're what you get when you take performance and simplicity seriously.",
+          "featured_image": {
+            "$media": {
+              "url": "https://images.unsplash.com/photo-1499750310107-5fef28a66643?w=1200&h=800&fit=crop",
+              "alt": "Laptop and coffee on a wooden table",
+              "filename": "case-for-static.jpg"
+            }
+          },
+          "content": [
+            {
+              "_type": "block",
+              "style": "normal",
+              "children": [
+                {
+                  "_type": "span",
+                  "text": "There's a certain irony in the fact that the web started static, went dynamic, and is now swinging back toward static again. But the static sites of today aren't the hand-coded HTML pages of 1998. They're generated, optimized, and deployed to edge networks that serve them in milliseconds."
+                }
+              ]
+            },
+            {
+              "_type": "block",
+              "style": "normal",
+              "children": [
+                {
+                  "_type": "span",
+                  "text": "The pitch for server-rendered everything was compelling: dynamic content, personalization, real-time data. But most sites don't need most of that most of the time. A blog post doesn't need to be rendered on every request. A product page doesn't change every second."
+                }
+              ]
+            },
+            {
+              "_type": "block",
+              "style": "h2",
+              "children": [
+                {
+                  "_type": "span",
+                  "text": "The performance argument"
+                }
+              ]
+            },
+            {
+              "_type": "block",
+              "style": "normal",
+              "children": [
+                {
+                  "_type": "span",
+                  "text": "A static file served from a CDN is as fast as the web gets. No cold starts, no database queries, no server-side rendering overhead. The Time to First Byte is essentially the network latency to your nearest edge node. You can't beat physics."
+                }
+              ]
+            },
+            {
+              "_type": "block",
+              "style": "normal",
+              "children": [
+                {
+                  "_type": "span",
+                  "text": "And when you do need dynamic behavior, you can add it surgically. An island of interactivity in a sea of static HTML. The best of both worlds, without paying the cost of either at all times."
+                }
+              ]
+            }
+          ]
+        },
+        "bylines": [
+          {
+            "byline": "byline-editorial"
+          }
+        ],
+        "taxonomies": {
+          "category": [
+            "tech"
+          ],
+          "tag": [
+            "webdev",
+            "opinion"
+          ]
+        }
+      },
+      {
+        "id": "post-3",
+        "slug": "learning-in-public",
+        "status": "published",
+        "data": {
+          "title": "Learning in Public",
+          "excerpt": "Writing about what you're learning is the fastest way to find out what you don't actually understand.",
+          "featured_image": {
+            "$media": {
+              "url": "https://images.unsplash.com/photo-1432821596592-e2c18b78144f?w=1200&h=800&fit=crop",
+              "alt": "Notebook and pen on a desk",
+              "filename": "learning-in-public.jpg"
+            }
+          },
+          "content": [
+            {
+              "_type": "block",
+              "style": "normal",
+              "children": [
+                {
+                  "_type": "span",
+                  "text": "I started writing about things I was learning not because I had anything original to say, but because I kept forgetting what I'd figured out. The blog posts were notes to my future self, published publicly more out of laziness than courage."
+                }
+              ]
+            },
+            {
+              "_type": "block",
+              "style": "normal",
+              "children": [
+                {
+                  "_type": "span",
+                  "text": "What I didn't expect was how much the writing itself would accelerate the learning. There's a particular kind of clarity that comes from trying to explain something to someone else. The gaps in your understanding, which you can happily ignore when the knowledge lives only in your head, become painfully obvious when you try to put it into sentences."
+                }
+              ]
+            },
+            {
+              "_type": "block",
+              "style": "h2",
+              "children": [
+                {
+                  "_type": "span",
+                  "text": "The fear of being wrong"
+                }
+              ]
+            },
+            {
+              "_type": "block",
+              "style": "normal",
+              "children": [
+                {
+                  "_type": "span",
+                  "text": "The biggest barrier isn't time or writing skill. It's the fear of publishing something that turns out to be wrong. But here's the thing: being wrong publicly is one of the most efficient ways to learn. Someone will correct you, often kindly, and you'll remember that correction forever."
+                }
+              ]
+            },
+            {
+              "_type": "block",
+              "style": "normal",
+              "children": [
+                {
+                  "_type": "span",
+                  "text": "The posts that helped me most weren't written by experts. They were written by people one step ahead of me on the same path, in language that hadn't yet been polished into abstraction. There's a place for that kind of writing, and it's more valuable than most people realize."
+                }
+              ]
+            }
+          ]
+        },
+        "taxonomies": {
+          "category": [
+            "lifestyle"
+          ],
+          "tag": [
+            "opinion"
+          ]
+        }
+      },
+      {
+        "id": "post-4",
+        "slug": "small-tools-big-impact",
+        "status": "published",
+        "data": {
+          "title": "Small Tools, Big Impact",
+          "excerpt": "The best developer tools do one thing well and get out of your way. A love letter to focused software.",
+          "featured_image": {
+            "$media": {
+              "url": "https://images.unsplash.com/photo-1575026615908-666710ae5e47?w=1200&h=800&fit=crop",
+              "alt": "Wrenches and hand tools hanging on a workshop wall",
+              "filename": "small-tools.jpg"
+            }
+          },
+          "content": [
+            {
+              "_type": "block",
+              "style": "normal",
+              "children": [
+                {
+                  "_type": "span",
+                  "text": "There's a class of software that doesn't get enough appreciation. Not the frameworks or the platforms or the IDEs, but the small, sharp tools that solve one problem so well you stop thinking about them. They become invisible, which is the highest compliment you can pay a tool."
+                }
+              ]
+            },
+            {
+              "_type": "block",
+              "style": "normal",
+              "children": [
+                {
+                  "_type": "span",
+                  "text": "I'm talking about things like ripgrep, which searches code so fast it changed how I think about searching. Or jq, which makes JSON feel like a first-class data format in the terminal. Or curl, which has been quietly powering the internet's plumbing for decades."
+                }
+              ]
+            },
+            {
+              "_type": "block",
+              "style": "h2",
+              "children": [
+                {
+                  "_type": "span",
+                  "text": "The Unix philosophy, revisited"
+                }
+              ]
+            },
+            {
+              "_type": "block",
+              "style": "normal",
+              "children": [
+                {
+                  "_type": "span",
+                  "text": "Do one thing well. The advice is old enough to be a cliche, but the best modern tools still follow it. They don't try to be platforms. They don't have plugin ecosystems or configuration languages or startup wizards. They do their job and they compose with other tools that do theirs."
+                }
+              ]
+            },
+            {
+              "_type": "block",
+              "style": "normal",
+              "children": [
+                {
+                  "_type": "span",
+                  "text": "The temptation is always to add more. One more feature, one more option, one more integration. But every addition is a decision someone has to make, a path through the code that has to be maintained, a thing that can break. The best tools resist this. They stay small, and in staying small, they stay reliable."
+                }
+              ]
+            }
+          ]
+        },
+        "taxonomies": {
+          "category": [
+            "tech"
+          ],
+          "tag": [
+            "tools"
+          ]
+        }
+      },
+      {
+        "id": "post-5",
+        "slug": "designing-with-constraints",
+        "status": "published",
+        "data": {
+          "title": "Designing with Constraints",
+          "excerpt": "Limitations aren't obstacles to creativity. They're the structure that makes creativity possible.",
+          "featured_image": {
+            "$media": {
+              "url": "https://images.unsplash.com/photo-1513542789411-b6a5d4f31634?w=1200&h=800&fit=crop",
+              "alt": "Pencils and design tools on a desk",
+              "filename": "designing-with-constraints.jpg"
+            }
+          },
+          "content": [
+            {
+              "_type": "block",
+              "style": "normal",
+              "children": [
+                {
+                  "_type": "span",
+                  "text": "Give a designer a blank canvas and unlimited time, and they'll often produce something mediocre. Give them a tight brief, a small screen, and a deadline, and they'll surprise you. This isn't a paradox - it's how creativity actually works."
+                }
+              ]
+            },
+            {
+              "_type": "block",
+              "style": "normal",
+              "children": [
+                {
+                  "_type": "span",
+                  "text": "Constraints force decisions. When you can't use more than two typefaces, you have to choose carefully. When the page has to load in under a second, every element earns its place. When the interface has to work on a 320px screen, you discover what's truly essential."
+                }
+              ]
+            },
+            {
+              "_type": "block",
+              "style": "h2",
+              "children": [
+                {
+                  "_type": "span",
+                  "text": "Embracing the box"
+                }
+              ]
+            },
+            {
+              "_type": "block",
+              "style": "normal",
+              "children": [
+                {
+                  "_type": "span",
+                  "text": "The web itself is a constraint. HTML flows in one direction. CSS has a box model. Browsers have viewport sizes and font rendering quirks. You can fight these constraints or you can work with them, and the results are dramatically different."
+                }
+              ]
+            },
+            {
+              "_type": "block",
+              "style": "normal",
+              "children": [
+                {
+                  "_type": "span",
+                  "text": "The designs I admire most don't look like they were forced through a framework. They look like they grew naturally from the medium, respecting its grain rather than working against it. That only happens when you treat constraints as creative partners rather than enemies."
+                }
+              ]
+            }
+          ]
+        },
+        "taxonomies": {
+          "category": [
+            "lifestyle"
+          ],
+          "tag": [
+            "creativity"
+          ]
+        }
+      },
+      {
+        "id": "post-6",
+        "slug": "a-weekend-with-a-side-project",
+        "status": "published",
+        "data": {
+          "title": "A Weekend with a Side Project",
+          "excerpt": "No stakeholders, no deadlines, no Jira tickets. Just you and a dumb idea that might turn into something.",
+          "featured_image": {
+            "$media": {
+              "url": "https://images.unsplash.com/photo-1542831371-29b0f74f9713?w=1200&h=800&fit=crop",
+              "alt": "Code on a screen with a dark theme",
+              "filename": "weekend-side-project.jpg"
+            }
+          },
+          "content": [
+            {
+              "_type": "block",
+              "style": "normal",
+              "children": [
+                {
+                  "_type": "span",
+                  "text": "Saturday morning. Coffee's made, the house is quiet, and I've got an idea that's been nagging at me all week. Not a good idea, necessarily - just a persistent one. A small tool that does a thing I keep doing manually. How hard could it be?"
+                }
+              ]
+            },
+            {
+              "_type": "block",
+              "style": "normal",
+              "children": [
+                {
+                  "_type": "span",
+                  "text": "This is the best kind of programming. No requirements document, no sprint planning, no pull request reviews. Just a text editor and a problem. The freedom to make terrible architectural decisions, rewrite everything twice, and follow tangents that turn out to be dead ends."
+                }
+              ]
+            },
+            {
+              "_type": "block",
+              "style": "h2",
+              "children": [
+                {
+                  "_type": "span",
+                  "text": "Why side projects matter"
+                }
+              ]
+            },
+            {
+              "_type": "block",
+              "style": "normal",
+              "children": [
+                {
+                  "_type": "span",
+                  "text": "Side projects are where you learn things your day job would never teach you. Not because the problems are harder, but because you're free to take risks. Try a language you've never used. Build something without a framework. Deploy to a platform you've only read about. The stakes are zero, which makes the learning maximum."
+                }
+              ]
+            },
+            {
+              "_type": "block",
+              "style": "normal",
+              "children": [
+                {
+                  "_type": "span",
+                  "text": "By Sunday evening, the thing sort of works. It's rough, the error handling is nonexistent, and the README is a single sentence. But it solves the problem I set out to solve, and I learned three things I didn't know on Friday. Not a bad weekend."
+                }
+              ]
+            }
+          ]
+        },
+        "taxonomies": {
+          "category": [
+            "business"
+          ],
+          "tag": [
+            "creativity"
+          ]
+        }
+      },
+      {
+        "id": "post-7",
+        "slug": "notes-on-simplicity",
+        "status": "published",
+        "data": {
+          "title": "Notes on Simplicity",
+          "excerpt": "Simplicity isn't the absence of complexity. It's the result of understanding a problem well enough to solve it cleanly.",
+          "featured_image": {
+            "$media": {
+              "url": "https://images.unsplash.com/photo-1559051668-e1fa58f25786?w=1200&h=800&fit=crop",
+              "alt": "Geometric pattern carved into white paper",
+              "filename": "notes-on-simplicity.jpg"
+            }
+          },
+          "content": [
+            {
+              "_type": "block",
+              "style": "normal",
+              "children": [
+                {
+                  "_type": "span",
+                  "text": "Every piece of software starts simple. A few files, a clear purpose, a small surface area. Then features get added, edge cases get handled, and before long you're looking at something that requires a diagram to understand. This isn't inevitable, but it takes discipline to prevent."
+                }
+              ]
+            },
+            {
+              "_type": "block",
+              "style": "normal",
+              "children": [
+                {
+                  "_type": "span",
+                  "text": "The hard part of simplicity isn't the initial design. It's the ongoing resistance to complication. Every feature request, every bug fix, every refactor is an opportunity to add complexity. Saying no is the most important design skill, and the least celebrated."
+                }
+              ]
+            },
+            {
+              "_type": "block",
+              "style": "h2",
+              "children": [
+                {
+                  "_type": "span",
+                  "text": "Removing as a feature"
+                }
+              ]
+            },
+            {
+              "_type": "block",
+              "style": "normal",
+              "children": [
+                {
+                  "_type": "span",
+                  "text": "The best version of a product often has fewer features than the previous one. Not because features were missing, but because someone had the courage to remove things that weren't earning their keep. Every feature has a cost - in maintenance, in cognitive load, in the weight of the interface."
+                }
+              ]
+            },
+            {
+              "_type": "block",
+              "style": "normal",
+              "children": [
+                {
+                  "_type": "span",
+                  "text": "Simplicity is a practice, not a destination. You never arrive at simple. You just keep asking: is this necessary? Could this be clearer? Is there a way to solve this problem by removing something instead of adding something? The answer is yes more often than you'd expect."
+                }
+              ]
+            }
+          ]
+        },
+        "taxonomies": {
+          "category": [
+            "lifestyle"
+          ],
+          "tag": [
+            "opinion"
+          ]
+        }
+      },
+      {
+        "id": "post-draft",
+        "slug": "work-in-progress",
+        "status": "draft",
+        "data": {
+          "title": "Work in Progress",
+          "excerpt": "This post is still being written.",
+          "content": [
+            {
+              "_type": "block",
+              "style": "normal",
+              "children": [
+                {
+                  "_type": "span",
+                  "text": "This is a draft post that won't appear in the public listing."
+                }
+              ]
+            }
+          ]
+        },
+        "taxonomies": {
+          "category": [
+            "world"
+          ]
+        }
+      },
+      {
+        "id": "post-10",
+        "slug": "tri-tue-nhan-tao-va-tuong-lai-nganh-lap-trinh",
+        "status": "published",
+        "data": {
+          "title": "Trí Tuệ Nhân Tạo Và Tương Lai Ngành Lập Trình Hệ Trọng Ra Sao?",
+          "excerpt": "Sự bùng nổ của các mô hình AI lớn như Gemini đang tái định hình cách thức các lập trình viên làm việc và tạo ra sản phẩm công nghệ.",
+          "featured_image": {
+            "$media": {
+              "url": "https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?w=1200&h=800&fit=crop",
+              "alt": "Hình ảnh trừu tượng về trí tuệ nhân tạo và mạng lưới thần kinh",
+              "filename": "ai-future-programming.jpg"
+            }
+          },
+          "content": [
+            {
+              "_type": "block",
+              "style": "normal",
+              "children": [
+                {
+                  "_type": "span",
+                  "text": "Trong những năm gần đây, trí tuệ nhân tạo (AI) đã chuyển mình từ một công nghệ mang tính lý thuyết trở thành trợ thủ đắc lực không thể thiếu trong quy trình phát triển phần mềm toàn cầu. Các công cụ hỗ trợ viết mã tự động đang giúp lập trình viên viết code nhanh hơn gấp nhiều lần."
+                }
+              ]
+            },
+            {
+              "_type": "block",
+              "style": "normal",
+              "children": [
+                {
+                  "_type": "span",
+                  "text": "Tuy nhiên, điều này cũng đặt ra một câu hỏi lớn: Liệu AI có thay thế hoàn toàn con người trong tương lai gần? Các chuyên gia công nghệ nhận định rằng, AI chỉ thay thế những công việc mang tính lặp đi lặp lại. Tư duy kiến trúc hệ thống và khả năng sáng tạo giải pháp của con người vẫn là độc bản."
+                }
+              ]
+            },
+            {
+              "_type": "block",
+              "style": "h2",
+              "children": [
+                {
+                  "_type": "span",
+                  "text": "Sự cộng tác hoàn hảo giữa người và máy"
+                }
+              ]
+            },
+            {
+              "_type": "block",
+              "style": "normal",
+              "children": [
+                {
+                  "_type": "span",
+                  "text": "Tương lai thuộc về những kỹ sư biết làm chủ công nghệ mới. Việc biết cách đặt câu lệnh (prompt) chính xác, đánh giá chất lượng mã nguồn do AI tạo ra và tích hợp chúng vào hệ thống lớn sẽ trở thành kỹ năng bắt buộc đối với mọi lập trình viên thế hệ mới."
+                }
+              ]
+            }
+          ]
+        },
+        "bylines": [
+          {
+            "byline": "byline-editorial"
+          }
+        ],
+        "taxonomies": {
+          "category": [
+            "tech"
+          ],
+          "tag": [
+            "webdev",
+            "tools"
+          ]
+        }
+      },
+      {
+        "id": "post-11",
+        "slug": "ky-nguyen-moi-cua-tham-hiem-khong-gian-hanh-trinh-sao-hoa",
+        "status": "published",
+        "data": {
+          "title": "Kỷ Nguyên Mới Của Thám Hiểm Không Gian: Hành Trình Chinh Phục Sao Hỏa",
+          "excerpt": "Các tập đoàn hàng không vũ trụ hàng đầu đang đẩy nhanh tiến độ đưa con người đặt chân lên hành tinh đỏ trong thập kỷ tới.",
+          "featured_image": {
+            "$media": {
+              "url": "https://images.unsplash.com/photo-1614728894747-a83421e2b9c9?w=1200&h=800&fit=crop",
+              "alt": "Hành tinh đỏ Sao Hỏa rực sáng giữa vũ trụ bao la",
+              "filename": "mars-space-mission.jpg"
+            }
+          },
+          "content": [
+            {
+              "_type": "block",
+              "style": "normal",
+              "children": [
+                {
+                  "_type": "span",
+                  "text": "Ước mơ chinh phục các hành tinh xa xôi của nhân loại chưa bao giờ gần thực tế như hiện nay. Với sự phát triển vượt bậc của công nghệ tên lửa đẩy tái sử dụng, chi phí vận chuyển hàng hóa và con người vào không gian đã giảm đi hàng chục lần."
+                }
+              ]
+            },
+            {
+              "_type": "block",
+              "style": "normal",
+              "children": [
+                {
+                  "_type": "span",
+                  "text": "Sao Hỏa - hành tinh có nhiều điểm tương đồng nhất với Trái Đất trong hệ mặt trời - đang là mục tiêu tối thượng. Việc xây dựng những trạm nghiên cứu tự động đầu tiên trên hành tinh này sẽ là tiền đề vững chắc cho việc thiết lập khu định cư vĩnh viễn cho con người."
+                }
+              ]
+            },
+            {
+              "_type": "block",
+              "style": "h2",
+              "children": [
+                {
+                  "_type": "span",
+                  "text": "Thử thách sinh tồn khắc nghiệt"
+                }
+              ]
+            },
+            {
+              "_type": "block",
+              "style": "normal",
+              "children": [
+                {
+                  "_type": "span",
+                  "text": "Bên cạnh các yếu tố công nghệ, sức khỏe thể chất và tinh thần của các phi hành gia trong hành trình kéo dài hàng tháng trời ngoài không gian cũng là một bài toán hóc búa cần lời giải đáp thỏa đáng từ các nhà khoa học."
+                }
+              ]
+            }
+          ]
+        },
+        "bylines": [
+          {
+            "byline": "byline-editorial"
+          }
+        ],
+        "taxonomies": {
+          "category": [
+            "world"
+          ],
+          "tag": [
+            "creativity",
+            "opinion"
+          ]
+        }
+      },
+      {
+        "id": "post-12",
+        "slug": "bien-doi-khi-hau-va-cuoc-dua-nang-luong-tai-tao",
+        "status": "published",
+        "data": {
+          "title": "Biến Đổi Khí Hậu Toàn Cầu: Cuộc Đua Chuyển Dịch Sang Năng Lượng Tái Tạo",
+          "excerpt": "Các quốc gia đang tăng tốc đầu tư vào điện mặt trời và điện gió nhằm đạt mục tiêu trung hòa carbon vào năm 2050.",
+          "featured_image": {
+            "$media": {
+              "url": "https://images.unsplash.com/photo-1509391366360-2e959784a276?w=1200&h=800&fit=crop",
+              "alt": "Cánh đồng pin mặt trời trải dài dưới ánh nắng chói chang",
+              "filename": "solar-renewable-energy.jpg"
+            }
+          },
+          "content": [
+            {
+              "_type": "block",
+              "style": "normal",
+              "children": [
+                {
+                  "_type": "span",
+                  "text": "Khủng hoảng khí hậu toàn cầu đang diễn biến phức tạp hơn bao giờ hết với các hiện tượng thời tiết cực đoan xuất hiện ở khắp nơi. Để ngăn chặn thảm họa, việc giảm sự phụ thuộc hoàn toàn vào năng lượng hóa thạch là nhiệm vụ sống còn."
+                }
+              ]
+            },
+            {
+              "_type": "block",
+              "style": "normal",
+              "children": [
+                {
+                  "_type": "span",
+                  "text": "Năng lượng mặt trời và năng lượng gió đang nổi lên như những giải pháp thay thế hoàn hảo nhờ chi phí sản xuất ngày càng rẻ và công nghệ lưu trữ pin có những bước tiến mang tính đột phá lớn."
+                }
+              ]
+            },
+            {
+              "_type": "block",
+              "style": "h2",
+              "children": [
+                {
+                  "_type": "span",
+                  "text": "Hành động quyết liệt của các chính phủ"
+                }
+              ]
+            },
+            {
+              "_type": "block",
+              "style": "normal",
+              "children": [
+                {
+                  "_type": "span",
+                  "text": "Sự đồng thuận quốc tế thông qua các hiệp định khí hậu toàn cầu đang thúc đẩy các chính sách chuyển dịch xanh mạnh mẽ, mở ra hàng triệu cơ hội việc làm mới trong ngành công nghệ sạch."
+                }
+              ]
+            }
+          ]
+        },
+        "bylines": [
+          {
+            "byline": "byline-editorial"
+          }
+        ],
+        "taxonomies": {
+          "category": [
+            "world"
+          ],
+          "tag": [
+            "webdev",
+            "opinion"
+          ]
+        }
+      },
+      {
+        "id": "post-13",
+        "slug": "su-troi-day-cua-xe-dien-thong-minh",
+        "status": "published",
+        "data": {
+          "title": "Sự Trỗi Dậy Của Xe Điện Thông Minh Và Xu Hướng Giao Thông Xanh",
+          "excerpt": "Thị trường xe điện toàn cầu chứng kiến sự tăng trưởng vượt bậc với các dòng xe tích hợp công nghệ tự lái tiên tiến.",
+          "featured_image": {
+            "$media": {
+              "url": "https://images.unsplash.com/photo-1563720223185-11003d516935?w=1200&h=800&fit=crop",
+              "alt": "Đầu xe điện thông minh đang được sạc năng lượng tại trạm sạc",
+              "filename": "smart-ev-charging.jpg"
+            }
+          },
+          "content": [
+            {
+              "_type": "block",
+              "style": "normal",
+              "children": [
+                {
+                  "_type": "span",
+                  "text": "Ngành công nghiệp ô tô đang trải qua một trong những cuộc cách mạng lớn nhất lịch sử. Xe điện (EV) giờ đây không chỉ đơn giản là phương tiện di chuyển bảo vệ môi trường, mà còn là một siêu máy tính di động."
+                }
+              ]
+            },
+            {
+              "_type": "block",
+              "style": "normal",
+              "children": [
+                {
+                  "_type": "span",
+                  "text": "Các tính năng tự lái thông minh, điều khiển bằng giọng nói tích hợp trợ lý AI và khả năng kết nối vạn vật (IoT) đang định nghĩa lại hoàn toàn trải nghiệm lái xe của người dùng hiện đại."
+                }
+              ]
+            },
+            {
+              "_type": "block",
+              "style": "h2",
+              "children": [
+                {
+                  "_type": "span",
+                  "text": "Hạ tầng trạm sạc - chìa khóa phổ cập"
+                }
+              ]
+            },
+            {
+              "_type": "block",
+              "style": "normal",
+              "children": [
+                {
+                  "_type": "span",
+                  "text": "Để xe điện thực sự thay thế hoàn toàn xe động cơ đốt trong truyền thống, việc xây dựng và phủ sóng hệ thống trạm sạc nhanh rộng khắp là yếu tố quan trọng nhất cần được giải quyết."
+                }
+              ]
+            }
+          ]
+        },
+        "bylines": [
+          {
+            "byline": "byline-editorial"
+          }
+        ],
+        "taxonomies": {
+          "category": [
+            "business"
+          ],
+          "tag": [
+            "tools",
+            "creativity"
+          ]
+        }
+      },
+      {
+        "id": "post-14",
+        "slug": "nghe-thuat-toi-gian-trong-thiet-ke-noi-that",
+        "status": "published",
+        "data": {
+          "title": "Nghệ Thuật Tối Giản Trong Thiết Kế Nội Thất Hiện Đại",
+          "excerpt": "Xu hướng tối giản hóa không gian sống giúp con người tìm lại sự bình yên, thư thái giữa nhịp sống đô thị hối hả.",
+          "featured_image": {
+            "$media": {
+              "url": "https://images.unsplash.com/photo-1586023492125-27b2c045efd7?w=1200&h=800&fit=crop",
+              "alt": "Phòng khách được thiết kế tối giản với gam màu trung tính nhã nhặn",
+              "filename": "minimalist-interior-design.jpg"
+            }
+          },
+          "content": [
+            {
+              "_type": "block",
+              "style": "normal",
+              "children": [
+                {
+                  "_type": "span",
+                  "text": "Chủ nghĩa tối giản (Minimalism) không đơn thuần là việc loại bỏ đồ đạc trong nhà, mà là nghệ thuật sắp đặt có tính toán nhằm giữ lại những gì tinh túy và thiết thực nhất, tạo ra không gian sống thoáng đãng, nhiều ánh sáng."
+                }
+              ]
+            },
+            {
+              "_type": "block",
+              "style": "normal",
+              "children": [
+                {
+                  "_type": "span",
+                  "text": "Sử dụng những gam màu trung tính nhã nhặn, vật liệu tự nhiên bền vững như gỗ và đá kết hợp với các đường nét hình học sắc sảo là đặc điểm cốt lõi của trường phái thiết kế sang trọng này."
+                }
+              ]
+            },
+            {
+              "_type": "block",
+              "style": "h2",
+              "children": [
+                {
+                  "_type": "span",
+                  "text": "Giải phóng không gian, giải phóng tâm trí"
+                }
+              ]
+            },
+            {
+              "_type": "block",
+              "style": "normal",
+              "children": [
+                {
+                  "_type": "span",
+                  "text": "Khi sống trong một không gian tối giản, gọn gàng, tâm trí con người ít bị xao nhãng hơn, từ đó tăng hiệu suất tập trung làm việc và dễ dàng tái tạo nguồn năng lượng tích cực."
+                }
+              ]
+            }
+          ]
+        },
+        "bylines": [
+          {
+            "byline": "byline-editorial"
+          }
+        ],
+        "taxonomies": {
+          "category": [
+            "lifestyle"
+          ],
+          "tag": [
+            "creativity",
+            "opinion"
+          ]
+        }
+      },
+      {
+        "id": "post-15",
+        "slug": "bi-quyet-duy-tri-can-bang-cuoc-song",
+        "status": "published",
+        "data": {
+          "title": "Bí Quyết Duy Trì Sự Cân Bằng Giữa Cuộc Sống Và Công Việc",
+          "excerpt": "Làm thế nào để tránh tình trạng kiệt sức (burnout) và tận hưởng trọn vẹn những phút giây bên gia đình của bạn?",
+          "featured_image": {
+            "$media": {
+              "url": "https://images.unsplash.com/photo-1506126613408-eca07ce68773?w=1200&h=800&fit=crop",
+              "alt": "Người phụ nữ ngồi thiền yên tĩnh bên bờ biển lúc bình minh",
+              "filename": "work-life-balance-yoga.jpg"
+            }
+          },
+          "content": [
+            {
+              "_type": "block",
+              "style": "normal",
+              "children": [
+                {
+                  "_type": "span",
+                  "text": "Trong thế giới phẳng kết nối liên tục 24/7 hiện nay, ranh giới giữa công việc và đời sống cá nhân đang trở nên mờ nhạt hơn bao giờ hết. Nhiều người rơi vào trạng thái kiệt sức mà không hề hay biết."
+                }
+              ]
+            },
+            {
+              "_type": "block",
+              "style": "normal",
+              "children": [
+                {
+                  "_type": "span",
+                  "text": "Thiết lập những ranh giới rõ ràng như không check email sau 8 giờ tối, dành riêng cuối tuần cho gia đình và bản thân là bước đi đầu tiên vô cùng quan trọng để bảo vệ sức khỏe tinh thần."
+                }
+              ]
+            },
+            {
+              "_type": "block",
+              "style": "h2",
+              "children": [
+                {
+                  "_type": "span",
+                  "text": "Thực hành lối sống chánh niệm"
+                }
+              ]
+            },
+            {
+              "_type": "block",
+              "style": "normal",
+              "children": [
+                {
+                  "_type": "span",
+                  "text": "Mỗi ngày chỉ cần dành ra 10 - 15 phút thiền định hoặc tập yoga nhẹ nhàng sẽ giúp xoa dịu thần kinh hiệu quả, mang lại sự tỉnh táo tinh thần và bình yên sâu thẳm trong nội tâm."
+                }
+              ]
+            }
+          ]
+        },
+        "bylines": [
+          {
+            "byline": "byline-editorial"
+          }
+        ],
+        "taxonomies": {
+          "category": [
+            "lifestyle"
+          ],
+          "tag": [
+            "opinion",
+            "creativity"
+          ]
+        }
+      },
+      {
+        "id": "post-16",
+        "slug": "kham-pha-am-thuc-duong-pho-ha-noi",
+        "status": "published",
+        "data": {
+          "title": "Hành Trình Khám Phá Ẩm Thực Đường Phố Hà Nội Cổ Kính",
+          "excerpt": "Ẩm thực Hà Nội với nét tinh tế lâu đời luôn là thỏi nam châm cuốn hút thực khách báo chí bốn phương tìm đến thưởng thức.",
+          "featured_image": {
+            "$media": {
+              "url": "https://images.unsplash.com/photo-1565557623262-b51c2513a641?w=1200&h=800&fit=crop",
+              "alt": "Món ăn đường phố Việt Nam thơm ngon nóng hổi",
+              "filename": "hanoi-street-food.jpg"
+            }
+          },
+          "content": [
+            {
+              "_type": "block",
+              "style": "normal",
+              "children": [
+                {
+                  "_type": "span",
+                  "text": "Nhắc đến Hà Nội là nhắc đến nét văn hóa ẩm thực lâu đời vô cùng tao nhã. Những gánh hàng rong, những quán nhỏ ven đường trong khu phố cổ luôn ẩn chứa những hương vị say đắm lòng người."
+                }
+              ]
+            },
+            {
+              "_type": "block",
+              "style": "normal",
+              "children": [
+                {
+                  "_type": "span",
+                  "text": "Từ phở bò gia truyền nước dùng trong thanh ngọt ngọt, bún chả thơm lừng mùi than hoa cho đến ly cà phê trứng béo ngậy độc đáo - tất cả hòa quyện tạo thành một bức tranh ẩm thực đa sắc màu đầy lôi cuốn."
+                }
+              ]
+            },
+            {
+              "_type": "block",
+              "style": "h2",
+              "children": [
+                {
+                  "_type": "span",
+                  "text": "Hồn cốt văn hóa của mảnh đất Kinh Kỳ"
+                }
+              ]
+            },
+            {
+              "_type": "block",
+              "style": "normal",
+              "children": [
+                {
+                  "_type": "span",
+                  "text": "Thưởng thức món ăn Hà Nội không chỉ là thỏa mãn vị giác, mà còn là trải nghiệm không gian văn hóa lịch sử, cảm nhận nhịp sống thư thái chậm rãi của người dân thủ đô ngàn năm văn hiến."
+                }
+              ]
+            }
+          ]
+        },
+        "bylines": [
+          {
+            "byline": "byline-editorial"
+          }
+        ],
+        "taxonomies": {
+          "category": [
+            "travel"
+          ],
+          "tag": [
+            "creativity"
+          ]
+        }
+      },
+      {
+        "id": "post-17",
+        "slug": "cuoc-cach-mang-web3-va-tuong-lai-internet",
+        "status": "published",
+        "data": {
+          "title": "Cuộc Cách Mạng Web3 Và Định Hình Tương Lai Của Mạng Internet",
+          "excerpt": "Web3 hứa hẹn trao lại quyền sở hữu dữ liệu cá nhân cho người dùng thông qua công nghệ phi tập trung blockchain.",
+          "featured_image": {
+            "$media": {
+              "url": "https://images.unsplash.com/photo-1639762681485-074b7f938ba0?w=1200&h=800&fit=crop",
+              "alt": "Mô hình trừu tượng về mạng lưới phi tập trung blockchain",
+              "filename": "web3-future-internet.jpg"
+            }
+          },
+          "content": [
+            {
+              "_type": "block",
+              "style": "normal",
+              "children": [
+                {
+                  "_type": "span",
+                  "text": "Internet đã trải qua thời kỳ sơ khai Web1 (chỉ đọc) và kỷ nguyên bùng nổ Web2 (đọc và viết thống trị bởi các ông lớn công nghệ). Giờ đây, chúng ta đang đứng trước thềm kỷ nguyên Web3 - kỷ nguyên phi tập trung hoàn toàn."
+                }
+              ]
+            },
+            {
+              "_type": "block",
+              "style": "normal",
+              "children": [
+                {
+                  "_type": "span",
+                  "text": "Bằng cách sử dụng công nghệ chuỗi khối (blockchain) và hợp đồng thông minh, Web3 loại bỏ vai trò của bên thứ ba trung gian, giúp người dùng tự làm chủ thông tin và tài sản số của mình một cách bảo mật tối đa."
+                }
+              ]
+            },
+            {
+              "_type": "block",
+              "style": "h2",
+              "children": [
+                {
+                  "_type": "span",
+                  "text": "Thách thức về khả năng mở rộng"
+                }
+              ]
+            },
+            {
+              "_type": "block",
+              "style": "normal",
+              "children": [
+                {
+                  "_type": "span",
+                  "text": "Dù có tiềm năng to lớn, Web3 vẫn phải đối mặt với nhiều rào cản kỹ thuật như tốc độ giao dịch còn chậm, trải nghiệm người dùng phức tạp và các vấn đề liên quan đến khung pháp lý quản lý toàn cầu."
+                }
+              ]
+            }
+          ]
+        },
+        "bylines": [
+          {
+            "byline": "byline-editorial"
+          }
+        ],
+        "taxonomies": {
+          "category": [
+            "tech"
+          ],
+          "tag": [
+            "webdev",
+            "tools"
+          ]
+        }
+      },
+      {
+        "id": "post-18",
+        "slug": "suc-manh-cua-viec-doc-sach-moi-ngay",
+        "status": "published",
+        "data": {
+          "title": "Sức Mạnh Diệu Kỳ Của Việc Duy Trì Thói Quen Đọc Sách Mỗi Ngày",
+          "excerpt": "Đọc sách không chỉ giúp mở mang tri thức mà còn cải thiện khả năng tập trung sâu và rèn luyện tư duy logic phản biện.",
+          "featured_image": {
+            "$media": {
+              "url": "https://images.unsplash.com/photo-1497633762265-9d179a990aa6?w=1200&h=800&fit=crop",
+              "alt": "Sách được xếp ngăn nắp trên các kệ gỗ trong thư viện cổ kính",
+              "filename": "reading-books-wisdom.jpg"
+            }
+          },
+          "content": [
+            {
+              "_type": "block",
+              "style": "normal",
+              "children": [
+                {
+                  "_type": "span",
+                  "text": "Trong thời đại của những thông tin ngắn gọn, lướt màn hình liên tục, khả năng đọc và hiểu sâu của con người đang dần bị mai một. Thói quen đọc sách mỗi ngày chính là liều thuốc vàng rèn luyện cơ não."
+                }
+              ]
+            },
+            {
+              "_type": "block",
+              "style": "normal",
+              "children": [
+                {
+                  "_type": "span",
+                  "text": "Những trang sách mở ra những thế giới quan mới mẻ, đúc kết tinh hoa trí tuệ hàng ngàn năm của nhân loại, giúp chúng ta nhìn nhận cuộc sống đa chiều và thông tuệ hơn rất nhiều."
+                }
+              ]
+            },
+            {
+              "_type": "block",
+              "style": "h2",
+              "children": [
+                {
+                  "_type": "span",
+                  "text": "Hành trình tự giáo dục suốt đời"
+                }
+              ]
+            },
+            {
+              "_type": "block",
+              "style": "normal",
+              "children": [
+                {
+                  "_type": "span",
+                  "text": "Tự học là con đường duy nhất dẫn tới đỉnh cao trí tuệ. Và sách chính là người thầy vĩ đại nhất, kiên nhẫn nhất luôn đồng hành cùng bạn trên mọi nẻo đường đời."
+                }
+              ]
+            }
+          ]
+        },
+        "bylines": [
+          {
+            "byline": "byline-editorial"
+          }
+        ],
+        "taxonomies": {
+          "category": [
+            "lifestyle"
+          ],
+          "tag": [
+            "creativity",
+            "opinion"
+          ]
+        }
+      },
+      {
+        "id": "post-19",
+        "slug": "xu-huong-lam-viec-tu-xa-co-hoi-va-thu-thach",
+        "status": "published",
+        "data": {
+          "title": "Xu Hướng Làm Việc Từ Xa: Cơ Hội Đột Phá Và Thách Thức Đi Kèm",
+          "excerpt": "Làm việc từ xa (remote work) mang lại sự linh hoạt tuyệt đối cho nhân sự nhưng cũng yêu cầu cao về năng lực tự quản trị.",
+          "featured_image": {
+            "$media": {
+              "url": "https://images.unsplash.com/photo-1588872657578-7efd1f1555ed?w=1200&h=800&fit=crop",
+              "alt": "Góc làm việc tại nhà tràn đầy cảm hứng sáng tạo bên cửa sổ",
+              "filename": "remote-workplace.jpg"
+            }
+          },
+          "content": [
+            {
+              "_type": "block",
+              "style": "normal",
+              "children": [
+                {
+                  "_type": "span",
+                  "text": "Đại dịch toàn cầu đã vô tình đẩy nhanh quá trình chuyển dịch số, biến làm việc từ xa trở thành xu hướng làm việc phổ biến hiện nay. Nhân viên có thể làm việc ở bất cứ đâu họ thích."
+                }
+              ]
+            },
+            {
+              "_type": "block",
+              "style": "normal",
+              "children": [
+                {
+                  "_type": "span",
+                  "text": "Sự linh hoạt này giúp tiết kiệm thời gian di chuyển, giảm thiểu ô nhiễm khói bụi giao thông và cho phép doanh nghiệp dễ dàng tiếp cận nguồn nhân tài không biên giới toàn cầu."
+                }
+              ]
+            },
+            {
+              "_type": "block",
+              "style": "h2",
+              "children": [
+                {
+                  "_type": "span",
+                  "text": "Tính kỷ luật tự giác cao độ"
+                }
+              ]
+            },
+            {
+              "_type": "block",
+              "style": "normal",
+              "children": [
+                {
+                  "_type": "span",
+                  "text": "Không có sự giám sát trực tiếp đồng nghĩa với việc bạn phải học cách tự quản lý thời gian hiệu quả, thiết lập kỷ luật thép để đảm bảo tiến độ công việc được giao đúng cam kết."
+                }
+              ]
+            }
+          ]
+        },
+        "bylines": [
+          {
+            "byline": "byline-editorial"
+          }
+        ],
+        "taxonomies": {
+          "category": [
+            "business"
+          ],
+          "tag": [
+            "webdev",
+            "tools"
+          ]
+        }
+      },
+      {
+        "id": "post-20",
+        "slug": "trekking-fansipan-hanh-trinh-chinh-phuc-noc-nha-dong-duong",
+        "status": "published",
+        "data": {
+          "title": "Trekking Fansipan: Hành Trình Chinh Phục Nóc Nhà Đông Dương Kỳ Vĩ",
+          "excerpt": "Leo núi Fansipan luôn là cuộc thử thách lòng quả cảm và thể lực đầy đam mê đối với những người yêu thích xê dịch trải nghiệm.",
+          "featured_image": {
+            "$media": {
+              "url": "https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?w=1200&h=800&fit=crop",
+              "alt": "Những ngọn núi trùng điệp chìm trong sương mù mờ ảo kì vĩ",
+              "filename": "trekking-fansipan-mountain.jpg"
+            }
+          },
+          "content": [
+            {
+              "_type": "block",
+              "style": "normal",
+              "children": [
+                {
+                  "_type": "span",
+                  "text": "Với độ cao 3.143m so với mực nước biển, Fansipan sừng sững giữa đất trời Sapa lộng gió, thách thức bước chân phiêu lưu của các nhà trekking từ mọi miền đất nước tìm về chinh phục."
+                }
+              ]
+            },
+            {
+              "_type": "block",
+              "style": "normal",
+              "children": [
+                {
+                  "_type": "span",
+                  "text": "Hành trình băng qua rừng trúc xanh mướt, vượt qua những con dốc đá trơn trượt hiểm trở dưới làn sương mù lãng đãng mờ ảo mang lại cảm xúc vỡ òa khó tả khi chạm tay vào cột mốc chóp inox thiêng liêng ở đỉnh núi."
+                }
+              ]
+            },
+            {
+              "_type": "block",
+              "style": "h2",
+              "children": [
+                {
+                  "_type": "span",
+                  "text": "Trải nghiệm thiên nhiên hoang sơ hùng vĩ"
+                }
+              ]
+            },
+            {
+              "_type": "block",
+              "style": "normal",
+              "children": [
+                {
+                  "_type": "span",
+                  "text": "Ngắm biển mây cuồn cuộn đổ như dòng thác đổ giữa thung lũng lộng gió lúc hoàng hôn buông xuống sẽ là kỷ niệm vô giá ghi dấu ấn sâu sắc suốt cuộc đời phiêu lưu của bạn."
+                }
+              ]
+            }
+          ]
+        },
+        "bylines": [
+          {
+            "byline": "byline-guest"
+          }
+        ],
+        "taxonomies": {
+          "category": [
+            "travel"
+          ],
+          "tag": [
+            "creativity"
+          ]
+        }
+      },
+      {
+        "id": "post-21",
+        "slug": "bao-mat-thong-tin-ca-nhan-ky-nguyen-so",
+        "status": "published",
+        "data": {
+          "title": "Bảo Mật Thông Tin Cá Nhân Trong Kỷ Nguyên Trí Tuệ Nhân Tạo",
+          "excerpt": "Làm thế nào để bảo vệ dữ liệu nhạy cảm của bạn trước làn sóng tấn công lừa đảo trực tuyến tinh vi bằng deepfake?",
+          "featured_image": {
+            "$media": {
+              "url": "https://images.unsplash.com/photo-1550751827-4bd374c3f58b?w=1200&h=800&fit=crop",
+              "alt": "Bảng mạch điện tử rực sáng màu xanh lục tượng trưng bảo mật mạng",
+              "filename": "cybersecurity-digital-identity.jpg"
+            }
+          },
+          "content": [
+            {
+              "_type": "block",
+              "style": "normal",
+              "children": [
+                {
+                  "_type": "span",
+                  "text": "Kỷ nguyên số mang lại sự tiện ích vô song nhưng cũng kéo theo những hiểm họa khôn lường về rò rỉ dữ liệu cá nhân. Các cuộc tấn công lừa đảo công nghệ cao giờ đây được trang bị thêm AI thông minh."
+                }
+              ]
+            },
+            {
+              "_type": "block",
+              "style": "normal",
+              "children": [
+                {
+                  "_type": "span",
+                  "text": "Sự xuất hiện của công nghệ giả mạo giọng nói và khuôn mặt (deepfake) khiến việc xác thực danh tính trở nên khó khăn hơn. Chúng ta cần có nhận thức phòng ngự bảo mật chủ động."
+                }
+              ]
+            },
+            {
+              "_type": "block",
+              "style": "h2",
+              "children": [
+                {
+                  "_type": "span",
+                  "text": "Những nguyên tắc vàng về phòng vệ"
+                }
+              ]
+            },
+            {
+              "_type": "block",
+              "style": "normal",
+              "children": [
+                {
+                  "_type": "span",
+                  "text": "Sử dụng mật khẩu mạnh kết hợp xác thực 2 yếu tố (2FA), không click vào các link lạ không rõ nguồn gốc và hạn chế chia sẻ thông tin vị trí cá nhân quá chi tiết trên mạng xã hội."
+                }
+              ]
+            }
+          ]
+        },
+        "bylines": [
+          {
+            "byline": "byline-editorial"
+          }
+        ],
+        "taxonomies": {
+          "category": [
+            "tech"
+          ],
+          "tag": [
+            "tools",
+            "opinion"
+          ]
+        }
+      },
+      {
+        "id": "post-22",
+        "slug": "van-hoa-thuong-tra-truyen-thong-viet-nam",
+        "status": "published",
+        "data": {
+          "title": "Nét Tinh Tế Trong Văn Hóa Thưởng Trà Truyền Thống Việt Nam",
+          "excerpt": "Nghệ thuật thưởng trà Việt Nam chứa đựng những giá trị triết lý sâu sắc, gắn kết tâm hồn con người xích lại gần nhau.",
+          "featured_image": {
+            "$media": {
+              "url": "https://images.unsplash.com/photo-1576092768241-dec231879fc3?w=1200&h=800&fit=crop",
+              "alt": "Bộ ấm chén trà gốm mộc mạc tinh xảo bên bông sen thơm ngát",
+              "filename": "vietnamese-tea-art.jpg"
+            }
+          },
+          "content": [
+            {
+              "_type": "block",
+              "style": "normal",
+              "children": [
+                {
+                  "_type": "span",
+                  "text": "Trà từ lâu đã đi sâu vào đời sống văn hóa tinh thần của người Việt như một thức uống kết nối cộng đồng tao nhã, từ ly trà đá vỉa hè bình dân cho đến chén trà sen cung đình tinh xảo."
+                }
+              ]
+            },
+            {
+              "_type": "block",
+              "style": "normal",
+              "children": [
+                {
+                  "_type": "span",
+                  "text": "Nghệ thuật ướp trà sen Tây Hồ cầu kỳ, hái sương mai từ sáng sớm để pha trà là đỉnh cao của sự tao nhã, phản ánh triết lý sống hòa hợp trọn vẹn với thiên nhiên hoang sơ của tiền nhân."
+                }
+              ]
+            },
+            {
+              "_type": "block",
+              "style": "h2",
+              "children": [
+                {
+                  "_type": "span",
+                  "text": "Thức tỉnh các giác quan thanh tao"
+                }
+              ]
+            },
+            {
+              "_type": "block",
+              "style": "normal",
+              "children": [
+                {
+                  "_type": "span",
+                  "text": "Nhấp một ngụm trà nóng hổi, cảm nhận vị chát dịu đầu lưỡi rồi ngọt hậu đọng sâu ở cổ họng giúp tâm hồn bỗng chốc lắng đọng, bỏ lại sau lưng mọi lo toan bộn bề của cuộc sống thường nhật."
+                }
+              ]
+            }
+          ]
+        },
+        "bylines": [
+          {
+            "byline": "byline-editorial"
+          }
+        ],
+        "taxonomies": {
+          "category": [
+            "travel"
+          ],
+          "tag": [
+            "creativity"
+          ]
+        }
+      },
+      {
+        "id": "post-23",
+        "slug": "suc-khoe-so-va-tam-quan-trong-cua-thiet-bi-deo",
+        "status": "published",
+        "data": {
+          "title": "Sức Khỏe Số: Cách Thiết Bị Đeo Thông Minh Thay Đổi Đời Sống",
+          "excerpt": "Các cảm biến theo dõi chỉ số sinh học thời gian thực đang giúp chúng ta chủ động quản trị sức khỏe một cách tối ưu.",
+          "featured_image": {
+            "$media": {
+              "url": "https://images.unsplash.com/photo-1575311373937-040b8e1fd5b6?w=1200&h=800&fit=crop",
+              "alt": "Đồng hồ thông minh đeo trên cổ tay đang theo dõi nhịp tim thể thao",
+              "filename": "smartwatch-health-tracking.jpg"
+            }
+          },
+          "content": [
+            {
+              "_type": "block",
+              "style": "normal",
+              "children": [
+                {
+                  "_type": "span",
+                  "text": "Cuộc cách mạng chăm sóc sức khỏe số (Digital Health) đang diễn ra mạnh mẽ ngay trên cổ tay của bạn. Những chiếc đồng hồ thông minh giờ đây đã tích hợp các cảm biến y tế hiện đại bậc nhất."
+                }
+              ]
+            },
+            {
+              "_type": "block",
+              "style": "normal",
+              "children": [
+                {
+                  "_type": "span",
+                  "text": "Khả năng đo điện tâm đồ (ECG), nồng độ oxy trong máu (SpO2), theo dõi mức độ căng thẳng (stress) và phân tích chất lượng giấc ngủ sâu giúp đưa ra những cảnh báo sức khỏe hữu ích sớm."
+                }
+              ]
+            },
+            {
+              "_type": "block",
+              "style": "h2",
+              "children": [
+                {
+                  "_type": "span",
+                  "text": "Cá nhân hóa phác đồ sức khỏe"
+                }
+              ]
+            },
+            {
+              "_type": "block",
+              "style": "normal",
+              "children": [
+                {
+                  "_type": "span",
+                  "text": "Dựa trên kho dữ liệu sinh học khổng lồ tích lũy liên tục, AI có thể đưa ra những gợi ý vận động dinh dưỡng được đo ni đóng giày riêng cho thể trạng của từng cá nhân."
+                }
+              ]
+            }
+          ]
+        },
+        "bylines": [
+          {
+            "byline": "byline-editorial"
+          }
+        ],
+        "taxonomies": {
+          "category": [
+            "tech"
+          ],
+          "tag": [
+            "tools"
+          ]
+        }
+      },
+      {
+        "id": "post-24",
+        "slug": "sang-tao-noi-dung-so-tren-nen-tang-video-ngan",
+        "status": "published",
+        "data": {
+          "title": "Xu Hướng Sáng Tạo Nội Dung Số Trên Nền Tảng Video Ngắn Thịnh Hành",
+          "excerpt": "Sự thống trị của định dạng video ngắn đang thay đổi hành vi tiêu thụ thông tin của giới trẻ toàn cầu hiện nay.",
+          "featured_image": {
+            "$media": {
+              "url": "https://images.unsplash.com/photo-1611162617213-7d7a39e9b1d7?w=1200&h=800&fit=crop",
+              "alt": "Các biểu tượng mạng xã hội lấp lánh trên màn hình điện thoại",
+              "filename": "short-video-creation.jpg"
+            }
+          },
+          "content": [
+            {
+              "_type": "block",
+              "style": "normal",
+              "children": [
+                {
+                  "_type": "span",
+                  "text": "Định dạng video dọc thời lượng ngắn đang là vua của các nền tảng mạng xã hội lớn. Nó thu hút người xem nhờ thông tin cô đọng, nhịp độ nhanh và mang tính giải trí trực quan cao."
+                }
+              ]
+            },
+            {
+              "_type": "block",
+              "style": "normal",
+              "children": [
+                {
+                  "_type": "span",
+                  "text": "Đối với các nhà sáng tạo nội dung, đây vừa là cơ hội tiếp cận hàng triệu khán giả cực kỳ nhanh chóng bằng thuật toán đề xuất, vừa là thách thức bắt buộc phải đổi mới tư duy kể chuyện trong 3 giây đầu tiên."
+                }
+              ]
+            },
+            {
+              "_type": "block",
+              "style": "h2",
+              "children": [
+                {
+                  "_type": "span",
+                  "text": "Thông điệp cô đọng, sáng tạo vô biên"
+                }
+              ]
+            },
+            {
+              "_type": "block",
+              "style": "normal",
+              "children": [
+                {
+                  "_type": "span",
+                  "text": "Để tạo ra một video thành công đòi hỏi sự am hiểu sâu sắc về xu hướng âm nhạc thịnh hành, kỹ thuật dựng nhịp nhàng và trên hết là mang lại giá trị thực sự cho người dùng."
+                }
+              ]
+            }
+          ]
+        },
+        "bylines": [
+          {
+            "byline": "byline-editorial"
+          }
+        ],
+        "taxonomies": {
+          "category": [
+            "lifestyle"
+          ],
+          "tag": [
+            "creativity"
+          ]
+        }
+      },
+      {
+        "id": "post-25",
+        "slug": "nghe-thuat-chup-anh-phong-canh-bang-dien-thoai",
+        "status": "published",
+        "data": {
+          "title": "Nghệ Thuật Chụp Ảnh Phong Cảnh Đỉnh Cao Bằng Điện Thoại Di Động",
+          "excerpt": "Không cần những chiếc máy ảnh DSLR cồng kềnh đắt đỏ, bạn vẫn có thể sở hữu bức ảnh phong cảnh triệu like nhờ các mẹo nhỏ sau.",
+          "featured_image": {
+            "$media": {
+              "url": "https://images.unsplash.com/photo-1516035069371-29a1b244cc32?w=1200&h=800&fit=crop",
+              "alt": "Người đang cầm điện thoại chụp bức ảnh phong cảnh hoàng hôn rực rỡ",
+              "filename": "mobile-landscape-photography.jpg"
+            }
+          },
+          "content": [
+            {
+              "_type": "block",
+              "style": "normal",
+              "children": [
+                {
+                  "_type": "span",
+                  "text": "Chiếc máy ảnh tốt nhất là chiếc máy ảnh luôn nằm trong túi của bạn. Với công nghệ camera điện thoại thông minh ngày nay, ranh giới chất lượng ảnh chụp phong cảnh đang dần được khỏa lấp."
+                }
+              ]
+            },
+            {
+              "_type": "block",
+              "style": "normal",
+              "children": [
+                {
+                  "_type": "span",
+                  "text": "Áp dụng quy tắc một phần ba kinhdelim, căn chỉnh đường chân trời thẳng thớm và tận dụng tối đa khung giờ vàng (Golden Hour) lúc bình minh hay hoàng hôn sẽ ngay lập tức nâng tầm bức ảnh."
+                }
+              ]
+            },
+            {
+              "_type": "block",
+              "style": "h2",
+              "children": [
+                {
+                  "_type": "span",
+                  "text": "Hậu kỳ nhẹ nhàng - sức sống mới"
+                }
+              ]
+            },
+            {
+              "_type": "block",
+              "style": "normal",
+              "children": [
+                {
+                  "_type": "span",
+                  "text": "Sử dụng các ứng dụng chỉnh sửa ảnh chuyên nghiệp trên điện thoại để cân chỉnh vùng sáng tối (HDR), tăng nhẹ độ rực màu của bầu trời sẽ thổi hồn nghệ thuật cuốn hút vào bức ảnh chụp của bạn."
+                }
+              ]
+            }
+          ]
+        },
+        "bylines": [
+          {
+            "byline": "byline-editorial"
+          }
+        ],
+        "taxonomies": {
+          "category": [
+            "lifestyle"
+          ],
+          "tag": [
+            "creativity"
+          ]
+        }
+      },
+      {
+        "id": "post-26",
+        "slug": "su-phat-trien-cua-giao-duc-truyen-tuyen",
+        "status": "published",
+        "data": {
+          "title": "Sự Phát Triển Vượt Bậc Của Giáo Dục Trực Tuyến Trong Kỷ Nguyên Số",
+          "excerpt": "Học tập trực tuyến đang dân chủ hóa tri thức toàn cầu, giúp bất kỳ ai cũng có thể tiếp cận bài giảng của giáo sư đại học lớn.",
+          "featured_image": {
+            "$media": {
+              "url": "https://images.unsplash.com/photo-1516321318423-f06f85e504b3?w=1200&h=800&fit=crop",
+              "alt": "Học sinh đang chăm chú theo dõi bài học trực tuyến trên máy tính",
+              "filename": "elearning-digital-education.jpg"
+            }
+          },
+          "content": [
+            {
+              "_type": "block",
+              "style": "normal",
+              "children": [
+                {
+                  "_type": "span",
+                  "text": "Giáo dục truyền thống đang thay đổi để thích ứng với thế giới số. Các khóa học trực tuyến mở (MOOCs) đang thu hút hàng chục triệu người học trên toàn cầu nhờ sự tiện lợi linh hoạt."
+                }
+              ]
+            },
+            {
+              "_type": "block",
+              "style": "normal",
+              "children": [
+                {
+                  "_type": "span",
+                  "text": "Bạn có thể tự do ngồi tại nhà ở Việt Nam nhưng vẫn được nghe bài giảng trực tiếp từ các giáo sư danh tiếng của Đại học Harvard hay Stanford thông qua các nền tảng edtech hiện đại."
+                }
+              ]
+            },
+            {
+              "_type": "block",
+              "style": "h2",
+              "children": [
+                {
+                  "_type": "span",
+                  "text": "Học tập chủ động - chìa khóa vàng"
+                }
+              ]
+            },
+            {
+              "_type": "block",
+              "style": "normal",
+              "children": [
+                {
+                  "_type": "span",
+                  "text": "Môi trường học trực tuyến đòi hỏi cao ở người học tính tự giác rèn luyện, khả năng quản trị mục tiêu và sắp xếp lịch học khoa học để đạt kết quả chứng chỉ như kỳ vọng."
+                }
+              ]
+            }
+          ]
+        },
+        "bylines": [
+          {
+            "byline": "byline-editorial"
+          }
+        ],
+        "taxonomies": {
+          "category": [
+            "lifestyle"
+          ],
+          "tag": [
+            "opinion"
+          ]
+        }
+      },
+      {
+        "id": "post-27",
+        "slug": "loi-ich-cua-viec-thien-dinh-dinh-ky",
+        "status": "published",
+        "data": {
+          "title": "Lợi Ích Sức Khỏe Khoa Học Của Việc Thực Hành Thiền Định Định Kỳ",
+          "excerpt": "Các nghiên cứu thần kinh học chứng minh thiền định thường xuyên giúp làm giảm nồng độ cortisol gây stress hiệu quả.",
+          "featured_image": {
+            "$media": {
+              "url": "https://images.unsplash.com/photo-1518241353330-0f7941c2d9b5?w=1200&h=800&fit=crop",
+              "alt": "Nhà sư ngồi thiền yên bình trong chánh niệm tĩnh lặng",
+              "filename": "mindfulness-meditation-peace.jpg"
+            }
+          },
+          "content": [
+            {
+              "_type": "block",
+              "style": "normal",
+              "children": [
+                {
+                  "_type": "span",
+                  "text": "Thiền định không còn mang màu sắc thần bí tôn giáo, mà đã được khoa học hiện đại chứng minh là một liệu pháp y khoa tâm lý cực kỳ hiệu quả để xoa dịu stress mệt mỏi."
+                }
+              ]
+            },
+            {
+              "_type": "block",
+              "style": "normal",
+              "children": [
+                {
+                  "_type": "span",
+                  "text": "Chụp cộng hưởng từ (MRI) não bộ của những người hành thiền thường xuyên cho thấy vùng não kiểm soát cảm xúc hạnh phúc dày lên, trong khi hạch hạnh nhân liên quan đến nỗi sợ hãi teo nhỏ lại."
+                }
+              ]
+            },
+            {
+              "_type": "block",
+              "style": "h2",
+              "children": [
+                {
+                  "_type": "span",
+                  "text": "Hơi thở chánh niệm giản đơn"
+                }
+              ]
+            },
+            {
+              "_type": "block",
+              "style": "normal",
+              "children": [
+                {
+                  "_type": "span",
+                  "text": "Chỉ cần ngồi thẳng thắn, nhắm khép nhẹ mắt và tập trung quan sát hơi thở tự nhiên đi vào đi ra. Hãy đón nhận những dòng suy nghĩ lướt qua mà không phán xét phân tích."
+                }
+              ]
+            }
+          ]
+        },
+        "bylines": [
+          {
+            "byline": "byline-editorial"
+          }
+        ],
+        "taxonomies": {
+          "category": [
+            "lifestyle"
+          ],
+          "tag": [
+            "opinion"
+          ]
+        }
+      },
+      {
+        "id": "post-28",
+        "slug": "xu-huong-thiet-ke-do-hoa-thinh-hanh",
+        "status": "published",
+        "data": {
+          "title": "Những Xu Hướng Thiết Kế Đồ Họa Đỉnh Cao Thịnh Hành Nhất",
+          "excerpt": "Các phong cách thiết kế 3D trừu tượng độc đáo kết hợp màu neon sặc sỡ đang chiếm lĩnh truyền thông quảng cáo.",
+          "featured_image": {
+            "$media": {
+              "url": "https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=1200&h=800&fit=crop",
+              "alt": "Các hình khối 3D trừu tượng màu sắc neon rực rỡ lộng lẫy",
+              "filename": "graphic-design-trends.jpg"
+            }
+          },
+          "content": [
+            {
+              "_type": "block",
+              "style": "normal",
+              "children": [
+                {
+                  "_type": "span",
+                  "text": "Thiết kế đồ họa luôn biến đổi không ngừng để phản ánh dòng chảy thẩm mỹ văn hóa đại chúng. Năm nay chứng kiến sự trỗi dậy mạnh mẽ của phong cách 3D siêu thực trừu tượng độc đáo."
+                }
+              ]
+            },
+            {
+              "_type": "block",
+              "style": "normal",
+              "children": [
+                {
+                  "_type": "span",
+                  "text": "Những sự kết hợp màu sắc tương phản neon cực mạnh, hiệu ứng kính mờ ảo (glassmorphism) và các yếu tố hoạt họa chuyển động mượt mà (motion graphics) mang lại trải nghiệm thị giác cuốn hút."
+                }
+              ]
+            },
+            {
+              "_type": "block",
+              "style": "h2",
+              "children": [
+                {
+                  "_type": "span",
+                  "text": "Truyền tải thông điệp bằng cảm xúc"
+                }
+              ]
+            },
+            {
+              "_type": "block",
+              "style": "normal",
+              "children": [
+                {
+                  "_type": "span",
+                  "text": "Thiết kế đỉnh cao không chỉ là vẻ đẹp bề ngoài lộng lẫy, mà quan trọng hơn là khả năng chạm tới cảm xúc người xem ngay tức khắc và truyền đạt trọn vẹn giá trị cốt lõi của thương hiệu."
+                }
+              ]
+            }
+          ]
+        },
+        "bylines": [
+          {
+            "byline": "byline-editorial"
+          }
+        ],
+        "taxonomies": {
+          "category": [
+            "lifestyle"
+          ],
+          "tag": [
+            "creativity"
+          ]
+        }
+      },
+      {
+        "id": "post-29",
+        "slug": "xay-dung-thuong-hieu-ca-nhan-ben-vung",
+        "status": "published",
+        "data": {
+          "title": "Cách Xây Dựng Một Thương Hiệu Cá Nhân Bền Vững Độc Bản",
+          "excerpt": "Thương hiệu cá nhân chính là tấm hộ chiếu quyền lực nhất giúp bạn mở rộng cơ hội thăng tiến sự nghiệp trong tương lai.",
+          "featured_image": {
+            "$media": {
+              "url": "https://images.unsplash.com/photo-1434030216411-0b793f4b4173?w=1200&h=800&fit=crop",
+              "alt": "Bàn tay đang ký tên bản thảo xây dựng thương hiệu phát triển",
+              "filename": "branding-identity-strategy.jpg"
+            }
+          },
+          "content": [
+            {
+              "_type": "block",
+              "style": "normal",
+              "children": [
+                {
+                  "_type": "span",
+                  "text": "Trong thế giới nghề nghiệp cạnh tranh khốc liệt ngày nay, năng lực chuyên môn xuất sắc đôi khi là chưa đủ nếu bạn không biết cách tiếp thị bản thân hiệu quả ra bên ngoài."
+                }
+              ]
+            },
+            {
+              "_type": "block",
+              "style": "normal",
+              "children": [
+                {
+                  "_type": "span",
+                  "text": "Định vị bản thân rõ ràng, kiên trì chia sẻ những giá trị chuyên môn hữu ích lên các mạng xã hội như LinkedIn và luôn giữ thái độ nhất quán, trung thực trong mọi hành xử công việc."
+                }
+              ]
+            },
+            {
+              "_type": "block",
+              "style": "h2",
+              "children": [
+                {
+                  "_type": "span",
+                  "text": "Giá trị cốt lõi đến từ sự chân thật"
+                }
+              ]
+            },
+            {
+              "_type": "block",
+              "style": "normal",
+              "children": [
+                {
+                  "_type": "span",
+                  "text": "Đừng cố gắng xây dựng một vỏ bọc giả tạo lộng lẫy. Sự chân thật, chân thành mang tính độc bản của bạn mới chính là thỏi nam châm mạnh nhất tạo dựng lòng tin bền vững ở đối tác."
+                }
+              ]
+            }
+          ]
+        },
+        "bylines": [
+          {
+            "byline": "byline-editorial"
+          }
+        ],
+        "taxonomies": {
+          "category": [
+            "business"
+          ],
+          "tag": [
+            "opinion"
+          ]
+        }
+      }
+    ]
+  }
 }

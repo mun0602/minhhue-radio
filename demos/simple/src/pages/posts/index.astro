@@ -11,36 +11,35 @@ const { entries: posts, cacheHint } = await getEmDashCollection("posts", {
 
 Astro.cache.set(cacheHint);
 
-// Single batched query for tags across all posts, instead of one
-// getEntryTerms() call per post (which would be N round-trips).
-// Bylines are already hydrated on entry.data.bylines.
-const tagsByEntry = await getTermsForEntries(
-	"posts",
-	posts.map((p) => p.data.id),
-	"tag",
-);
+// Single batched query for tags and categories across all posts
+const [tagsByEntry, categoriesByEntry] = await Promise.all([
+	getTermsForEntries("posts", posts.map((p) => p.data.id), "tag"),
+	getTermsForEntries("posts", posts.map((p) => p.data.id), "category"),
+]);
 
-const postsWithTags = posts.map((post) => ({
-	post,
-	tags: tagsByEntry.get(post.data.id) ?? [],
-	bylines: post.data.bylines ?? [],
-}));
+const postsWithTags = posts
+	.map((post) => ({
+		post,
+		tags: tagsByEntry.get(post.data.id) ?? [],
+		categories: categoriesByEntry.get(post.data.id) ?? [],
+		bylines: post.data.bylines ?? [],
+	}))
+	.filter((p) => p.categories.some((c) => c.slug === "lifestyle"));
 
 const formatDate = (date: Date) =>
-	date.toLocaleDateString("en-US", {
+	date.toLocaleDateString("vi-VN", {
 		year: "numeric",
 		month: "long",
 		day: "numeric",
 	});
 ---
 
-<Base title="All Posts" description="Browse all blog posts">
+<Base title="Chia sẻ tu luyện" description="Duyệt qua các bài viết chia sẻ tu luyện Pháp Luân Đại Pháp">
 	<div class="posts-page">
 		<header class="page-header">
-			<h1 class="page-title">All Posts</h1>
+			<h1 class="page-title">Bài viết chia sẻ tu luyện</h1>
 			<p class="page-description">
-				{posts.length}
-				{posts.length === 1 ? "article" : "articles"}
+				Có {postsWithTags.length} bài viết
 			</p>
 		</header>
 

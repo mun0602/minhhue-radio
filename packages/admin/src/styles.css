@@ -11,6 +11,7 @@
 @import "tailwindcss";
 @import "@cloudflare/kumo/styles/tailwind";
 @plugin "@tailwindcss/typography";
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
 
 /* Scan Kumo component JS for Tailwind utility classes (e.g. Dialog centering) */
 @source "../node_modules/@cloudflare/kumo/dist";
@@ -30,17 +31,17 @@
  * Applied via data-theme="classic" on <html> so portals inherit too.
  */
 [data-theme="classic"] {
-	/* Primary brand blue */
-	--color-kumo-brand: #2271b1;
-	--color-kumo-brand-hover: #135e96;
-	--text-color-kumo-brand: #2271b1;
+	/* Premium Indigo Brand */
+	--color-kumo-brand: #4f46e5;
+	--color-kumo-brand-hover: #4338ca;
+	--text-color-kumo-brand: #4f46e5;
 }
 
 [data-theme="classic"]:not([data-mode="dark"]) {
 	/* Surfaces */
 	--color-kumo-base: #ffffff;
-	--color-kumo-elevated: #f0f0f1;
-	--color-kumo-recessed: #dcdcde;
+	--color-kumo-elevated: #f8fafc;
+	--color-kumo-recessed: #f1f5f9;
 	--color-kumo-overlay: #ffffff;
 	--color-kumo-control: #ffffff;
 	--color-kumo-tint: #f0f0f1;
@@ -51,14 +52,14 @@
 
 	/* Borders */
 	--color-kumo-line: #c3c4c7;
-	--color-kumo-ring: #2271b1;
+	--color-kumo-ring: #CC0000;
 
 	/* Text hierarchy */
 	--text-color-kumo-default: #1d2327;
 	--text-color-kumo-strong: #50575e;
 	--text-color-kumo-subtle: #787c82;
 	--text-color-kumo-inactive: #a7aaad;
-	--text-color-kumo-link: #2271b1;
+	--text-color-kumo-link: #CC0000;
 
 	/* Semantic colors */
 	--color-kumo-info: #72aee6;
@@ -86,7 +87,7 @@
  * Override Tailwind's --font-sans so all font-sans utilities use it.
  */
 @theme {
-	--font-sans: var(
+	--font-sans: 'Inter', var(
 		--font-emdash,
 		ui-sans-serif,
 		system-ui,
@@ -106,12 +107,14 @@
 body {
 	background-color: var(--color-kumo-elevated);
 	color: var(--text-color-kumo-default);
+	-webkit-font-smoothing: antialiased;
+	-moz-osx-font-smoothing: grayscale;
 }
 
 /* Fix text selection contrast */
 ::selection {
-	background-color: var(--color-kumo-interact);
-	color: var(--text-color-kumo-default);
+	background-color: var(--color-kumo-brand);
+	color: #ffffff;
 }
 
 /**
@@ -297,4 +300,25 @@ body {
  */
 [role="region"][aria-label="Notifications"] {
 	z-index: 10000 !important;
+}
+
+/* Glassmorphism Classes for UI */
+.glass-panel {
+	background: rgba(255, 255, 255, 0.7) !important;
+	backdrop-filter: blur(16px) !important;
+	-webkit-backdrop-filter: blur(16px) !important;
+	border-bottom: 1px solid rgba(255, 255, 255, 0.5) !important;
+}
+
+[data-mode="dark"] .glass-panel {
+	background: rgba(15, 23, 42, 0.7) !important;
+	border-bottom: 1px solid rgba(255, 255, 255, 0.05) !important;
+}
+
+/* Premium Sidebar Transition */
+.sidebar-nav-item {
+	transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+.sidebar-nav-item:hover {
+	transform: translateX(4px);
 }

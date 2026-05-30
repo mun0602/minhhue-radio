@@ -99,10 +99,10 @@ function NavMenuLink({ item, isActive }: { item: NavItem; isActive: boolean }) {
 			data-active={isActive || undefined}
 			data-sidebar="menu-button"
 			className={cn(
-				"emdash-nav-link group/menu-button flex w-full min-w-0 items-center gap-2.5 rounded-md no-underline outline-none cursor-pointer",
+				"emdash-nav-link sidebar-nav-item group/menu-button flex w-full min-w-0 items-center gap-2.5 rounded-md no-underline outline-none cursor-pointer",
 				"min-h-[36px] px-3 py-1.5 text-[13px]",
 				"transition-all duration-200 ease-out",
-				isActive ? "bg-kumo-brand text-white" : "text-white/70 hover:text-white hover:bg-white/8",
+				isActive ? "bg-kumo-brand text-white shadow-md shadow-kumo-brand/20" : "text-white/70 hover:text-white hover:bg-white/10",
 				"focus-visible:ring-2 focus-visible:ring-kumo-brand/50",
 			)}
 		>
@@ -289,14 +289,16 @@ export function SidebarNav({ manifest }: SidebarNavProps) {
 					__html: `
 			/* Classic dark chrome — override kumo tokens within the sidebar */
 			.emdash-sidebar {
-				--color-kumo-base: #1d2327;
+				--color-kumo-base: rgba(15, 23, 42, 0.75);
 				--color-kumo-tint: rgba(255,255,255,0.1);
 				--color-kumo-line: rgba(255,255,255,0.08);
-				--color-kumo-brand: #2271b1;
+				--color-kumo-brand: #4f46e5;
 				--text-color-kumo-default: #fff;
 				--text-color-kumo-subtle: rgba(255,255,255,0.7);
 				--text-color-kumo-strong: #fff;
-				background-color: #1d2327 !important;
+				background-color: rgba(15, 23, 42, 0.75) !important;
+				backdrop-filter: blur(20px) !important;
+				-webkit-backdrop-filter: blur(20px) !important;
 				color: #fff !important;
 				border-color: rgba(255,255,255,0.08) !important;
 			}

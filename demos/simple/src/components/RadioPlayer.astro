@@ -1,0 +1,952 @@
+---
+// Component Trình phát Radio Minh Huệ siêu cao cấp "Emdash Prime"
+import fs from "node:fs";
+import path from "node:path";
+
+// Đọc danh sách phát từ file JSON đã cào
+const filePath = path.resolve("./radio-playlist.json");
+const playlist = fs.existsSync(filePath)
+	? JSON.parse(fs.readFileSync(filePath, "utf-8"))
+	: [];
+
+// Bài hát đầu tiên làm mặc định
+const defaultTrack = playlist.length > 0 ? playlist[0] : {
+	title: "Phát thanh Minh Huệ: Trừ bỏ chấp trước vào điện thoại – Tìm về trạng thái tu luyện như thuở đầu (Số 3)",
+	url: "https://vi.minghui.org/radio/20250926-TDTH.mp3",
+	category: "tru-bo-chap-truoc-vao-dien-thoai"
+};
+---
+
+<!-- Thư viện Plyr.css từ CDN (chỉ nạp cho component này) -->
+<link rel="stylesheet" href="https://cdn.plyr.io/3.7.8/plyr.css" />
+
+<div class="emdash-radio-card">
+	{/* Hiệu ứng phát quang nhẹ ở viền thẻ */}
+	<div class="radio-glow-border"></div>
+
+	<div class="radio-grid-layout-premium">
+		{/* Panel bên trái: Trình phát nhạc chính */}
+		<div class="radio-left-panel-premium">
+			{/* Tiêu đề & Trạng thái phát */}
+			<header class="radio-header">
+				<div class="radio-live-tag">
+					<span class="live-pulse"></span>
+					RADIO
+				</div>
+				<h3 class="radio-main-title">Phát Thanh Minh Huệ</h3>
+			</header>
+
+			{/* Giao diện bài đang phát hiện tại */}
+			<div class="now-playing-box">
+				<span class="now-playing-label">Đang phát:</span>
+				<h4 id="current-track-title" class="current-track-title">
+					{defaultTrack.title}
+				</h4>
+			</div>
+
+			{/* Trình phát Audio của Plyr */}
+			<div class="plyr-wrapper">
+				<audio id="audio-player" controls>
+					<source src={`/api/audio-proxy?url=${encodeURIComponent(defaultTrack.url)}`} type="audio/mpeg" />
+					Trình duyệt của bạn không hỗ trợ phát âm thanh trực tiếp.
+				</audio>
+			</div>
+		</div>
+
+		{/* Panel bên phải: Danh sách phát */}
+		<div class="radio-right-panel-premium">
+			<div class="playlist-section">
+				<div class="playlist-header">
+					<h4 class="playlist-title">Danh Sách Phát Mới Nhất</h4>
+					<div class="playlist-actions">
+						<button id="random-playlist" class="action-btn" title="Phát ngẫu nhiên">
+							<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="18" x="3" y="3" rx="2"/><path d="M7 17h10"/><path d="M7 12h10"/><path d="M7 7h10"/></svg>
+							Ngẫu nhiên
+						</button>
+						<button id="revert-playlist" class="action-btn" title="Đảo thứ tự bài">
+							<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m3 16 4 4 4-4"/><path d="M7 20V4"/><path d="m21 8-4-4-4 4"/><path d="M17 4v16"/></svg>
+							Đảo thứ tự
+						</button>
+					</div>
+				</div>
+
+				<!-- Thẻ nhúng danh mục đồng bộ chuẩn 100% giao thức Minh Huệ Net -->
+				<div class="categories-filter-wrapper">
+					<div class="sub-categories-nav-toggle" id="categories-toggle">
+						<span id="selected-category-text">Danh sách chuyên mục</span>
+						<i class="sub-categories-nav-icon"></i>
+					</div>
+					
+					<div class="sub-categories-nav-items" id="categories-dropdown" style="display: none;">
+						<ul>
+							<li class="sub-category-nav-item active-category" data-filter="all">
+								<div>
+									<a href="#">Tất cả phát thanh</a>
+								</div>
+							</li>
+							<li class="sub-category-nav-item" data-filter="tru-bo-chap-truoc-vao-dien-thoai">
+								<div>
+									<a href="/news/category/tru-bo-chap-truoc-vao-dien-thoai">Trừ bỏ chấp trước vào điện thoại</a>
+								</div>
+							</li>
+							<li class="sub-category-nav-item" data-filter="ngay-phap-luan-dai-phap-the-gioi-radio">
+								<div>
+									<a href="/news/category/ngay-phap-luan-dai-phap-the-gioi-radio">Ngày Pháp Luân Đại Pháp Thế giới</a>
+								</div>
+							</li>
+							<li class="sub-category-nav-item" data-filter="phap-hoi-trung-quoc-radio">
+								<div>
+									<a href="/news/category/phap-hoi-trung-quoc-radio">Pháp hội Trung Quốc</a>
+								</div>
+							</li>
+							<li class="sub-category-nav-item" data-filter="tin-tuc-tai-dai-luc">
+								<div>
+									<a href="/news/category/tin-tuc-tai-dai-luc">Tin tức tại Đại Lục</a>
+								</div>
+							</li>
+							<li class="sub-category-nav-item" data-filter="tin-tuc-tren-the-gioi">
+								<div>
+									<a href="/news/category/tin-tuc-tren-the-gioi">Tin tức trên thế giới</a>
+								</div>
+							</li>
+							<li class="sub-category-nav-item" data-filter="thien-am-tinh-nhac">
+								<div>
+									<a href="/news/category/thien-am-tinh-nhac">Thiên Âm Tịnh Nhạc</a>
+								</div>
+							</li>
+							<li class="sub-category-nav-item" data-filter="kien-tri-hoc-thuoc-phap">
+								<div>
+									<a href="/news/category/kien-tri-hoc-thuoc-phap">Kiên trì học thuộc Pháp</a>
+								</div>
+							</li>
+							<li class="sub-category-nav-item" data-filter="tin-tuc-tong-hop">
+								<div>
+									<a href="/news/category/tin-tuc">Tin tức tổng hợp</a>
+								</div>
+							</li>
+							<li class="sub-category-nav-item" data-filter="cau-chuyen-tu-luyen">
+								<div>
+									<a href="/news/category/cau-chuyen-tu-luyen">Câu chuyện tu luyện</a>
+								</div>
+							</li>
+							<li class="sub-category-nav-item" data-filter="giai-the-van-hoa-dang">
+								<div>
+									<a href="/news/category/giai-the-van-hoa-dang">Giải thể văn hóa đảng</a>
+								</div>
+							</li>
+							<li class="sub-category-nav-item" data-filter="radio-hoi-uc-ve-su-phu">
+								<div>
+									<a href="/news/category/radio-hoi-uc-ve-su-phu">Hồi ức về Sư Phụ</a>
+								</div>
+							</li>
+							<li class="sub-category-nav-item" data-filter="tuyen-tap-bai-chia-se-cua-tieu-de-tu-dai-phap">
+								<div>
+									<a href="/news/category/tuyen-tap-bai-chia-se-cua-tieu-de-tu-dai-phap">Tiểu đệ tử Đại Pháp</a>
+								</div>
+							</li>
+							<li class="sub-category-nav-item" data-filter="tuyen-tap-cac-bai-chia-se-cua-de-tu-dai-phap-tre-tuoi">
+								<div>
+									<a href="/news/category/tuyen-tap-cac-bai-chia-se-cua-de-tu-dai-phap-tre-tuoi">Đệ tử Đại Pháp trẻ tuổi</a>
+								</div>
+							</li>
+							<li class="sub-category-nav-item" data-filter="tuyen-tap-cac-bai-chia-se-tu-luyen-chinh-phap">
+								<div>
+									<a href="/news/category/tuyen-tap-cac-bai-chia-se-tu-luyen-chinh-phap">Tu luyện Chính Pháp</a>
+								</div>
+							</li>
+							<li class="sub-category-nav-item" data-filter="dot-pha-gia-tuong-nghiep-benh">
+								<div>
+									<a href="/news/category/dot-pha-gia-tuong-nghiep-benh">Đột phá giả tướng nghiệp bệnh</a>
+								</div>
+							</li>
+							<li class="sub-category-nav-item" data-filter="mot-niem-giua-thien-va-ac">
+								<div>
+									<a href="/news/category/mot-niem-giua-thien-va-ac">Một niệm giữa thiện và ác</a>
+								</div>
+							</li>
+							<li class="sub-category-nav-item" data-filter="cuoc-song-va-hy-vong-da-quay-tro-lai">
+								<div>
+									<a href="/news/category/cuoc-song-va-hy-vong-da-quay-tro-lai">Cuộc sống và hy vọng đã quay trở lại</a>
+								</div>
+							</li>
+							<li class="sub-category-nav-item" data-filter="bai-chia-se-co-loi-binh-cua-su-phu">
+								<div>
+									<a href="/news/category/bai-chia-se-co-loi-binh-cua-su-phu">Bài chia sẻ có lời bình của Sư phụ</a>
+								</div>
+							</li>
+						</ul>
+					</div>
+				</div>
+
+				<div class="playlist-scroll-container">
+					<!-- Thông báo nếu không có phát thanh trong mục chọn -->
+					<p id="empty-playlist-msg" class="empty-playlist-msg">
+						Không có phát thanh nào thuộc chuyên mục này.
+					</p>
+
+					<ul id="playlist">
+						{playlist.map((track, index) => {
+							// Định dạng số thứ tự dạng hai chữ số (01, 02...)
+							const trackNum = String(index + 1).padStart(2, '0');
+							// Rút gọn tiêu đề hiển thị trong danh sách phát cho gọn gàng và đẹp
+							let displayName = track.title;
+							displayName = displayName.replace(/\[\d{2}-\d{2}-\d{4}\]/g, ''); // Xóa [DD-MM-YYYY]
+							displayName = displayName.replace(/Phát thanh Minh Huệ:\s*/g, '');
+							displayName = displayName.replace(/Phát thanh Minh Huệ\s*\(.*?\):\s*/g, '');
+							displayName = displayName.trim();
+
+							return (
+								<li 
+									data-url={track.url} 
+									data-title={track.title} 
+									data-category={track.category} 
+									class={index === 0 ? "active" : ""}
+								>
+									<span class="track-number">{trackNum}</span>
+									<span class="track-name" title={track.title}>{displayName}</span>
+								</li>
+							);
+						})}
+					</ul>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+<!-- Nạp Plyr.js động từ CDN và chạy logic xử lý danh sách phát -->
+<script is:inline src="https://cdn.plyr.io/3.7.8/plyr.js"></script>
+
+<script>
+	// Khai báo kiểu cho Plyr từ CDN để tránh lỗi build TypeScript
+	declare const Plyr: any;
+
+	document.addEventListener('DOMContentLoaded', () => {
+		// 1. Khởi tạo Plyr
+		const player = new Plyr('#audio-player', {
+			controls: ['play', 'progress', 'current-time', 'mute', 'volume', 'settings'],
+			tooltips: { controls: true, seek: true }
+		});
+
+		const audio = document.getElementById('audio-player') as HTMLAudioElement;
+		const currentTrackTitle = document.getElementById('current-track-title');
+		const playlistContainer = document.getElementById('playlist');
+		const revertButton = document.getElementById('revert-playlist');
+		const randomButton = document.getElementById('random-playlist');
+		
+		// Selector cho bộ lọc chuyên mục
+		const categoriesToggle = document.getElementById('categories-toggle');
+		const categoriesDropdown = document.getElementById('categories-dropdown');
+		const selectedCategoryText = document.getElementById('selected-category-text');
+		const emptyPlaylistMsg = document.getElementById('empty-playlist-msg');
+		const dropdownItems = categoriesDropdown ? Array.from(categoriesDropdown.querySelectorAll('.sub-category-nav-item')) : [];
+
+		if (!audio || !currentTrackTitle || !playlistContainer) return;
+
+		// Tự động kiểm tra tham số filter từ URL khi load trang để kích hoạt lọc danh mục
+		const urlParams = new URLSearchParams(window.location.search);
+		const filterParam = urlParams.get('filter');
+		if (filterParam) {
+			const targetItem = dropdownItems.find(item => item.getAttribute('data-filter') === filterParam);
+			if (targetItem) {
+				setTimeout(() => {
+					(targetItem as HTMLElement).click();
+				}, 150); // Delay nhẹ đảm bảo DOM và Plyr đã sẵn sàng
+			}
+		}
+
+		let playlistItems = Array.from(playlistContainer.querySelectorAll('li'));
+		let visibleItems = [...playlistItems]; // Chứa danh sách các bài phát hiển thị sau lọc
+		let isRandomMode = false;
+
+		// 2. Click chọn bài hát
+		const attachClickHandlers = () => {
+			playlistItems.forEach((item) => {
+				item.removeEventListener('click', handleTrackClick);
+				item.addEventListener('click', handleTrackClick);
+			});
+		};
+
+		function handleTrackClick(this: HTMLLIElement) {
+			playTrack(this);
+		}
+
+		function playTrack(item: HTMLLIElement) {
+			const url = item.getAttribute('data-url');
+			const title = item.getAttribute('data-title');
+			
+			if (url && title) {
+				audio.src = `/api/audio-proxy?url=${encodeURIComponent(url)}`;
+				player.play();
+				
+				// Cập nhật giao diện active
+				playlistItems.forEach(i => i.classList.remove('active'));
+				item.classList.add('active');
+				
+				// Cập nhật tiêu đề bài phát
+				currentTrackTitle!.textContent = title;
+				
+				// Cuộn mượt mà đến bài hát được chọn
+				item.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+			}
+		}
+
+		// Khởi động lắng nghe sự kiện lúc đầu
+		attachClickHandlers();
+
+		// 3. Xử lý bộ lọc chuyên mục (Dropdown)
+		if (categoriesToggle && categoriesDropdown) {
+			// Bấm mở/đóng dropdown
+			categoriesToggle.addEventListener('click', (e) => {
+				e.stopPropagation();
+				const isShow = categoriesDropdown.style.display === 'block';
+				categoriesDropdown.style.display = isShow ? 'none' : 'block';
+				categoriesToggle.classList.toggle('open');
+			});
+
+			// Đóng dropdown khi bấm ra ngoài
+			document.addEventListener('click', () => {
+				categoriesDropdown.style.display = 'none';
+				categoriesToggle.classList.remove('open');
+			});
+
+			// Lắng nghe chọn chuyên mục
+			dropdownItems.forEach((item) => {
+				// Ngăn chặn chuyển trang thực tế khi click link để nhạc không bị dừng
+				const link = item.querySelector('a');
+				if (link) {
+					link.addEventListener('click', (e) => {
+						e.preventDefault();
+					});
+				}
+
+				item.addEventListener('click', function(e) {
+					e.stopPropagation();
+					const filter = item.getAttribute('data-filter');
+					const categoryText = item.querySelector('a')?.textContent;
+
+					// Cập nhật lớp active cho nút chọn trong dropdown
+					dropdownItems.forEach(i => i.classList.remove('active-category'));
+					item.classList.add('active-category');
+
+					// Cập nhật nhãn đã chọn
+					if (selectedCategoryText && categoryText) {
+						selectedCategoryText.textContent = categoryText;
+					}
+
+					// Lọc các li bài phát tương ứng
+					playlistItems.forEach((li) => {
+						const trackCategory = li.getAttribute('data-category');
+						let isMatch = false;
+
+						if (filter === 'all') {
+							isMatch = true;
+						} else if (filter === 'ngay-phap-luan-dai-phap-the-gioi-radio') {
+							// Khớp cả các chuyên mục con theo năm của Ngày Pháp Luân Đại Pháp
+							isMatch = trackCategory === filter || (trackCategory && trackCategory.startsWith('ngay-phap-luan-dai-phap-the-gioi'));
+						} else if (filter === 'phap-hoi-trung-quoc-radio') {
+							// Khớp cả các chuyên mục con theo kỳ của Pháp hội Trung Quốc
+							isMatch = trackCategory === filter || (trackCategory && trackCategory.startsWith('phap-hoi-trung-quoc'));
+						} else {
+							isMatch = trackCategory === filter;
+						}
+
+						if (isMatch) {
+							li.style.display = 'flex';
+						} else {
+							li.style.display = 'none';
+						}
+					});
+
+					// Cập nhật mảng visibleItems dùng cho chuyển bài
+					visibleItems = playlistItems.filter(li => li.style.display !== 'none');
+
+					// Hiển thị thông báo rỗng nếu không có bài hát nào thuộc chuyên mục này
+					if (emptyPlaylistMsg) {
+						if (visibleItems.length === 0) {
+							emptyPlaylistMsg.style.display = 'block';
+						} else {
+							emptyPlaylistMsg.style.display = 'none';
+						}
+					}
+
+					// Đóng dropdown
+					categoriesDropdown.style.display = 'none';
+					categoriesToggle.classList.remove('open');
+				});
+			});
+		}
+
+		// 4. Nút đảo thứ tự phát (áp dụng cho visibleItems hiện tại)
+		if (revertButton) {
+			revertButton.addEventListener('click', () => {
+				// Đảo ngược các bài viết hiển thị hiện tại
+				visibleItems.reverse();
+				// Sắp xếp lại DOM
+				playlistContainer.innerHTML = '';
+				playlistItems.forEach(item => {
+					if (visibleItems.includes(item)) {
+						playlistContainer.appendChild(item);
+					} else {
+						// Giữ các bài bị ẩn vào cuối DOM
+						playlistContainer.appendChild(item);
+					}
+				});
+				// Gắn lại sự kiện click
+				attachClickHandlers();
+				
+				// Hiệu ứng tương tác micro-animation
+				revertButton.classList.add('action-active');
+				setTimeout(() => revertButton.classList.remove('action-active'), 300);
+			});
+		}
+
+		// 5. Nút phát ngẫu nhiên
+		if (randomButton) {
+			randomButton.addEventListener('click', () => {
+				isRandomMode = !isRandomMode;
+				if (isRandomMode) {
+					randomButton.classList.add('active-mode');
+					if (visibleItems.length > 0) {
+						// Chọn ngẫu nhiên bài để phát từ các bài đang hiển thị
+						const randomIndex = Math.floor(Math.random() * visibleItems.length);
+						playTrack(visibleItems[randomIndex]);
+					}
+				} else {
+					randomButton.classList.remove('active-mode');
+				}
+			});
+		}
+
+		// 6. Tự động chuyển bài khi kết thúc (sử dụng visibleItems hiện có để chuyển đúng bài trong chuyên mục)
+		audio.addEventListener('ended', () => {
+			if (isRandomMode) {
+				if (visibleItems.length > 0) {
+					const randomIndex = Math.floor(Math.random() * visibleItems.length);
+					playTrack(visibleItems[randomIndex]);
+				}
+			} else {
+				const activeItem = playlistContainer.querySelector('li.active') as HTMLLIElement;
+				if (activeItem) {
+					const currentVisibleIndex = visibleItems.indexOf(activeItem);
+					if (currentVisibleIndex !== -1 && currentVisibleIndex < visibleItems.length - 1) {
+						playTrack(visibleItems[currentVisibleIndex + 1]);
+					} else if (visibleItems.length > 0) {
+						// Nếu là bài cuối của bộ lọc, quay lại bài đầu tiên của bộ lọc
+						playTrack(visibleItems[0]);
+					}
+				}
+			}
+		});
+
+		// Lắng nghe sự kiện click từ các link menu chuyên mục trên Header để chuyển đổi mượt mà không reload trang (SPA Experience)
+		document.querySelectorAll('.dropdown-menu-item').forEach(link => {
+			link.addEventListener('click', (e) => {
+				const currentPath = window.location.pathname;
+				if (currentPath === '/' || currentPath === '' || currentPath === '/index.html') {
+					e.preventDefault();
+					const url = new URL((link as HTMLAnchorElement).href);
+					const filterVal = url.searchParams.get('filter');
+					if (filterVal) {
+						// Cập nhật URL trình duyệt mượt mà (không reload trang)
+						window.history.pushState({}, '', url.pathname + url.search);
+						const targetItem = dropdownItems.find(item => item.getAttribute('data-filter') === filterVal);
+						if (targetItem) {
+							(targetItem as HTMLElement).click();
+						}
+					}
+				}
+			});
+		});
+	});
+</script>
+
+<style>
+	/* CSS Phong cách Emdash Prime cực kỳ cao cấp và sang trọng - Phiên bản Light Mode tối ưu */
+	
+	.emdash-radio-card {
+		position: relative;
+		display: flex;
+		flex-direction: column;
+		background: rgba(255, 255, 255, 0.45);
+		border: 1px solid rgba(255, 255, 255, 0.4);
+		border-radius: var(--radius-lg);
+		padding: var(--spacing-6);
+		box-shadow: var(--shadow-md);
+		backdrop-filter: blur(20px);
+		-webkit-backdrop-filter: blur(20px);
+		overflow: hidden;
+		transition: all var(--transition-base);
+		margin-top: var(--spacing-4);
+	}
+
+	.emdash-radio-card:hover {
+		transform: translateY(-2px);
+		box-shadow: var(--shadow-lg), var(--shadow-glow);
+		border-color: rgba(0, 102, 204, 0.2);
+	}
+
+	/* Glow border viền phát quang mềm mại tương lai */
+	.radio-glow-border {
+		position: absolute;
+		inset: 0;
+		border-radius: var(--radius-lg);
+		padding: 2px;
+		background: var(--gradient-accent);
+		-webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+		-webkit-mask-composite: xor;
+		mask-composite: exclude;
+		opacity: 0.15;
+		pointer-events: none;
+		transition: opacity var(--transition-base);
+	}
+
+	.emdash-radio-card:hover .radio-glow-border {
+		opacity: 0.45;
+	}
+
+	/* Layout Grid cho trình phát radio */
+	.radio-grid-layout-premium {
+		display: flex;
+		flex-direction: column;
+		gap: var(--spacing-6);
+		width: 100%;
+	}
+
+	.radio-left-panel-premium {
+		display: flex;
+		flex-direction: column;
+		gap: var(--spacing-2);
+		min-width: 0;
+	}
+
+	.radio-right-panel-premium {
+		display: flex;
+		flex-direction: column;
+		min-width: 0;
+	}
+
+	@media (min-width: 900px) {
+		.radio-grid-layout-premium {
+			display: grid;
+			grid-template-columns: 1.15fr 0.85fr;
+			gap: var(--spacing-10);
+			align-items: start;
+		}
+	}
+
+	/* Header trình phát */
+	.radio-header {
+		display: flex;
+		align-items: center;
+		gap: var(--spacing-3);
+		margin-bottom: var(--spacing-4);
+	}
+
+	.radio-live-tag {
+		background: var(--gradient-premium);
+		color: #ffffff;
+		font-size: 10px;
+		font-weight: 800;
+		padding: 4px 10px;
+		border-radius: 20px;
+		display: inline-flex;
+		align-items: center;
+		gap: var(--spacing-2);
+		letter-spacing: 0.08em;
+		box-shadow: 0 4px 12px rgba(0, 102, 204, 0.2);
+	}
+
+	.live-pulse {
+		width: 6px;
+		height: 6px;
+		background: #ffffff;
+		border-radius: 50%;
+		animation: pulseIndicator 1.5s infinite;
+	}
+
+	@keyframes pulseIndicator {
+		0% {
+			transform: scale(0.95);
+			box-shadow: 0 0 0 0 rgba(255, 255, 255, 0.8);
+		}
+		70% {
+			transform: scale(1);
+			box-shadow: 0 0 0 6px rgba(255, 255, 255, 0);
+		}
+		100% {
+			transform: scale(0.95);
+			box-shadow: 0 0 0 0 rgba(255, 255, 255, 0);
+		}
+	}
+
+	.radio-main-title {
+		font-family: var(--font-sans);
+		font-size: 14px;
+		font-weight: 800;
+		text-transform: uppercase;
+		letter-spacing: 0.05em;
+		color: var(--color-text-secondary);
+		margin: 0;
+	}
+
+	/* Hộp hiển thị bài hát đang phát */
+	.now-playing-box {
+		background: rgba(0, 102, 204, 0.02);
+		border-radius: var(--radius);
+		padding: var(--spacing-4) var(--spacing-5);
+		border: 1px dashed rgba(0, 102, 204, 0.15);
+		margin-bottom: var(--spacing-4);
+	}
+
+	.now-playing-label {
+		display: block;
+		font-size: var(--font-size-xs);
+		color: var(--color-muted);
+		text-transform: uppercase;
+		font-weight: 700;
+		letter-spacing: 0.05em;
+		margin-bottom: var(--spacing-1);
+	}
+
+	.current-track-title {
+		font-family: var(--font-serif);
+		font-size: var(--font-size-lg);
+		font-weight: 700;
+		color: var(--color-text);
+		line-height: 1.4;
+		margin: 0;
+		display: -webkit-box;
+		-webkit-line-clamp: 2;
+		-webkit-box-orient: vertical;
+		overflow: hidden;
+	}
+
+	/* Wrapper cho trình phát Plyr */
+	.plyr-wrapper {
+		margin-bottom: var(--spacing-4);
+	}
+
+	:global(.plyr--audio) {
+		--plyr-color-main: var(--color-accent);
+		--plyr-audio-controls-background: transparent;
+		--plyr-audio-control-color: var(--color-text);
+		--plyr-audio-control-color-hover: #ffffff;
+		border: 1px solid var(--color-border);
+		border-radius: var(--radius);
+		padding: 6px;
+		background: rgba(0, 0, 0, 0.01) !important;
+	}
+
+	/* Danh sách phát nhạc */
+	.playlist-section {
+		display: flex;
+		flex-direction: column;
+		gap: var(--spacing-3);
+	}
+
+	.playlist-header {
+		display: flex;
+		justify-content: space-between;
+		align-items: center;
+		border-bottom: 1px solid var(--color-border);
+		padding-bottom: var(--spacing-2);
+	}
+
+	.playlist-title {
+		font-family: var(--font-sans);
+		font-size: var(--font-size-sm);
+		font-weight: 800;
+		text-transform: uppercase;
+		letter-spacing: 0.05em;
+		color: var(--color-text-secondary);
+		margin: 0;
+	}
+
+	.playlist-actions {
+		display: flex;
+		gap: var(--spacing-2);
+	}
+
+	.action-btn {
+		display: inline-flex;
+		align-items: center;
+		gap: 6px;
+		background: var(--color-bg-subtle);
+		border: 1px solid var(--color-border);
+		color: var(--color-text-secondary);
+		padding: 5px 10px;
+		border-radius: var(--radius-sm);
+		font-size: var(--font-size-xs);
+		font-weight: 700;
+		cursor: pointer;
+		transition: all var(--transition-fast);
+	}
+
+	.action-btn:hover {
+		background: var(--color-accent);
+		border-color: var(--color-accent);
+		color: #ffffff;
+	}
+
+	.action-btn svg {
+		opacity: 0.7;
+	}
+
+	.action-btn:hover svg {
+		opacity: 1;
+	}
+
+	/* Click micro-animations */
+	.action-active {
+		transform: scale(0.95);
+	}
+
+	/* Trạng thái ngẫu nhiên đang được kích hoạt */
+	.action-btn.active-mode {
+		background: var(--gradient-premium);
+		border-color: transparent;
+		color: #ffffff;
+		box-shadow: 0 4px 10px rgba(0, 102, 204, 0.25);
+	}
+
+	/* CẤU TRÚC DROPDOWN CHUYÊN MỤC ĐỒNG BỘ 100% GỐC */
+	.categories-filter-wrapper {
+		position: relative;
+		margin-bottom: var(--spacing-3);
+	}
+
+	.sub-categories-nav-toggle {
+		display: flex;
+		justify-content: space-between;
+		align-items: center;
+		background: var(--color-bg-subtle);
+		border: 1px solid var(--color-border);
+		padding: 10px 16px;
+		border-radius: var(--radius-sm);
+		font-family: var(--font-sans);
+		font-size: var(--font-size-xs);
+		font-weight: 700;
+		color: var(--color-text-secondary);
+		cursor: pointer;
+		transition: all var(--transition-fast);
+		user-select: none;
+	}
+
+	.sub-categories-nav-toggle:hover {
+		background: var(--color-surface);
+		border-color: var(--color-accent);
+		color: var(--color-text);
+	}
+
+	/* Biểu tượng mũi tên kéo xuống đồng bộ Minh Huệ */
+	.sub-categories-nav-icon {
+		display: inline-block;
+		transition: transform var(--transition-fast);
+		border: solid var(--color-muted);
+		border-width: 0 2.5px 2.5px 0;
+		padding: 3px;
+		transform: rotate(45deg);
+		-webkit-transform: rotate(45deg);
+		margin-top: -3px;
+	}
+
+	.sub-categories-nav-toggle.open .sub-categories-nav-icon {
+		transform: rotate(-135deg);
+		-webkit-transform: rotate(-135deg);
+		border-color: var(--color-accent);
+	}
+
+	/* Trình đơn chuyên mục đồng bộ class sub-categories-nav-items */
+	.sub-categories-nav-items {
+		position: absolute;
+		top: calc(100% + 6px);
+		left: 0;
+		right: 0;
+		background: var(--color-surface);
+		border: 1px solid var(--color-border);
+		border-radius: var(--radius-sm);
+		box-shadow: var(--shadow-dropdown);
+		z-index: 10;
+		backdrop-filter: blur(10px);
+		-webkit-backdrop-filter: blur(10px);
+		max-height: 250px;
+		overflow-y: auto;
+		animation: slideDown 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+	}
+
+	/* Tùy chỉnh thanh cuộn cho dropdown chuyên mục */
+	.sub-categories-nav-items::-webkit-scrollbar {
+		width: 4px;
+	}
+
+	.sub-categories-nav-items::-webkit-scrollbar-track {
+		background: transparent;
+	}
+
+	.sub-categories-nav-items::-webkit-scrollbar-thumb {
+		background: var(--color-border);
+		border-radius: 10px;
+	}
+
+	@keyframes slideDown {
+		from { opacity: 0; transform: translateY(-8px); }
+		to { opacity: 1; transform: translateY(0); }
+	}
+
+	.sub-categories-nav-items ul {
+		list-style: none;
+		padding: var(--spacing-2) 0;
+		margin: 0;
+	}
+
+	.sub-category-nav-item {
+		padding: 0;
+		margin: 0;
+		transition: all var(--transition-fast);
+	}
+
+	.sub-category-nav-item div {
+		padding: 0;
+	}
+
+	.sub-category-nav-item a {
+		display: block;
+		padding: 10px 16px;
+		font-size: var(--font-size-xs);
+		font-weight: 600;
+		color: var(--color-text-secondary) !important;
+		text-decoration: none;
+		transition: all var(--transition-fast);
+	}
+
+	.sub-category-nav-item:hover {
+		background: var(--color-bg-subtle);
+	}
+
+	.sub-category-nav-item:hover a {
+		color: var(--color-accent) !important;
+		padding-left: 20px;
+	}
+
+	.sub-category-nav-item.active-category {
+		background: rgba(0, 102, 204, 0.06);
+	}
+
+	.sub-category-nav-item.active-category a {
+		color: var(--color-accent) !important;
+		font-weight: 700;
+	}
+
+	/* Thông báo danh sách phát rỗng */
+	.empty-playlist-msg {
+		display: none;
+		font-family: var(--font-sans);
+		font-size: var(--font-size-xs);
+		color: var(--color-muted);
+		text-align: center;
+		padding: var(--spacing-6) 0;
+		margin: 0;
+		line-height: var(--leading-normal);
+		border: 1px dashed var(--color-border);
+		border-radius: var(--radius-sm);
+		background: rgba(0, 0, 0, 0.005);
+	}
+
+	/* Vùng danh sách phát có thanh cuộn mượt */
+	.playlist-scroll-container {
+		max-height: 260px;
+		overflow-y: auto;
+		padding-right: var(--spacing-2);
+	}
+
+	/* Tùy chỉnh thanh cuộn siêu thanh lịch */
+	.playlist-scroll-container::-webkit-scrollbar {
+		width: 4px;
+	}
+
+	.playlist-scroll-container::-webkit-scrollbar-track {
+		background: transparent;
+	}
+
+	.playlist-scroll-container::-webkit-scrollbar-thumb {
+		background: var(--color-border);
+		border-radius: 10px;
+	}
+
+	.playlist-scroll-container::-webkit-scrollbar-thumb:hover {
+		background: var(--color-accent);
+	}
+
+	#playlist {
+		display: flex;
+		flex-direction: column;
+		gap: 6px;
+		padding: 0;
+		margin: 0;
+		list-style: none;
+	}
+
+	#playlist li {
+		display: flex;
+		align-items: center;
+		gap: var(--spacing-3);
+		padding: 10px 14px;
+		background: var(--color-bg-subtle);
+		border: 1px solid transparent;
+		border-radius: var(--radius-sm);
+		cursor: pointer;
+		font-size: var(--font-size-xs);
+		font-weight: 500;
+		color: var(--color-text-secondary);
+		transition: all var(--transition-fast);
+	}
+
+	#playlist li:hover {
+		background: var(--color-surface);
+		border-color: var(--color-border);
+		color: var(--color-text);
+		transform: translateX(3px);
+	}
+
+	.track-number {
+		font-size: 10px;
+		font-weight: 800;
+		color: var(--color-muted);
+		width: 14px;
+	}
+
+	.track-name {
+		flex: 1;
+		white-space: nowrap;
+		overflow: hidden;
+		text-overflow: ellipsis;
+	}
+
+	/* Trạng thái bài hát active */
+	#playlist li.active {
+		background: var(--color-surface);
+		border-color: var(--color-accent);
+		color: var(--color-accent);
+		font-weight: 700;
+		box-shadow: var(--shadow-sm);
+	}
+
+	#playlist li.active .track-number {
+		color: var(--color-accent);
+	}
+
+	#playlist li.active::before {
+		content: "●";
+		font-size: 8px;
+		color: var(--color-accent);
+		margin-right: -4px;
+		animation: pulseActiveDot 1.5s infinite;
+	}
+
+	@keyframes pulseActiveDot {
+		0% { opacity: 0.4; }
+		50% { opacity: 1; }
+		100% { opacity: 0.4; }
+	}
+</style>

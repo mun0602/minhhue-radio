@@ -16,9 +16,21 @@ if (!term) {
 	return Astro.redirect("/404");
 }
 
-const { entries: posts, cacheHint } = await getEmDashCollection("posts", {
+const { entries: allPosts, cacheHint } = await getEmDashCollection("posts", {
 	where: { tag: term.slug },
 	orderBy: { published_at: "desc" },
+});
+
+// Single batched query for categories on every post to filter lifestyle posts
+const categoriesByEntry = await getTermsForEntries(
+	"posts",
+	allPosts.map((p) => p.data.id),
+	"category",
+);
+
+const posts = allPosts.filter((p) => {
+	const cats = categoriesByEntry.get(p.data.id) ?? [];
+	return cats.some((c) => c.slug === "lifestyle");
 });
 
 Astro.cache.set(cacheHint);

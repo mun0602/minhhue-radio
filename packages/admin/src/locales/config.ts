@@ -42,7 +42,7 @@ export const SUPPORTED_LOCALES = [
 
 export const SUPPORTED_LOCALE_CODES = new Set(SUPPORTED_LOCALES.map((l) => l.code));
 
-export const DEFAULT_LOCALE = SOURCE_LOCALE.code;
+export const DEFAULT_LOCALE = "vi";
 
 /** Maps base language codes to supported locales (e.g. "pt" -> "pt-BR"). */
 const BASE_LANGUAGE_MAP = new Map<string, string>();

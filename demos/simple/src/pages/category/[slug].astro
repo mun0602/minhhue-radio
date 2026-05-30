@@ -12,7 +12,7 @@ import { getReadingTime } from "../../utils/reading-time";
 const slug = decodeSlug(Astro.params.slug);
 const term = slug ? await getTerm("category", slug) : null;
 
-if (!term) {
+if (!term || term.slug !== "lifestyle") {
 	return Astro.redirect("/404");
 }
 

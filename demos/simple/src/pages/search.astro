@@ -1,45 +1,63 @@
 ---
 export const prerender = false;
 
-import { search } from "emdash";
+import { search, getEmDashCollection, getTermsForEntries } from "emdash";
 import Base from "../layouts/Base.astro";
 
 const query = Astro.url.searchParams.get("q")?.trim() || "";
 
-// Use the FTS-backed search() API instead of loading every post and
-// filtering in JS. FTS scales as the post count grows, returns ranked
-// results, and handles tokenization/stemming. Templates that grep all
-// post bodies in JS quickly become unusable past a few hundred posts.
-const { items: results } = query
-	? await search(query, { collections: ["posts"], limit: 30 })
+// Lấy danh sách tất cả các bài viết
+const { entries: allPosts } = await getEmDashCollection("posts");
+
+// Lấy chuyên mục cho tất cả các bài viết
+const categoriesByEntry = await getTermsForEntries(
+	"posts",
+	allPosts.map((p) => p.data.id),
+	"category",
+);
+
+// Tạo Set chứa ID của các bài viết thuộc danh mục lifestyle
+const lifestyleIds = new Set(
+	allPosts
+		.filter((p) => {
+			const cats = categoriesByEntry.get(p.data.id) ?? [];
+			return cats.some((c) => c.slug === "lifestyle");
+		})
+		.map((p) => p.data.id)
+);
+
+const { items: allResults } = query
+	? await search(query, { collections: ["posts"], limit: 100 })
 	: { items: [] };
+
+const results = allResults.filter(r => lifestyleIds.has(r.id));
 ---
 
 <Base
-	title={query ? `Search: ${query}` : "Search"}
-	description="Search blog posts"
+	title={query ? `Tìm kiếm: ${query}` : "Tìm kiếm"}
+	description="Tìm kiếm bài viết tu luyện chia sẻ Minh Huệ"
 >
 	<section class="search-page">
-		<h1 class="search-title">Search</h1>
+		<h1 class="search-title">Tìm kiếm bài viết</h1>
 
 		<form method="get" action="/search" class="search-form">
 			<input
 				type="search"
 				name="q"
 				value={query}
-				placeholder="Search posts..."
+				placeholder="Nhập từ khóa tìm kiếm..."
 				class="search-input"
 				autofocus
 			/>
-			<button type="submit" class="search-button">Search</button>
+			<button type="submit" class="search-button">Tìm kiếm</button>
 		</form>
 
 		{
 			query && (
 				<p class="search-summary">
 					{results.length === 0
-						? `No results for "${query}"`
-						: `${results.length} result${results.length === 1 ? "" : "s"} for "${query}"`}
+						? `Không tìm thấy kết quả nào cho "${query}"`
+						: `Tìm thấy ${results.length} kết quả cho "${query}"`}
 				</p>
 			)
 		}
@@ -54,7 +72,7 @@ const { items: results } = query
 								class="result-link"
 							>
 								<h2 class="result-title">
-									{result.title ?? "Untitled"}
+									{result.title ?? "Không có tiêu đề"}
 								</h2>
 								{result.snippet && (
 									<p class="result-snippet" set:html={result.snippet} />
@@ -66,7 +84,7 @@ const { items: results } = query
 			)
 		}
 
-		{!query && <p class="search-hint">Enter a search term to find posts.</p>}
+		{!query && <p class="search-hint">Nhập từ khóa phía trên để tìm kiếm bài viết chia sẻ tu luyện.</p>}
 	</section>
 </Base>
 
