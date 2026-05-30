@@ -8,28 +8,28 @@
 
 :root {
 	/* --- Bảng màu Emdash Prime siêu sang trọng (Light Mode) --- */
-	--color-bg: #f8f9fa;          /* Nền xám nhạt hiện đại, tối giản và sạch sẽ */
-	--color-bg-subtle: #f1f3f5;   /* Màu nền phụ tối giản */
-	--color-text: #1a1a1a;        /* Màu chữ đen than đá sâu thẳm */
-	--color-text-secondary: #495057; /* Màu chữ phụ */
+	--color-bg: #f8f9fa;          /* Nền xám nhạt hiện đại, cực kỳ sạch sẽ và tinh khiết */
+	--color-bg-subtle: #f1f3f5;   /* Màu nền phụ tối giản, êm dịu */
+	--color-text: #1a1a1a;        /* Màu chữ đen than đá sâu thẳm, dễ đọc */
+	--color-text-secondary: #495057; /* Màu chữ phụ hiện đại */
 	--color-muted: #868e96;       /* Màu chữ mờ tinh tế */
 	--color-border: #e9ecef;      /* Đường viền siêu mảnh, cực kỳ tinh khiết */
 	--color-border-subtle: #f8f9fa;
 	--color-surface: #ffffff;     /* Nền thẻ trắng tinh khiết */
 	
-	/* Tông màu nhấn gradient nghệ thuật */
-	--color-accent: #000000;      /* Đen tối giản làm tông màu chủ đạo */
-	--color-accent-hover: #343a40;
+	/* Tông màu nhấn gradient nghệ thuật tinh tế, bớt sặc sỡ */
+	--color-accent: #0052a3;      /* Xanh dương đại dương sẫm dịu mắt, nhã nhặn */
+	--color-accent-hover: #003d7a;
 	--color-on-accent: #ffffff;
-	--gradient-accent: linear-gradient(135deg, #1a1a1a 0%, #495057 100%);
-	--gradient-premium: linear-gradient(135deg, #1a1a1a, #212529, #495057);
+	--gradient-accent: linear-gradient(135deg, #0052a3 0%, #1e3a8a 50%, #475569 100%); /* Lam sẫm - Navy - Slate */
+	--gradient-premium: linear-gradient(135deg, #0052a3, #1e3a8a, #475569);
 
 	/* --- Typography nâng cấp chất lượng cao --- */
-	--font-serif: "Plus Jakarta Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+	--font-serif: "Playfair Display", Georgia, Cambria, "Times New Roman", Times, serif;
 	--font-sans: "Plus Jakarta Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
 	
 	/* Thiết lập phông mặc định */
-	--font-family-headings: var(--font-sans);
+	--font-family-headings: var(--font-serif);
 	--font-family-body: var(--font-sans);
 
 	/* --- Thiết kế bo tròn hiện đại & Glassmorphic --- */

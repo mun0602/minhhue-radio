@@ -471,11 +471,12 @@ const isLoggedIn = !!Astro.locals.user;
 				position: sticky;
 				top: 0;
 				z-index: 100;
-				background: rgba(255, 255, 255, 0.85) !important; /* Mờ đục nhẹ tinh khiết */
+				background: rgba(255, 255, 255, 0.8) !important; /* Mờ đục nhẹ tinh khiết */
 				backdrop-filter: blur(20px);
 				-webkit-backdrop-filter: blur(20px);
-				border-bottom: 1px solid var(--color-border) !important;
-				box-shadow: var(--shadow-sm);
+				border-bottom: 2px solid transparent !important;
+				border-image: var(--gradient-accent) 1 !important;
+				box-shadow: var(--shadow-md);
 				transition: all var(--transition-base);
 			}
 
@@ -491,7 +492,7 @@ const isLoggedIn = !!Astro.locals.user;
 				transition: all var(--transition-base);
 			}
 
-			/* Logo phong cách tối giản siêu sạch sẽ */
+			/* Logo phong cách Emdash Prime siêu sang trọng */
 			.site-logo-premium {
 				display: flex;
 				align-items: center;
@@ -500,38 +501,42 @@ const isLoggedIn = !!Astro.locals.user;
 				transition: transform 0.3s ease;
 			}
 			.site-logo-premium:hover {
-				transform: scale(1.01);
+				transform: scale(1.02);
 			}
 			.site-logo-premium .logo-badge-premium {
-				background: #000000;
+				background: var(--gradient-premium);
 				color: #ffffff;
 				font-family: var(--font-sans);
-				font-weight: 800;
-				font-size: 18px;
+				font-weight: 900;
+				font-size: 20px;
 				line-height: 1;
-				width: 32px;
-				height: 32px;
+				width: 36px;
+				height: 36px;
 				display: inline-flex;
 				align-items: center;
 				justify-content: center;
-				border-radius: 4px;
+				border-radius: 10px;
+				box-shadow: 0 4px 15px rgba(0, 82, 163, 0.2);
 			}
 			.site-logo-premium .logo-text-premium {
 				color: var(--color-text);
 				font-family: var(--font-sans);
-				font-weight: 700;
-				font-size: 18px;
-				letter-spacing: -0.02em;
+				font-weight: 800;
+				font-size: 20px;
+				letter-spacing: -0.04em;
 				display: flex;
 				align-items: center;
 				gap: 4px;
 				transition: color var(--transition-fast);
 			}
 			.site-logo-premium .logo-serif-sub {
-				font-family: var(--font-sans);
+				font-family: var(--font-serif);
 				font-weight: 700;
-				font-size: 16px;
-				color: var(--color-muted);
+				font-style: italic;
+				font-size: 18px;
+				background: var(--gradient-accent);
+				-webkit-background-clip: text;
+				-webkit-text-fill-color: transparent;
 				letter-spacing: 0.05em;
 			}
 			.footer-logo-premium .logo-text-premium {
@@ -555,8 +560,8 @@ const isLoggedIn = !!Astro.locals.user;
 			.nav-item {
 				text-decoration: none;
 				color: var(--color-text-secondary) !important;
-				font-weight: 600;
-				font-size: 13px;
+				font-weight: 700;
+				font-size: 13.5px;
 				text-transform: uppercase;
 				letter-spacing: 0.05em;
 				transition: color var(--transition-fast);
@@ -573,9 +578,9 @@ const isLoggedIn = !!Astro.locals.user;
 				bottom: 0;
 				left: 0;
 				width: 100%;
-				height: 2px;
-				background: #000000;
-				border-radius: 1px;
+				height: 3px;
+				background: var(--gradient-premium);
+				border-radius: 2px;
 				transform: scaleX(0);
 				transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
 			}
