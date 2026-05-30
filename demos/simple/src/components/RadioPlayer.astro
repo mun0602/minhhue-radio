@@ -697,6 +697,41 @@ const defaultTrack = playlist.length > 0 ? playlist[0] : {
 
 	/* Thiết kế bố cục trình phát thích ứng (Responsive) - Tối ưu Mobile */
 	@media (max-width: 600px) {
+		.emdash-radio-card {
+			margin-top: 0;
+			height: 100%;
+			padding: var(--spacing-4);
+			border-radius: 8px;
+		}
+
+		.radio-grid-layout-premium {
+			height: 100%;
+			display: flex;
+			flex-direction: column;
+			gap: var(--spacing-4);
+		}
+
+		.radio-right-panel-premium {
+			flex: 1;
+			display: flex;
+			flex-direction: column;
+			min-height: 0; /* Quan trọng để flex child có thể scroll nội dung dư thừa */
+		}
+
+		.playlist-section {
+			flex: 1;
+			display: flex;
+			flex-direction: column;
+			min-height: 0;
+		}
+
+		.playlist-scroll-container {
+			flex: 1;
+			max-height: none !important;
+			overflow-y: auto;
+			padding-bottom: 20px; /* Thêm khoảng trống nhỏ ở đáy */
+		}
+
 		:global(.plyr__controls) {
 			display: grid !important;
 			grid-template-columns: auto 1fr auto !important;
