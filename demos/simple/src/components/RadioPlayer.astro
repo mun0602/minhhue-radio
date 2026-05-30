@@ -519,47 +519,32 @@ const defaultTrack = playlist.length > 0 ? playlist[0] : {
 </script>
 
 <style>
-	/* CSS Phong cách Emdash Prime cực kỳ cao cấp và sang trọng - Phiên bản Light Mode tối ưu */
+	/* ============================================================================
+	   CSS Phong cách Minimalist Clean - Trình phát Radio Minh Huệ
+	   ============================================================================ */
 	
 	.emdash-radio-card {
 		position: relative;
 		display: flex;
 		flex-direction: column;
-		background: rgba(255, 255, 255, 0.45);
-		border: 1px solid rgba(255, 255, 255, 0.4);
-		border-radius: var(--radius-lg);
+		background: #ffffff;
+		border: 1px solid var(--color-border);
+		border-radius: 12px;
 		padding: var(--spacing-6);
-		box-shadow: var(--shadow-md);
-		backdrop-filter: blur(20px);
-		-webkit-backdrop-filter: blur(20px);
+		box-shadow: var(--shadow-sm);
 		overflow: hidden;
 		transition: all var(--transition-base);
 		margin-top: var(--spacing-4);
 	}
 
 	.emdash-radio-card:hover {
-		transform: translateY(-2px);
-		box-shadow: var(--shadow-lg), var(--shadow-glow);
-		border-color: rgba(0, 102, 204, 0.2);
+		border-color: #ced4da;
+		box-shadow: var(--shadow-md);
 	}
 
-	/* Glow border viền phát quang mềm mại tương lai */
+	/* Loại bỏ các hiệu ứng viền sáng để giữ triết lý tối giản */
 	.radio-glow-border {
-		position: absolute;
-		inset: 0;
-		border-radius: var(--radius-lg);
-		padding: 2px;
-		background: var(--gradient-accent);
-		-webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
-		-webkit-mask-composite: xor;
-		mask-composite: exclude;
-		opacity: 0.15;
-		pointer-events: none;
-		transition: opacity var(--transition-base);
-	}
-
-	.emdash-radio-card:hover .radio-glow-border {
-		opacity: 0.45;
+		display: none;
 	}
 
 	/* Layout Grid cho trình phát radio */
@@ -586,8 +571,8 @@ const defaultTrack = playlist.length > 0 ? playlist[0] : {
 	@media (min-width: 900px) {
 		.radio-grid-layout-premium {
 			display: grid;
-			grid-template-columns: 1.15fr 0.85fr;
-			gap: var(--spacing-10);
+			grid-template-columns: 1.1fr 0.9fr;
+			gap: var(--spacing-8);
 			align-items: start;
 		}
 	}
@@ -601,23 +586,22 @@ const defaultTrack = playlist.length > 0 ? playlist[0] : {
 	}
 
 	.radio-live-tag {
-		background: var(--gradient-premium);
+		background: #000000;
 		color: #ffffff;
 		font-size: 10px;
-		font-weight: 800;
-		padding: 4px 10px;
-		border-radius: 20px;
+		font-weight: 700;
+		padding: 4px 8px;
+		border-radius: 4px;
 		display: inline-flex;
 		align-items: center;
 		gap: var(--spacing-2);
-		letter-spacing: 0.08em;
-		box-shadow: 0 4px 12px rgba(0, 102, 204, 0.2);
+		letter-spacing: 0.05em;
 	}
 
 	.live-pulse {
 		width: 6px;
 		height: 6px;
-		background: #ffffff;
+		background: #20c997;
 		border-radius: 50%;
 		animation: pulseIndicator 1.5s infinite;
 	}
@@ -625,53 +609,53 @@ const defaultTrack = playlist.length > 0 ? playlist[0] : {
 	@keyframes pulseIndicator {
 		0% {
 			transform: scale(0.95);
-			box-shadow: 0 0 0 0 rgba(255, 255, 255, 0.8);
+			box-shadow: 0 0 0 0 rgba(32, 201, 151, 0.7);
 		}
 		70% {
 			transform: scale(1);
-			box-shadow: 0 0 0 6px rgba(255, 255, 255, 0);
+			box-shadow: 0 0 0 5px rgba(32, 201, 151, 0);
 		}
 		100% {
 			transform: scale(0.95);
-			box-shadow: 0 0 0 0 rgba(255, 255, 255, 0);
+			box-shadow: 0 0 0 0 rgba(32, 201, 151, 0);
 		}
 	}
 
 	.radio-main-title {
 		font-family: var(--font-sans);
-		font-size: 14px;
-		font-weight: 800;
+		font-size: 13px;
+		font-weight: 700;
 		text-transform: uppercase;
 		letter-spacing: 0.05em;
 		color: var(--color-text-secondary);
 		margin: 0;
 	}
 
-	/* Hộp hiển thị bài hát đang phát */
+	/* Hộp hiển thị bài hát đang phát tối giản */
 	.now-playing-box {
-		background: rgba(0, 102, 204, 0.02);
-		border-radius: var(--radius);
-		padding: var(--spacing-4) var(--spacing-5);
-		border: 1px dashed rgba(0, 102, 204, 0.15);
+		background: var(--color-bg-subtle);
+		border-radius: 8px;
+		padding: var(--spacing-5);
+		border: 1px solid var(--color-border);
 		margin-bottom: var(--spacing-4);
 	}
 
 	.now-playing-label {
 		display: block;
-		font-size: var(--font-size-xs);
+		font-size: 11px;
 		color: var(--color-muted);
 		text-transform: uppercase;
-		font-weight: 700;
+		font-weight: 600;
 		letter-spacing: 0.05em;
-		margin-bottom: var(--spacing-1);
+		margin-bottom: var(--spacing-2);
 	}
 
 	.current-track-title {
-		font-family: var(--font-serif);
-		font-size: var(--font-size-lg);
-		font-weight: 700;
+		font-family: var(--font-sans);
+		font-size: 15px;
+		font-weight: 600;
 		color: var(--color-text);
-		line-height: 1.4;
+		line-height: 1.5;
 		margin: 0;
 		display: -webkit-box;
 		-webkit-line-clamp: 2;
@@ -684,18 +668,101 @@ const defaultTrack = playlist.length > 0 ? playlist[0] : {
 		margin-bottom: var(--spacing-4);
 	}
 
+	/* Nâng cấp CSS của thư viện Plyr theo phong cách cực kỳ phẳng, tinh tế */
 	:global(.plyr--audio) {
-		--plyr-color-main: var(--color-accent);
+		--plyr-color-main: #000000;
 		--plyr-audio-controls-background: transparent;
-		--plyr-audio-control-color: var(--color-text);
+		--plyr-audio-control-color: #1a1a1a;
 		--plyr-audio-control-color-hover: #ffffff;
-		border: 1px solid var(--color-border);
-		border-radius: var(--radius);
-		padding: 6px;
-		background: rgba(0, 0, 0, 0.01) !important;
+		border: 1px solid var(--color-border) !important;
+		border-radius: 8px !important;
+		padding: 16px !important;
+		background: #ffffff !important;
 	}
 
-	/* Danh sách phát nhạc */
+	:global(.plyr__controls) {
+		display: flex !important;
+		flex-wrap: wrap !important;
+		align-items: center !important;
+		gap: 12px !important;
+		width: 100% !important;
+		background: transparent !important;
+		padding: 0 !important;
+	}
+
+	:global(.plyr__progress) {
+		flex: 1 1 auto !important;
+		min-width: 120px !important;
+	}
+
+	/* Thiết kế bố cục trình phát thích ứng (Responsive) - Tối ưu Mobile */
+	@media (max-width: 600px) {
+		:global(.plyr__controls) {
+			display: grid !important;
+			grid-template-columns: auto 1fr auto !important;
+			grid-template-rows: auto auto !important;
+			gap: 12px 8px !important;
+		}
+
+		/* Nút Play/Pause thiết kế tinh gọn hơn */
+		:global(.plyr__control[data-plyr="play"]),
+		:global(.plyr__control[data-plyr="pause"]) {
+			grid-column: 1 !important;
+			grid-row: 1 !important;
+			background: #000000 !important;
+			color: #ffffff !important;
+			border-radius: 50% !important;
+			width: 42px !important;
+			height: 42px !important;
+			display: flex !important;
+			align-items: center !important;
+			justify-content: center !important;
+			transition: background 0.2s ease !important;
+		}
+
+		:global(.plyr__control[data-plyr="play"]:hover),
+		:global(.plyr__control[data-plyr="pause"]:hover) {
+			background: #333333 !important;
+		}
+
+		/* Chỉ báo thời gian */
+		:global(.plyr__time) {
+			grid-row: 1 !important;
+			align-self: center !important;
+			font-size: 12px !important;
+			font-family: var(--font-sans) !important;
+			color: var(--color-text-secondary) !important;
+		}
+
+		:global(.plyr__time--current) {
+			grid-column: 2 !important;
+			justify-self: start !important;
+		}
+
+		:global(.plyr__time--duration) {
+			grid-column: 3 !important;
+			justify-self: end !important;
+		}
+
+		/* Đẩy thanh tua thời gian xuống một dòng hoàn toàn riêng biệt trên mobile. 
+		   Giúp không bị chồng chéo và người dùng dễ dàng chạm/vuốt để điều khiển. */
+		:global(.plyr__progress) {
+			grid-column: 1 / -1 !important;
+			grid-row: 2 !important;
+			width: 100% !important;
+			margin: 0 !important;
+			padding: 8px 0 !important; /* Mở rộng vùng tương tác chạm */
+		}
+
+		/* Ẩn các nút điều khiển phụ trên điện thoại để đạt sự liền mạch, tối giản */
+		:global(.plyr__volume),
+		:global(.plyr__control[data-plyr="mute"]),
+		:global(.plyr__menu) {
+			display: none !important;
+		}
+	}
+
+	/* Danh sách phát nhạc tối giản */
 	.playlist-section {
 		display: flex;
 		flex-direction: column;
@@ -707,13 +774,13 @@ const defaultTrack = playlist.length > 0 ? playlist[0] : {
 		justify-content: space-between;
 		align-items: center;
 		border-bottom: 1px solid var(--color-border);
-		padding-bottom: var(--spacing-2);
+		padding-bottom: var(--spacing-3);
 	}
 
 	.playlist-title {
 		font-family: var(--font-sans);
-		font-size: var(--font-size-sm);
-		font-weight: 800;
+		font-size: 12px;
+		font-weight: 700;
 		text-transform: uppercase;
 		letter-spacing: 0.05em;
 		color: var(--color-text-secondary);
@@ -729,45 +796,43 @@ const defaultTrack = playlist.length > 0 ? playlist[0] : {
 		display: inline-flex;
 		align-items: center;
 		gap: 6px;
-		background: var(--color-bg-subtle);
+		background: #ffffff;
 		border: 1px solid var(--color-border);
 		color: var(--color-text-secondary);
-		padding: 5px 10px;
-		border-radius: var(--radius-sm);
-		font-size: var(--font-size-xs);
-		font-weight: 700;
+		padding: 6px 12px;
+		border-radius: 6px;
+		font-size: 11px;
+		font-weight: 600;
 		cursor: pointer;
 		transition: all var(--transition-fast);
 	}
 
 	.action-btn:hover {
-		background: var(--color-accent);
-		border-color: var(--color-accent);
+		background: #000000;
+		border-color: #000000;
 		color: #ffffff;
 	}
 
 	.action-btn svg {
 		opacity: 0.7;
+		transition: opacity var(--transition-fast);
 	}
 
 	.action-btn:hover svg {
 		opacity: 1;
 	}
 
-	/* Click micro-animations */
 	.action-active {
-		transform: scale(0.95);
+		transform: scale(0.96);
 	}
 
-	/* Trạng thái ngẫu nhiên đang được kích hoạt */
 	.action-btn.active-mode {
-		background: var(--gradient-premium);
-		border-color: transparent;
+		background: #000000;
+		border-color: #000000;
 		color: #ffffff;
-		box-shadow: 0 4px 10px rgba(0, 102, 204, 0.25);
 	}
 
-	/* CẤU TRÚC DROPDOWN CHUYÊN MỤC ĐỒNG BỘ 100% GỐC */
+	/* Cấu trúc dropdown chuyên mục tối giản */
 	.categories-filter-wrapper {
 		position: relative;
 		margin-bottom: var(--spacing-3);
@@ -777,13 +842,13 @@ const defaultTrack = playlist.length > 0 ? playlist[0] : {
 		display: flex;
 		justify-content: space-between;
 		align-items: center;
-		background: var(--color-bg-subtle);
+		background: #ffffff;
 		border: 1px solid var(--color-border);
 		padding: 10px 16px;
-		border-radius: var(--radius-sm);
+		border-radius: 6px;
 		font-family: var(--font-sans);
-		font-size: var(--font-size-xs);
-		font-weight: 700;
+		font-size: 12px;
+		font-weight: 600;
 		color: var(--color-text-secondary);
 		cursor: pointer;
 		transition: all var(--transition-fast);
@@ -791,17 +856,16 @@ const defaultTrack = playlist.length > 0 ? playlist[0] : {
 	}
 
 	.sub-categories-nav-toggle:hover {
-		background: var(--color-surface);
-		border-color: var(--color-accent);
+		background: var(--color-bg-subtle);
+		border-color: #ced4da;
 		color: var(--color-text);
 	}
 
-	/* Biểu tượng mũi tên kéo xuống đồng bộ Minh Huệ */
 	.sub-categories-nav-icon {
 		display: inline-block;
 		transition: transform var(--transition-fast);
 		border: solid var(--color-muted);
-		border-width: 0 2.5px 2.5px 0;
+		border-width: 0 2px 2px 0;
 		padding: 3px;
 		transform: rotate(45deg);
 		-webkit-transform: rotate(45deg);
@@ -811,28 +875,24 @@ const defaultTrack = playlist.length > 0 ? playlist[0] : {
 	.sub-categories-nav-toggle.open .sub-categories-nav-icon {
 		transform: rotate(-135deg);
 		-webkit-transform: rotate(-135deg);
-		border-color: var(--color-accent);
+		border-color: #000000;
 	}
 
-	/* Trình đơn chuyên mục đồng bộ class sub-categories-nav-items */
 	.sub-categories-nav-items {
 		position: absolute;
 		top: calc(100% + 6px);
 		left: 0;
 		right: 0;
-		background: var(--color-surface);
+		background: #ffffff;
 		border: 1px solid var(--color-border);
-		border-radius: var(--radius-sm);
-		box-shadow: var(--shadow-dropdown);
+		border-radius: 6px;
+		box-shadow: var(--shadow-lg);
 		z-index: 10;
-		backdrop-filter: blur(10px);
-		-webkit-backdrop-filter: blur(10px);
 		max-height: 250px;
 		overflow-y: auto;
-		animation: slideDown 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+		animation: slideDown 0.2s cubic-bezier(0.16, 1, 0.3, 1);
 	}
 
-	/* Tùy chỉnh thanh cuộn cho dropdown chuyên mục */
 	.sub-categories-nav-items::-webkit-scrollbar {
 		width: 4px;
 	}
@@ -853,7 +913,7 @@ const defaultTrack = playlist.length > 0 ? playlist[0] : {
 
 	.sub-categories-nav-items ul {
 		list-style: none;
-		padding: var(--spacing-2) 0;
+		padding: 6px 0;
 		margin: 0;
 	}
 
@@ -870,8 +930,8 @@ const defaultTrack = playlist.length > 0 ? playlist[0] : {
 	.sub-category-nav-item a {
 		display: block;
 		padding: 10px 16px;
-		font-size: var(--font-size-xs);
-		font-weight: 600;
+		font-size: 12px;
+		font-weight: 500;
 		color: var(--color-text-secondary) !important;
 		text-decoration: none;
 		transition: all var(--transition-fast);
@@ -882,16 +942,16 @@ const defaultTrack = playlist.length > 0 ? playlist[0] : {
 	}
 
 	.sub-category-nav-item:hover a {
-		color: var(--color-accent) !important;
+		color: #000000 !important;
 		padding-left: 20px;
 	}
 
 	.sub-category-nav-item.active-category {
-		background: rgba(0, 102, 204, 0.06);
+		background: var(--color-bg-subtle);
 	}
 
 	.sub-category-nav-item.active-category a {
-		color: var(--color-accent) !important;
+		color: #000000 !important;
 		font-weight: 700;
 	}
 
@@ -899,25 +959,24 @@ const defaultTrack = playlist.length > 0 ? playlist[0] : {
 	.empty-playlist-msg {
 		display: none;
 		font-family: var(--font-sans);
-		font-size: var(--font-size-xs);
+		font-size: 12px;
 		color: var(--color-muted);
 		text-align: center;
 		padding: var(--spacing-6) 0;
 		margin: 0;
 		line-height: var(--leading-normal);
 		border: 1px dashed var(--color-border);
-		border-radius: var(--radius-sm);
-		background: rgba(0, 0, 0, 0.005);
+		border-radius: 8px;
+		background: var(--color-bg-subtle);
 	}
 
 	/* Vùng danh sách phát có thanh cuộn mượt */
 	.playlist-scroll-container {
-		max-height: 260px;
+		max-height: 320px;
 		overflow-y: auto;
-		padding-right: var(--spacing-2);
+		padding-right: 4px;
 	}
 
-	/* Tùy chỉnh thanh cuộn siêu thanh lịch */
 	.playlist-scroll-container::-webkit-scrollbar {
 		width: 4px;
 	}
@@ -932,7 +991,7 @@ const defaultTrack = playlist.length > 0 ? playlist[0] : {
 	}
 
 	.playlist-scroll-container::-webkit-scrollbar-thumb:hover {
-		background: var(--color-accent);
+		background: #ced4da;
 	}
 
 	#playlist {
@@ -948,29 +1007,27 @@ const defaultTrack = playlist.length > 0 ? playlist[0] : {
 		display: flex;
 		align-items: center;
 		gap: var(--spacing-3);
-		padding: 10px 14px;
-		background: var(--color-bg-subtle);
-		border: 1px solid transparent;
-		border-radius: var(--radius-sm);
+		padding: 12px 16px;
+		background: #ffffff;
+		border: 1px solid var(--color-border);
+		border-radius: 6px;
 		cursor: pointer;
-		font-size: var(--font-size-xs);
+		font-size: 13px;
 		font-weight: 500;
 		color: var(--color-text-secondary);
 		transition: all var(--transition-fast);
 	}
 
 	#playlist li:hover {
-		background: var(--color-surface);
-		border-color: var(--color-border);
+		background: var(--color-bg-subtle);
 		color: var(--color-text);
-		transform: translateX(3px);
 	}
 
 	.track-number {
-		font-size: 10px;
-		font-weight: 800;
+		font-size: 11px;
+		font-weight: 600;
 		color: var(--color-muted);
-		width: 14px;
+		width: 18px;
 	}
 
 	.track-name {
@@ -980,30 +1037,22 @@ const defaultTrack = playlist.length > 0 ? playlist[0] : {
 		text-overflow: ellipsis;
 	}
 
-	/* Trạng thái bài hát active */
+	/* Trạng thái bài hát active tối giản đặc sắc */
 	#playlist li.active {
-		background: var(--color-surface);
-		border-color: var(--color-accent);
-		color: var(--color-accent);
-		font-weight: 700;
-		box-shadow: var(--shadow-sm);
+		background: #000000;
+		border-color: #000000;
+		color: #ffffff;
+		font-weight: 600;
 	}
 
 	#playlist li.active .track-number {
-		color: var(--color-accent);
+		color: rgba(255, 255, 255, 0.6);
 	}
 
 	#playlist li.active::before {
 		content: "●";
 		font-size: 8px;
-		color: var(--color-accent);
+		color: #20c997;
 		margin-right: -4px;
-		animation: pulseActiveDot 1.5s infinite;
-	}
-
-	@keyframes pulseActiveDot {
-		0% { opacity: 0.4; }
-		50% { opacity: 1; }
-		100% { opacity: 0.4; }
 	}
 </style>
