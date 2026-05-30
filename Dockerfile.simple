@@ -26,6 +26,10 @@ RUN sed -i '/slidev/d' pnpm-workspace.yaml
 RUN sed -i 's|file:./data.db|file:./data/data.db|' demos/simple/astro.config.mjs
 RUN sed -i 's|directory: "./uploads"|directory: "./data/uploads"|' demos/simple/astro.config.mjs
 
+# Sao chép file database và uploads cục bộ vào đúng thư mục data tương đối của ứng dụng để phục vụ quá trình Astro build tĩnh
+RUN mkdir -p demos/simple/data && cp demos/simple/data.db demos/simple/data/data.db
+RUN mkdir -p demos/simple/data/uploads && (cp -r demos/simple/uploads/* demos/simple/data/uploads/ || true)
+
 RUN pnpm build && pnpm --filter emdash-demo build
 
 # Đóng gói độc lập demo simple sang thư mục /deploy
@@ -34,6 +38,7 @@ RUN pnpm --filter emdash-demo deploy /deploy --prod --legacy
 # Sao chép các tệp cần thiết cho runtime
 RUN cp -r /app/demos/simple/dist /deploy/dist
 RUN cp -r /app/demos/simple/seed /deploy/seed
+RUN cp -r /app/demos/simple/data /deploy/data
 RUN cp /app/demos/simple/astro.config.mjs /deploy/astro.config.mjs
 
 # ---- Môi trường Runtime ----
