@@ -23,6 +23,9 @@ RUN sed -i 's|directory: "./uploads"|directory: "./data/uploads"|' demos/simple/
 RUN mkdir -p demos/simple/data && cp demos/simple/data.db demos/simple/data/data.db
 RUN mkdir -p demos/simple/data/uploads && (cp -r demos/simple/uploads/* demos/simple/data/uploads/ || true)
 
+# Tăng giới hạn bộ nhớ cho Node.js để tránh lỗi "JavaScript heap out of memory" khi build và deploy monorepo
+ENV NODE_OPTIONS="--max-old-space-size=4096"
+
 RUN pnpm build && pnpm --filter emdash-demo build
 
 # Đóng gói độc lập demo simple sang thư mục /deploy
