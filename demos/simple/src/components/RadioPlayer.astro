@@ -244,37 +244,19 @@ const defaultTrack = playlist.length > 0 ? playlist[0] : {
 					</div>
 				</div>
  
-				<div class="playlist-scroll-container">
+				<div class="playlist-scroll-container" id="playlist-scroll-container">
 					<!-- Thông báo nếu không có phát thanh trong mục chọn -->
 					<p id="empty-playlist-msg" class="empty-playlist-msg">
 						Không có phát thanh nào thuộc chuyên mục này.
 					</p>
  
-					<ul id="playlist">
-						{playlist.map((track, index) => {
-							// Định dạng số thứ tự dạng hai chữ số (01, 02...)
-							const trackNum = String(index + 1).padStart(2, '0');
-							// Rút gọn tiêu đề hiển thị trong danh sách phát cho gọn gàng và đẹp
-							let displayName = track.title;
-							displayName = displayName.replace(/\[\d{2}-\d{2}-\d{4}\]/g, ''); // Xóa [DD-MM-YYYY]
-							displayName = displayName.replace(/Phát thanh Minh Huệ:\s*/g, '');
-							displayName = displayName.replace(/Phát thanh Minh Huệ\s*\(.*?\):\s*/g, '');
-							displayName = displayName.trim();
- 
-							return (
-								<li 
-									data-url={track.url} 
-									data-title={track.title} 
-									data-category={track.category} 
-									class={index === 0 ? "active" : ""}
-								>
-									<span class="track-number">{trackNum}</span>
-									<span class="track-name" title={track.title}>{displayName}</span>
-								</li>
-							);
-						})}
-					</ul>
+					<!-- Virtual scrolling: chỉ render các item hiển thị -->
+					<div id="playlist-virtual-spacer" style="position:relative;">
+						<ul id="playlist"></ul>
+					</div>
 				</div>
+				<!-- Truyền dữ liệu playlist qua JSON thay vì render 3441 DOM nodes -->
+				<script id="playlist-data" type="application/json" set:html={JSON.stringify(playlist)} />
 			</div>
 		</div>
 	</div>
@@ -285,17 +267,17 @@ const defaultTrack = playlist.length > 0 ? playlist[0] : {
 		const audio = document.getElementById('audio-player') as HTMLAudioElement;
 		const currentTrackTitle = document.getElementById('current-track-title');
 		const playlistContainer = document.getElementById('playlist');
+		const scrollContainer = document.getElementById('playlist-scroll-container');
+		const virtualSpacer = document.getElementById('playlist-virtual-spacer');
 		const revertButton = document.getElementById('revert-playlist');
 		const randomButton = document.getElementById('random-playlist');
 		
-		// Selector cho bộ lọc chuyên mục
 		const categoriesToggle = document.getElementById('categories-toggle');
 		const categoriesDropdown = document.getElementById('categories-dropdown');
 		const selectedCategoryText = document.getElementById('selected-category-text');
 		const emptyPlaylistMsg = document.getElementById('empty-playlist-msg');
 		const dropdownItems = categoriesDropdown ? Array.from(categoriesDropdown.querySelectorAll('.sub-category-nav-item')) : [];
 
-		// Custom Player Controls
 		const playBtn = document.getElementById('custom-play-btn');
 		const playIcon = document.getElementById('play-icon');
 		const pauseIcon = document.getElementById('pause-icon');
@@ -309,464 +291,297 @@ const defaultTrack = playlist.length > 0 ? playlist[0] : {
 		const statusDot = document.getElementById('player-status-dot');
 		const statusText = document.getElementById('player-status-text');
 
-		// Bộ hẹn giờ tắt (Sleep Timer)
 		const sleepBtn = document.getElementById('custom-sleep-btn');
 		const sleepBtnText = document.getElementById('sleep-btn-text');
 		const sleepDropdown = document.getElementById('sleep-timer-dropdown');
 		const sleepItems = sleepDropdown ? Array.from(sleepDropdown.querySelectorAll('li')) : [];
 
-		if (!audio || !currentTrackTitle || !playlistContainer) return;
+		if (!audio || !currentTrackTitle || !playlistContainer || !scrollContainer || !virtualSpacer) return;
 
-		// Hỗ trợ tốc độ phát
+		// ===== VIRTUAL SCROLLING ENGINE =====
+		const ITEM_HEIGHT = 52; // px per playlist item (padding + gap)
+		const BUFFER = 10; // extra items above/below viewport
+		const allTracks: {title:string; url:string; category:string}[] = JSON.parse(
+			document.getElementById('playlist-data')!.textContent!
+		);
+		let visibleTracks = allTracks.map((t, i) => ({...t, originalIndex: i}));
+		let activeTrackUrl = allTracks[0]?.url || '';
+
+		function cleanTitle(title: string) {
+			return title.replace(/\[\d{2}-\d{2}-\d{4}\]/g, '')
+				.replace(/Phát thanh Minh Huệ:\s*/g, '')
+				.replace(/Phát thanh Minh Huệ\s*\(.*?\):\s*/g, '')
+				.trim();
+		}
+
+		let lastRenderStart = -1, lastRenderEnd = -1;
+		function renderVirtualList() {
+			const scrollTop = scrollContainer.scrollTop;
+			const viewHeight = scrollContainer.clientHeight;
+			const totalHeight = visibleTracks.length * ITEM_HEIGHT;
+			virtualSpacer.style.height = totalHeight + 'px';
+
+			const startIdx = Math.max(0, Math.floor(scrollTop / ITEM_HEIGHT) - BUFFER);
+			const endIdx = Math.min(visibleTracks.length, Math.ceil((scrollTop + viewHeight) / ITEM_HEIGHT) + BUFFER);
+
+			if (startIdx === lastRenderStart && endIdx === lastRenderEnd) return;
+			lastRenderStart = startIdx;
+			lastRenderEnd = endIdx;
+
+			let html = '';
+			for (let i = startIdx; i < endIdx; i++) {
+				const t = visibleTracks[i];
+				const num = String(t.originalIndex + 1).padStart(2, '0');
+				const isActive = t.url === activeTrackUrl;
+				html += `<li data-idx="${i}" style="position:absolute;top:${i * ITEM_HEIGHT}px;left:0;right:0;height:${ITEM_HEIGHT - 8}px;" class="${isActive ? 'active' : ''}"><span class="track-number">${num}</span><span class="track-name" title="${t.title.replace(/"/g, '&quot;')}">${cleanTitle(t.title)}</span></li>`;
+			}
+			playlistContainer.innerHTML = html;
+		}
+
+		let scrollRaf = 0;
+		scrollContainer.addEventListener('scroll', () => {
+			if (!scrollRaf) scrollRaf = requestAnimationFrame(() => { renderVirtualList(); scrollRaf = 0; });
+		}, {passive: true});
+
+		renderVirtualList();
+
+		function scrollToTrack(trackUrl: string) {
+			const idx = visibleTracks.findIndex(t => t.url === trackUrl);
+			if (idx >= 0) {
+				const targetTop = idx * ITEM_HEIGHT - scrollContainer.clientHeight / 2 + ITEM_HEIGHT / 2;
+				scrollContainer.scrollTop = Math.max(0, targetTop);
+			}
+		}
+
+		// Playlist click delegation (virtual items)
+		playlistContainer.addEventListener('click', (e) => {
+			const li = (e.target as HTMLElement).closest('li');
+			if (!li) return;
+			const idx = parseInt(li.getAttribute('data-idx')!, 10);
+			if (isNaN(idx)) return;
+			playTrackByIndex(idx);
+		});
+
+		// ===== SPEED CONTROL =====
 		const speeds = [1.0, 1.25, 1.5, 2.0, 0.75];
 		let currentSpeedIndex = 0;
 
 		if (speedBtn && speedText) {
 			speedBtn.addEventListener('click', () => {
 				currentSpeedIndex = (currentSpeedIndex + 1) % speeds.length;
-				const newSpeed = speeds[currentSpeedIndex];
-				audio.playbackRate = newSpeed;
-				speedText.textContent = `${newSpeed.toFixed(2).replace('.00', '')}x`;
+				audio.playbackRate = speeds[currentSpeedIndex];
+				speedText.textContent = `${speeds[currentSpeedIndex]}x`;
 			});
 		}
 
-		// Logic Hẹn giờ tắt (Sleep Timer) thông minh
+		// ===== SLEEP TIMER =====
 		let sleepTimerInterval: any = null;
-		let sleepTimeRemaining = 0; // tính bằng giây
+		let sleepTimeRemaining = 0;
 		let stopAtTrackEnd = false;
 
 		if (sleepBtn && sleepDropdown) {
-			sleepBtn.addEventListener('click', (e) => {
-				e.stopPropagation();
-				const isShow = sleepDropdown.style.display === 'block';
-				sleepDropdown.style.display = isShow ? 'none' : 'block';
-			});
-
-			document.addEventListener('click', () => {
-				sleepDropdown.style.display = 'none';
-			});
-
+			sleepBtn.addEventListener('click', (e) => { e.stopPropagation(); sleepDropdown.style.display = sleepDropdown.style.display === 'block' ? 'none' : 'block'; });
+			document.addEventListener('click', () => { sleepDropdown.style.display = 'none'; });
 			sleepItems.forEach((item) => {
 				item.addEventListener('click', (e) => {
 					e.stopPropagation();
 					const val = item.getAttribute('data-minutes');
 					sleepDropdown.style.display = 'none';
-					
-					// Dừng bộ hẹn giờ trước đó nếu có
-					if (sleepTimerInterval) {
-						clearInterval(sleepTimerInterval);
-						sleepTimerInterval = null;
-					}
+					if (sleepTimerInterval) { clearInterval(sleepTimerInterval); sleepTimerInterval = null; }
 					stopAtTrackEnd = false;
-
-					if (val === '0') {
-						sleepTimeRemaining = 0;
-						if (sleepBtnText) sleepBtnText.textContent = 'Hẹn giờ';
-						sleepBtn.classList.remove('active-timer');
-					} else if (val === 'end') {
-						stopAtTrackEnd = true;
-						if (sleepBtnText) sleepBtnText.textContent = 'Hết bài';
-						sleepBtn.classList.add('active-timer');
-					} else if (val) {
-						const minutes = parseInt(val, 10);
-						sleepTimeRemaining = minutes * 60;
-						sleepBtn.classList.add('active-timer');
-						
-						startSleepTimer();
-					}
+					if (val === '0') { sleepTimeRemaining = 0; if (sleepBtnText) sleepBtnText.textContent = 'Hẹn giờ'; sleepBtn.classList.remove('active-timer'); }
+					else if (val === 'end') { stopAtTrackEnd = true; if (sleepBtnText) sleepBtnText.textContent = 'Hết bài'; sleepBtn.classList.add('active-timer'); }
+					else if (val) { sleepTimeRemaining = parseInt(val, 10) * 60; sleepBtn.classList.add('active-timer'); startSleepTimer(); }
 				});
 			});
 		}
-
 		function startSleepTimer() {
 			updateSleepButtonText();
 			sleepTimerInterval = setInterval(() => {
-				if (sleepTimeRemaining <= 0) {
-					clearInterval(sleepTimerInterval);
-					sleepTimerInterval = null;
-					triggerSleepStop();
-				} else {
-					sleepTimeRemaining--;
-					updateSleepButtonText();
-				}
+				if (sleepTimeRemaining <= 0) { clearInterval(sleepTimerInterval); sleepTimerInterval = null; triggerSleepStop(); }
+				else { sleepTimeRemaining--; updateSleepButtonText(); }
 			}, 1000);
 		}
-
 		function updateSleepButtonText() {
 			if (!sleepBtnText) return;
-			const mins = Math.floor(sleepTimeRemaining / 60);
-			const secs = sleepTimeRemaining % 60;
-			sleepBtnText.textContent = `${String(mins).padStart(2, '0')}:${String(secs).padStart(2, '0')}`;
+			sleepBtnText.textContent = `${String(Math.floor(sleepTimeRemaining / 60)).padStart(2, '0')}:${String(sleepTimeRemaining % 60).padStart(2, '0')}`;
 		}
-
 		function triggerSleepStop() {
-			// Fade out âm lượng cực kỳ nhẹ nhàng trong 2 giây rồi pause để không làm giật mình khi đang ngủ
 			let vol = audio.volume;
-			const fadeInterval = setInterval(() => {
-				if (vol > 0.05) {
-					vol -= 0.05;
-					audio.volume = Math.max(0, vol);
-				} else {
-					clearInterval(fadeInterval);
-					audio.pause();
-					audio.volume = 1.0; // Reset âm lượng về ban đầu
-					if (sleepBtnText) sleepBtnText.textContent = 'Hẹn giờ';
-					sleepBtn?.classList.remove('active-timer');
-				}
+			const fade = setInterval(() => {
+				if (vol > 0.05) { vol -= 0.05; audio.volume = Math.max(0, vol); }
+				else { clearInterval(fade); audio.pause(); audio.volume = 1.0; if (sleepBtnText) sleepBtnText.textContent = 'Hẹn giờ'; sleepBtn?.classList.remove('active-timer'); }
 			}, 100);
 		}
 
-		// Tua lùi 10s và tua đi 30s
-		if (rewindBtn) {
-			rewindBtn.addEventListener('click', () => {
-				audio.currentTime = Math.max(0, audio.currentTime - 10);
-			});
-		}
-		if (forwardBtn) {
-			forwardBtn.addEventListener('click', () => {
-				audio.currentTime = Math.min(audio.duration || 0, audio.currentTime + 30);
-			});
-		}
+		// ===== PLAYER CONTROLS =====
+		if (rewindBtn) rewindBtn.addEventListener('click', () => { audio.currentTime = Math.max(0, audio.currentTime - 10); });
+		if (forwardBtn) forwardBtn.addEventListener('click', () => { audio.currentTime = Math.min(audio.duration || 0, audio.currentTime + 30); });
 
-		// Hàm định dạng thời gian (mm:ss)
-		const formatTime = (secs: number) => {
-			if (isNaN(secs)) return "00:00";
-			const minutes = Math.floor(secs / 60);
-			const seconds = Math.floor(secs % 60);
-			return `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
-		};
+		const formatTime = (secs: number) => isNaN(secs) ? "00:00" : `${String(Math.floor(secs / 60)).padStart(2, '0')}:${String(Math.floor(secs % 60)).padStart(2, '0')}`;
 
-		// Cập nhật trạng thái giao diện phát/tạm dừng
 		const updatePlayState = (isPlaying: boolean) => {
 			if (!playIcon || !pauseIcon || !statusDot || !statusText) return;
-			if (isPlaying) {
-				playIcon.style.display = 'none';
-				pauseIcon.style.display = 'block';
-				statusDot.classList.add('playing');
-				statusText.textContent = 'Đang phát';
-				playBtn?.classList.add('playing');
-			} else {
-				playIcon.style.display = 'block';
-				pauseIcon.style.display = 'none';
-				statusDot.classList.remove('playing');
-				statusText.textContent = 'Đang dừng';
-				playBtn?.classList.remove('playing');
-			}
+			playIcon.style.display = isPlaying ? 'none' : 'block';
+			pauseIcon.style.display = isPlaying ? 'block' : 'none';
+			statusDot.classList.toggle('playing', isPlaying);
+			statusText.textContent = isPlaying ? 'Đang phát' : 'Đang dừng';
+			playBtn?.classList.toggle('playing', isPlaying);
 		};
 
-		// Play / Pause toggle
-		if (playBtn) {
-			playBtn.addEventListener('click', () => {
-				if (audio.paused) {
-					audio.play().catch(err => console.log("Playback error", err));
-				} else {
-					audio.pause();
-				}
-			});
-		}
-
+		if (playBtn) playBtn.addEventListener('click', () => { audio.paused ? audio.play().catch(() => {}) : audio.pause(); });
 		audio.addEventListener('play', () => updatePlayState(true));
 		audio.addEventListener('pause', () => updatePlayState(false));
 
-		// Đồng bộ tiến trình thời gian
+		let isDraggingSlider = false;
 		audio.addEventListener('timeupdate', () => {
 			if (seekSlider && !isDraggingSlider) {
-				const duration = audio.duration || 0;
-				const currentTime = audio.currentTime || 0;
-				seekSlider.value = duration > 0 ? String((currentTime / duration) * 100) : "0";
-				
-				// Đổi màu nền background cho input range để tạo track fill tự nhiên
-				const percent = duration > 0 ? (currentTime / duration) * 100 : 0;
-				seekSlider.style.background = `linear-gradient(to right, var(--color-accent) ${percent}%, var(--color-border) ${percent}%)`;
+				const pct = audio.duration > 0 ? (audio.currentTime / audio.duration) * 100 : 0;
+				seekSlider.value = String(pct);
+				seekSlider.style.background = `linear-gradient(to right, var(--color-accent) ${pct}%, var(--color-border) ${pct}%)`;
 			}
-			if (timeCurrent) {
-				timeCurrent.textContent = formatTime(audio.currentTime);
-			}
+			if (timeCurrent) timeCurrent.textContent = formatTime(audio.currentTime);
 		});
-
-		// Khi load xong metadata
 		audio.addEventListener('loadedmetadata', () => {
-			if (timeDuration) {
-				timeDuration.textContent = formatTime(audio.duration);
-			}
-			if (seekSlider) {
-				seekSlider.style.background = `linear-gradient(to right, var(--color-accent) 0%, var(--color-border) 0%)`;
-			}
+			if (timeDuration) timeDuration.textContent = formatTime(audio.duration);
+			if (seekSlider) seekSlider.style.background = `linear-gradient(to right, var(--color-accent) 0%, var(--color-border) 0%)`;
 		});
-
-		// Kéo thanh trượt
-		let isDraggingSlider = false;
 		if (seekSlider) {
-			seekSlider.addEventListener('input', () => {
-				isDraggingSlider = true;
-				if (timeCurrent) {
-					const duration = audio.duration || 0;
-					const targetTime = (parseFloat(seekSlider.value) / 100) * duration;
-					timeCurrent.textContent = formatTime(targetTime);
-				}
-			});
-
-			seekSlider.addEventListener('change', () => {
-				isDraggingSlider = false;
-				const duration = audio.duration || 0;
-				audio.currentTime = (parseFloat(seekSlider.value) / 100) * duration;
-			});
+			seekSlider.addEventListener('input', () => { isDraggingSlider = true; if (timeCurrent) timeCurrent.textContent = formatTime((parseFloat(seekSlider.value) / 100) * (audio.duration || 0)); });
+			seekSlider.addEventListener('change', () => { isDraggingSlider = false; audio.currentTime = (parseFloat(seekSlider.value) / 100) * (audio.duration || 0); });
 		}
 
-		// Khôi phục trạng thái phát nhạc từ localStorage
+		// ===== PLAY TRACK BY INDEX (virtual) =====
+		function playTrackByIndex(idx: number) {
+			const t = visibleTracks[idx];
+			if (!t) return;
+			audio.src = `/api/audio-proxy?url=${encodeURIComponent(t.url)}`;
+			audio.playbackRate = speeds[currentSpeedIndex];
+			audio.play().catch(() => {});
+			activeTrackUrl = t.url;
+			currentTrackTitle!.textContent = t.title;
+			lastRenderStart = -1; // force re-render
+			renderVirtualList();
+		}
+
+		// ===== RESTORE STATE =====
 		const savedStateStr = localStorage.getItem('minhhue_radio_state');
 		if (savedStateStr) {
 			try {
-				const savedState = JSON.parse(savedStateStr);
-				if (savedState.url && savedState.title) {
-					audio.src = `/api/audio-proxy?url=${encodeURIComponent(savedState.url)}`;
-					currentTrackTitle.textContent = savedState.title;
-					
-					// Đặt lại tốc độ hiện tại nếu có lưu
+				const s = JSON.parse(savedStateStr);
+				if (s.url && s.title) {
+					audio.src = `/api/audio-proxy?url=${encodeURIComponent(s.url)}`;
+					currentTrackTitle.textContent = s.title;
+					activeTrackUrl = s.url;
 					audio.playbackRate = speeds[currentSpeedIndex];
-					
-					const setSavedTime = () => {
-						if (savedState.time) {
-							audio.currentTime = savedState.time;
-						}
-						if (timeDuration) {
-							timeDuration.textContent = formatTime(audio.duration);
-						}
-						audio.removeEventListener('loadedmetadata', setSavedTime);
-					};
+					const setSavedTime = () => { if (s.time) audio.currentTime = s.time; if (timeDuration) timeDuration.textContent = formatTime(audio.duration); audio.removeEventListener('loadedmetadata', setSavedTime); };
 					audio.addEventListener('loadedmetadata', setSavedTime);
-
-					// Đánh dấu active trên danh sách
-					const playlistItemsForRestoration = Array.from(playlistContainer.querySelectorAll('li'));
-					playlistItemsForRestoration.forEach(i => i.classList.remove('active'));
-					const targetItem = playlistItemsForRestoration.find(i => i.getAttribute('data-url') === savedState.url);
-					if (targetItem) {
-						targetItem.classList.add('active');
-						setTimeout(() => targetItem.scrollIntoView({ behavior: 'smooth', block: 'center' }), 800);
-					}
+					lastRenderStart = -1;
+					renderVirtualList();
+					setTimeout(() => scrollToTrack(s.url), 300);
 				}
-			} catch (e) {
-				console.error("Failed to parse saved state", e);
-			}
+			} catch (e) {}
 		}
 
-		// Lưu trạng thái phát nhạc định kỳ (2s / lần)
+		// ===== SAVE STATE (throttled) =====
 		let lastSaveTime = 0;
-		const saveState = () => {
-			const activeItem = playlistContainer.querySelector('li.active');
-			if (activeItem) {
-				const url = activeItem.getAttribute('data-url');
-				const title = activeItem.getAttribute('data-title');
-				if (url && title) {
-					localStorage.setItem('minhhue_radio_state', JSON.stringify({
-						url,
-						title,
-						time: audio.currentTime
-					}));
-				}
-			}
-		};
-
 		audio.addEventListener('timeupdate', () => {
-			if (Date.now() - lastSaveTime > 2000) {
-				saveState();
+			if (Date.now() - lastSaveTime > 5000) {
 				lastSaveTime = Date.now();
+				const t = visibleTracks.find(t => t.url === activeTrackUrl);
+				if (t) localStorage.setItem('minhhue_radio_state', JSON.stringify({ url: t.url, title: t.title, time: audio.currentTime }));
 			}
 		});
 
-		// Tự động kiểm tra tham số filter từ URL khi load trang để kích hoạt lọc danh mục
-		const urlParams = new URLSearchParams(window.location.search);
-		const filterParam = urlParams.get('filter');
+		// ===== CATEGORY FILTER =====
+		let currentFilter = 'all';
+		function applyFilter(filter: string) {
+			currentFilter = filter;
+			if (filter === 'all') {
+				visibleTracks = allTracks.map((t, i) => ({...t, originalIndex: i}));
+			} else {
+				visibleTracks = allTracks.reduce((acc, t, i) => {
+					let match = t.category === filter;
+					if (!match && filter === 'ngay-phap-luan-dai-phap-the-gioi-radio') match = t.category?.startsWith('ngay-phap-luan-dai-phap-the-gioi');
+					if (!match && filter === 'phap-hoi-trung-quoc-radio') match = t.category?.startsWith('phap-hoi-trung-quoc');
+					if (match) acc.push({...t, originalIndex: i});
+					return acc;
+				}, [] as typeof visibleTracks);
+			}
+			if (emptyPlaylistMsg) emptyPlaylistMsg.style.display = visibleTracks.length === 0 ? 'block' : 'none';
+			scrollContainer.scrollTop = 0;
+			lastRenderStart = -1;
+			renderVirtualList();
+		}
+
+		// URL filter param
+		const filterParam = new URLSearchParams(window.location.search).get('filter');
 		if (filterParam) {
 			const targetItem = dropdownItems.find(item => item.getAttribute('data-filter') === filterParam);
-			if (targetItem) {
-				setTimeout(() => {
-					(targetItem as HTMLElement).click();
-				}, 150);
-			}
+			if (targetItem) setTimeout(() => (targetItem as HTMLElement).click(), 100);
 		}
 
-		let playlistItems = Array.from(playlistContainer.querySelectorAll('li'));
-		let visibleItems = [...playlistItems];
-		let isRandomMode = false;
-
-		const attachClickHandlers = () => {
-			playlistItems.forEach((item) => {
-				item.removeEventListener('click', handleTrackClick);
-				item.addEventListener('click', handleTrackClick);
-			});
-		};
-
-		function handleTrackClick(this: HTMLLIElement) {
-			playTrack(this);
-		}
-
-		function playTrack(item: HTMLLIElement) {
-			const url = item.getAttribute('data-url');
-			const title = item.getAttribute('data-title');
-			
-			if (url && title) {
-				audio.src = `/api/audio-proxy?url=${encodeURIComponent(url)}`;
-				audio.playbackRate = speeds[currentSpeedIndex]; // Duy trì tốc độ phát đã chọn
-				audio.play().catch(err => console.log("Playback error", err));
-				
-				playlistItems.forEach(i => i.classList.remove('active'));
-				item.classList.add('active');
-				
-				currentTrackTitle!.textContent = title;
-				item.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-			}
-		}
-
-		attachClickHandlers();
-
-		// Xử lý bộ lọc chuyên mục (Dropdown)
 		if (categoriesToggle && categoriesDropdown) {
-			categoriesToggle.addEventListener('click', (e) => {
-				e.stopPropagation();
-				const isShow = categoriesDropdown.style.display === 'block';
-				categoriesDropdown.style.display = isShow ? 'none' : 'block';
-				categoriesToggle.classList.toggle('open');
-			});
-
-			document.addEventListener('click', () => {
-				categoriesDropdown.style.display = 'none';
-				categoriesToggle.classList.remove('open');
-			});
-
+			categoriesToggle.addEventListener('click', (e) => { e.stopPropagation(); categoriesDropdown.style.display = categoriesDropdown.style.display === 'block' ? 'none' : 'block'; categoriesToggle.classList.toggle('open'); });
+			document.addEventListener('click', () => { categoriesDropdown.style.display = 'none'; categoriesToggle.classList.remove('open'); });
 			dropdownItems.forEach((item) => {
 				const link = item.querySelector('a');
-				if (link) {
-					link.addEventListener('click', (e) => {
-						e.preventDefault();
-					});
-				}
-
+				if (link) link.addEventListener('click', (e) => e.preventDefault());
 				item.addEventListener('click', function(e) {
 					e.stopPropagation();
-					const filter = item.getAttribute('data-filter');
-					const categoryText = item.querySelector('a')?.textContent;
-
+					const filter = item.getAttribute('data-filter') || 'all';
 					dropdownItems.forEach(i => i.classList.remove('active-category'));
 					item.classList.add('active-category');
-
-					if (selectedCategoryText && categoryText) {
-						selectedCategoryText.textContent = categoryText;
-					}
-
-					playlistItems.forEach((li) => {
-						const trackCategory = li.getAttribute('data-category');
-						let isMatch = false;
-
-						if (filter === 'all') {
-							isMatch = true;
-						} else if (filter === 'ngay-phap-luan-dai-phap-the-gioi-radio') {
-							isMatch = trackCategory === filter || (trackCategory && trackCategory.startsWith('ngay-phap-luan-dai-phap-the-gioi'));
-						} else if (filter === 'phap-hoi-trung-quoc-radio') {
-							isMatch = trackCategory === filter || (trackCategory && trackCategory.startsWith('phap-hoi-trung-quoc'));
-						} else {
-							isMatch = trackCategory === filter;
-						}
-
-						if (isMatch) {
-							li.style.display = 'flex';
-						} else {
-							li.style.display = 'none';
-						}
-					});
-
-					visibleItems = playlistItems.filter(li => li.style.display !== 'none');
-
-					if (emptyPlaylistMsg) {
-						if (visibleItems.length === 0) {
-							emptyPlaylistMsg.style.display = 'block';
-						} else {
-							emptyPlaylistMsg.style.display = 'none';
-						}
-					}
-
+					if (selectedCategoryText) selectedCategoryText.textContent = item.querySelector('a')?.textContent || '';
+					applyFilter(filter);
 					categoriesDropdown.style.display = 'none';
 					categoriesToggle.classList.remove('open');
 				});
 			});
 		}
 
-		// Nút đảo thứ tự phát
+		// ===== REVERT & RANDOM =====
+		let isRandomMode = false;
 		if (revertButton) {
 			revertButton.addEventListener('click', () => {
-				visibleItems.reverse();
-				playlistContainer.innerHTML = '';
-				playlistItems.forEach(item => {
-					if (visibleItems.includes(item)) {
-						playlistContainer.appendChild(item);
-					} else {
-						playlistContainer.appendChild(item);
-					}
-				});
-				attachClickHandlers();
+				visibleTracks.reverse();
+				scrollContainer.scrollTop = 0;
+				lastRenderStart = -1;
+				renderVirtualList();
 				revertButton.classList.add('action-active');
 				setTimeout(() => revertButton.classList.remove('action-active'), 300);
 			});
 		}
-
-		// Nút phát ngẫu nhiên
 		if (randomButton) {
 			randomButton.addEventListener('click', () => {
 				isRandomMode = !isRandomMode;
-				if (isRandomMode) {
-					randomButton.classList.add('active-mode');
-					if (visibleItems.length > 0) {
-						const randomIndex = Math.floor(Math.random() * visibleItems.length);
-						playTrack(visibleItems[randomIndex]);
-					}
-				} else {
-					randomButton.classList.remove('active-mode');
+				randomButton.classList.toggle('active-mode', isRandomMode);
+				if (isRandomMode && visibleTracks.length > 0) {
+					playTrackByIndex(Math.floor(Math.random() * visibleTracks.length));
 				}
 			});
 		}
 
-		// Tự động chuyển bài khi kết thúc
+		// ===== AUTO-NEXT =====
 		audio.addEventListener('ended', () => {
-			if (stopAtTrackEnd) {
-				audio.pause();
-				stopAtTrackEnd = false;
-				if (sleepBtnText) sleepBtnText.textContent = 'Hẹn giờ';
-				sleepBtn?.classList.remove('active-timer');
-				return; // Dừng hẳn, không tự chuyển bài tiếp
-			}
-
-			if (isRandomMode) {
-				if (visibleItems.length > 0) {
-					const randomIndex = Math.floor(Math.random() * visibleItems.length);
-					playTrack(visibleItems[randomIndex]);
-				}
-			} else {
-				const activeItem = playlistContainer.querySelector('li.active') as HTMLLIElement;
-				if (activeItem) {
-					const currentVisibleIndex = visibleItems.indexOf(activeItem);
-					if (currentVisibleIndex !== -1 && currentVisibleIndex < visibleItems.length - 1) {
-						playTrack(visibleItems[currentVisibleIndex + 1]);
-					} else if (visibleItems.length > 0) {
-						playTrack(visibleItems[0]);
-					}
-				}
-			}
+			if (stopAtTrackEnd) { audio.pause(); stopAtTrackEnd = false; if (sleepBtnText) sleepBtnText.textContent = 'Hẹn giờ'; sleepBtn?.classList.remove('active-timer'); return; }
+			if (isRandomMode) { playTrackByIndex(Math.floor(Math.random() * visibleTracks.length)); return; }
+			const idx = visibleTracks.findIndex(t => t.url === activeTrackUrl);
+			if (idx >= 0 && idx < visibleTracks.length - 1) playTrackByIndex(idx + 1);
+			else if (visibleTracks.length > 0) playTrackByIndex(0);
 		});
 
-		// Lắng nghe sự kiện click từ các link menu chuyên mục trên Header
+		// ===== HEADER MENU LINKS =====
 		document.querySelectorAll('.dropdown-menu-item').forEach(link => {
 			link.addEventListener('click', (e) => {
-				const currentPath = window.location.pathname;
-				if (currentPath === '/' || currentPath === '' || currentPath === '/index.html') {
+				if (['/', '', '/index.html'].includes(window.location.pathname)) {
 					e.preventDefault();
 					const url = new URL((link as HTMLAnchorElement).href);
 					const filterVal = url.searchParams.get('filter');
 					if (filterVal) {
 						window.history.pushState({}, '', url.pathname + url.search);
 						const targetItem = dropdownItems.find(item => item.getAttribute('data-filter') === filterVal);
-						if (targetItem) {
-							(targetItem as HTMLElement).click();
-						}
+						if (targetItem) (targetItem as HTMLElement).click();
 					}
 				}
 			});
@@ -803,7 +618,7 @@ const defaultTrack = playlist.length > 0 ? playlist[0] : {
 	.emdash-player-card-premium,
 	.emdash-playlist-card-premium {
 		position: relative;
-		background: rgba(255, 255, 255, 0.75); /* Trắng trong suốt */
+		background: rgba(255, 255, 255, 0.75);
 		backdrop-filter: blur(24px);
 		-webkit-backdrop-filter: blur(24px);
 		border: 1px solid rgba(255, 255, 255, 0.6);
@@ -811,8 +626,11 @@ const defaultTrack = playlist.length > 0 ? playlist[0] : {
 		padding: var(--spacing-8);
 		box-shadow: 0 20px 40px -10px rgba(0, 0, 0, 0.05), 0 0 40px rgba(0, 82, 163, 0.06);
 		overflow: hidden;
-		transition: all var(--transition-base);
-		color: #1e293b; /* Slate 800 */
+		/* Specific transitions instead of 'all' — reduces repaint scope */
+		transition: transform var(--transition-base), box-shadow var(--transition-base), border-color var(--transition-base);
+		color: #1e293b;
+		/* GPU layer promotion for iOS Safari */
+		transform: translate3d(0, 0, 0);
 	}
 
 	.emdash-player-card-premium:hover,
@@ -1177,13 +995,11 @@ const defaultTrack = playlist.length > 0 ? playlist[0] : {
 		position: absolute;
 		bottom: calc(100% + 8px);
 		right: 0;
-		background: rgba(255, 255, 255, 0.95);
+		background: #ffffff; /* Opaque — no need for expensive blur on dropdown */
 		border: 1px solid rgba(0, 0, 0, 0.05);
 		border-radius: var(--radius-sm);
 		box-shadow: 0 -10px 30px rgba(0, 0, 0, 0.08);
 		z-index: 30;
-		backdrop-filter: blur(16px);
-		-webkit-backdrop-filter: blur(16px);
 		width: 140px;
 		animation: slideUpTimer 0.25s cubic-bezier(0.16, 1, 0.3, 1);
 	}
@@ -1372,13 +1188,11 @@ const defaultTrack = playlist.length > 0 ? playlist[0] : {
 		top: calc(100% + 8px);
 		left: 0;
 		right: 0;
-		background: rgba(255, 255, 255, 0.95);
+		background: #ffffff; /* Opaque — eliminates expensive blur layer on iOS */
 		border: 1px solid rgba(0, 0, 0, 0.05);
 		border-radius: var(--radius-sm);
 		box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
 		z-index: 20;
-		backdrop-filter: blur(16px);
-		-webkit-backdrop-filter: blur(16px);
 		max-height: 280px;
 		overflow-y: auto;
 		animation: slideDown 0.25s cubic-bezier(0.16, 1, 0.3, 1);
@@ -1463,6 +1277,8 @@ const defaultTrack = playlist.length > 0 ? playlist[0] : {
 		overflow-y: auto;
 		padding-right: 8px;
 		flex: 1;
+		contain: layout style;
+		-webkit-overflow-scrolling: touch;
 	}
 
 	.playlist-scroll-container::-webkit-scrollbar {
@@ -1484,12 +1300,12 @@ const defaultTrack = playlist.length > 0 ? playlist[0] : {
 	}
 
 	#playlist {
-		display: flex;
-		flex-direction: column;
-		gap: 8px;
+		display: block;
 		padding: 0;
 		margin: 0;
 		list-style: none;
+		position: relative;
+		width: 100%;
 	}
 
 	#playlist li {
@@ -1504,8 +1320,7 @@ const defaultTrack = playlist.length > 0 ? playlist[0] : {
 		font-size: 13px;
 		font-weight: 500;
 		color: #475569;
-		transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
-		position: relative;
+		transition: background 0.15s ease, border-color 0.15s ease;
 		overflow: hidden;
 	}
 
@@ -1521,8 +1336,6 @@ const defaultTrack = playlist.length > 0 ? playlist[0] : {
 		background: #ffffff;
 		border-color: rgba(14, 165, 233, 0.15);
 		color: #0f172a;
-		transform: translateX(4px);
-		box-shadow: 0 4px 10px rgba(0,0,0,0.02);
 	}
 
 	.track-number {
@@ -1541,12 +1354,10 @@ const defaultTrack = playlist.length > 0 ? playlist[0] : {
 	}
 
 	#playlist li.active {
-		background: linear-gradient(90deg, rgba(255, 255, 255, 1), rgba(240, 249, 255, 0.8));
+		background: rgba(240, 249, 255, 0.9);
 		border-color: #bae6fd;
 		color: #1e3a8a;
 		font-weight: 700;
-		box-shadow: 0 4px 12px rgba(14, 165, 233, 0.1);
-		transform: scale(1.01);
 	}
 
 	#playlist li.active::before {
@@ -1564,28 +1375,20 @@ const defaultTrack = playlist.length > 0 ? playlist[0] : {
 		color: #0ea5e9;
 		margin-left: 8px;
 		display: inline-block;
-		animation: pulseActiveDot 1.5s infinite;
 		vertical-align: middle;
-	}
-
-	@keyframes pulseActiveDot {
-		0% { opacity: 0.2; transform: scale(0.8); }
-		50% { opacity: 1; transform: scale(1.2); text-shadow: 0 0 8px rgba(14,165,233,0.5); }
-		100% { opacity: 0.2; transform: scale(0.8); }
 	}
 
 	/* RESPONSIVE LAYOUT TỐI ƯU TUYỆT VỜI CHO MOBILE */
 	@media (max-width: 768px) {
-		/* Hợp nhất 2 card làm một bằng cách đưa glassmorphism lên container chính */
+		/* Hợp nhất 2 card làm một — dùng nền ĐỤC thay vì backdrop-filter để tránh lag iOS Safari */
 		.emdash-radio-layout-container {
-			background: rgba(255, 255, 255, 0.75); /* Trắng trong suốt */
-			backdrop-filter: blur(24px);
-			-webkit-backdrop-filter: blur(24px);
+			background: rgba(255, 255, 255, 0.97); /* Gần đục hoàn toàn — không cần blur */
+			/* KHÔNG dùng backdrop-filter trên mobile — thủ phạm gây lag chính */
 			border: 1px solid rgba(255, 255, 255, 0.6);
 			border-radius: 24px;
 			padding: var(--spacing-6);
 			box-shadow: 0 20px 40px -10px rgba(0, 0, 0, 0.05), 0 0 40px rgba(0, 82, 163, 0.06);
-			gap: 0; /* Gộp khít hai phần */
+			gap: 0;
 			margin-top: var(--spacing-8);
 			overflow: hidden;
 		}
@@ -1601,12 +1404,19 @@ const defaultTrack = playlist.length > 0 ? playlist[0] : {
 			padding: 0 !important;
 			border-radius: 0 !important;
 			transform: none !important;
+			will-change: auto !important;
 		}
 
 		/* Ẩn viền phát quang của card con để tránh trùng lặp viền */
 		.emdash-player-card-premium .radio-glow-border,
 		.emdash-playlist-card-premium .radio-glow-border {
 			display: none !important;
+		}
+
+		/* Tắt hiệu ứng blur nặng trên nút Play */
+		.custom-play-main-btn::before {
+			filter: none !important;
+			opacity: 0.2;
 		}
 
 		/* Vách chia đứt nét tinh tế giữa Trình phát nhạc và Danh sách phát */
@@ -1623,7 +1433,7 @@ const defaultTrack = playlist.length > 0 ? playlist[0] : {
 		.custom-center-controls {
 			gap: 12px;
 		}
-		
+
 		.custom-play-main-btn {
 			width: 52px;
 			height: 52px;
@@ -1640,6 +1450,62 @@ const defaultTrack = playlist.length > 0 ? playlist[0] : {
 
 		.current-track-title {
 			font-size: 18px;
+		}
+
+		/* Disable all infinite animations on mobile — saves battery & reduces jank */
+		.live-pulse,
+		.status-dot.playing,
+		.utility-btn.active-timer {
+			animation: none !important;
+		}
+		.live-pulse { opacity: 1; }
+		.status-dot.playing { background: #10b981; box-shadow: none; }
+
+		/* Remove hover transforms on mobile (no hover on touch) */
+		.emdash-player-card-premium:hover,
+		.emdash-playlist-card-premium:hover {
+			transform: none !important;
+			box-shadow: none !important;
+		}
+		.control-secondary-btn:hover {
+			transform: none;
+			box-shadow: none;
+		}
+
+		/* Touch-optimized: larger tap targets (min 44px per Apple HIG) */
+		.control-secondary-btn {
+			width: 48px;
+			height: 48px;
+		}
+		.custom-play-main-btn {
+			width: 56px;
+			height: 56px;
+		}
+		.utility-btn {
+			min-height: 36px;
+			padding: 8px 14px;
+		}
+		#playlist li {
+			min-height: 48px;
+			padding: 10px 12px;
+		}
+		.custom-seek-slider {
+			height: 8px;
+		}
+		.custom-seek-slider::-webkit-slider-thumb {
+			width: 22px;
+			height: 22px;
+			transform: scale(1);
+		}
+	}
+
+	/* Tắt tất cả animation infinite khi thiết bị yêu cầu giảm chuyển động */
+	@media (prefers-reduced-motion: reduce) {
+		.live-pulse,
+		.status-dot.playing,
+		#playlist li.active .track-name::after,
+		.utility-btn.active-timer {
+			animation: none !important;
 		}
 	}
 </style>

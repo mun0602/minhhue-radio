@@ -43,6 +43,10 @@ const siteTagline = "Trang phát thanh chia sẻ trải nghiệm tu luyện và 
 			display: flex;
 			flex-direction: column;
 		}
+		/* Hide heavy blur(120px) orbs on mobile — devastating for iOS Safari GPU */
+		.glow-orb {
+			display: none !important;
+		}
 	}
 
 	/* ============================================================================
@@ -85,6 +89,13 @@ const siteTagline = "Trang phát thanh chia sẻ trải nghiệm tu luyện và 
 		}
 		100% {
 			transform: translate(-20px, 20px) scale(0.92);
+		}
+	}
+
+	/* Hide glow orbs on mobile — blur(120px) + infinite animation kills performance */
+	@media (max-width: 768px) {
+		.glow-orb {
+			display: none !important;
 		}
 	}
 
