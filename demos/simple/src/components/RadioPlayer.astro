@@ -57,35 +57,58 @@ const defaultTrack = playlist.length > 0 ? playlist[0] : {
 					</div>
 				</div>
 
-				{/* 2. Hàng điều khiển tối giản (Controls) */}
+				{/* 2. Bộ điều khiển chính: Nút to rõ dễ chạm cho mobile */}
 				<div class="custom-controls-row">
-					{/* Điều chỉnh tốc độ */}
-					<button id="custom-speed-btn" class="custom-player-btn speed-btn" title="Tốc độ phát">
-						1.0x
-					</button>
-
 					<div class="custom-center-controls">
 						{/* Tua lùi 10s */}
 						<button id="custom-rewind-btn" class="custom-player-btn control-secondary-btn" title="Lùi 10 giây">
-							<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M16 14 12 10 16 6"/><path d="M12 14 8 10 12 6"/><path d="M20 18a8 8 0 1 0-8 8h1"/></svg>
+							<svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M16 14 12 10 16 6"/><path d="M12 14 8 10 12 6"/><path d="M20 18a8 8 0 1 0-8 8h1"/></svg>
 						</button>
 
 						{/* Nút Play/Pause chính */}
 						<button id="custom-play-btn" class="custom-play-main-btn" title="Phát / Tạm dừng">
-							<svg id="play-icon" xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
-							<svg id="pause-icon" xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="currentColor" style="display:none;"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></svg>
+							<svg id="play-icon" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
+							<svg id="pause-icon" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="currentColor" style="display:none;"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></svg>
 						</button>
 
 						{/* Tua đi 30s */}
 						<button id="custom-forward-btn" class="custom-player-btn control-secondary-btn" title="Tiến 30 giây">
-							<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M8 6l4 4-4 4"/><path d="M12 6l4 4-4 4"/><path d="M4 18a8 8 0 1 1 8 8h-1"/></svg>
+							<svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M8 6l4 4-4 4"/><path d="M12 6l4 4-4 4"/><path d="M4 18a8 8 0 1 1 8 8h-1"/></svg>
 						</button>
 					</div>
+				</div>
+
+				{/* 3. Hàng tiện ích phụ: Tốc độ, Hẹn giờ & Trạng thái */}
+				<div class="custom-utilities-row">
+					{/* Điều chỉnh tốc độ */}
+					<button id="custom-speed-btn" class="utility-btn speed-btn" title="Tốc độ phát">
+						<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 4px; vertical-align: middle;"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
+						<span id="speed-text" style="vertical-align: middle;">1.0x</span>
+					</button>
 
 					{/* Chỉ báo trạng thái thiền định */}
 					<div class="custom-status-indicator">
 						<span id="player-status-dot" class="status-dot"></span>
 						<span id="player-status-text" class="status-text">Đang dừng</span>
+					</div>
+
+					{/* Nút Hẹn giờ tắt (Sleep Timer) thông minh */}
+					<div class="sleep-timer-container">
+						<button id="custom-sleep-btn" class="utility-btn sleep-btn" title="Hẹn giờ tắt">
+							<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 4px; vertical-align: middle;"><path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"/></svg>
+							<span id="sleep-btn-text" style="vertical-align: middle;">Hẹn giờ</span>
+						</button>
+						{/* Dropdown chọn thời gian hẹn giờ */}
+						<div id="sleep-timer-dropdown" class="sleep-timer-dropdown" style="display: none;">
+							<ul>
+								<li data-minutes="0">Tắt hẹn giờ</li>
+								<li data-minutes="15">15 phút</li>
+								<li data-minutes="30">30 phút</li>
+								<li data-minutes="45">45 phút</li>
+								<li data-minutes="60">60 phút</li>
+								<li data-minutes="end">Hết bài</li>
+							</ul>
+						</div>
 					</div>
 				</div>
 			</div>
@@ -280,10 +303,17 @@ const defaultTrack = playlist.length > 0 ? playlist[0] : {
 		const timeCurrent = document.getElementById('custom-time-current');
 		const timeDuration = document.getElementById('custom-time-duration');
 		const speedBtn = document.getElementById('custom-speed-btn');
+		const speedText = document.getElementById('speed-text');
 		const rewindBtn = document.getElementById('custom-rewind-btn');
 		const forwardBtn = document.getElementById('custom-forward-btn');
 		const statusDot = document.getElementById('player-status-dot');
 		const statusText = document.getElementById('player-status-text');
+
+		// Bộ hẹn giờ tắt (Sleep Timer)
+		const sleepBtn = document.getElementById('custom-sleep-btn');
+		const sleepBtnText = document.getElementById('sleep-btn-text');
+		const sleepDropdown = document.getElementById('sleep-timer-dropdown');
+		const sleepItems = sleepDropdown ? Array.from(sleepDropdown.querySelectorAll('li')) : [];
 
 		if (!audio || !currentTrackTitle || !playlistContainer) return;
 
@@ -291,13 +321,99 @@ const defaultTrack = playlist.length > 0 ? playlist[0] : {
 		const speeds = [1.0, 1.25, 1.5, 2.0, 0.75];
 		let currentSpeedIndex = 0;
 
-		if (speedBtn) {
+		if (speedBtn && speedText) {
 			speedBtn.addEventListener('click', () => {
 				currentSpeedIndex = (currentSpeedIndex + 1) % speeds.length;
 				const newSpeed = speeds[currentSpeedIndex];
 				audio.playbackRate = newSpeed;
-				speedBtn.textContent = `${newSpeed.toFixed(2).replace('.00', '')}x`;
+				speedText.textContent = `${newSpeed.toFixed(2).replace('.00', '')}x`;
 			});
+		}
+
+		// Logic Hẹn giờ tắt (Sleep Timer) thông minh
+		let sleepTimerInterval: any = null;
+		let sleepTimeRemaining = 0; // tính bằng giây
+		let stopAtTrackEnd = false;
+
+		if (sleepBtn && sleepDropdown) {
+			sleepBtn.addEventListener('click', (e) => {
+				e.stopPropagation();
+				const isShow = sleepDropdown.style.display === 'block';
+				sleepDropdown.style.display = isShow ? 'none' : 'block';
+			});
+
+			document.addEventListener('click', () => {
+				sleepDropdown.style.display = 'none';
+			});
+
+			sleepItems.forEach((item) => {
+				item.addEventListener('click', (e) => {
+					e.stopPropagation();
+					const val = item.getAttribute('data-minutes');
+					sleepDropdown.style.display = 'none';
+					
+					// Dừng bộ hẹn giờ trước đó nếu có
+					if (sleepTimerInterval) {
+						clearInterval(sleepTimerInterval);
+						sleepTimerInterval = null;
+					}
+					stopAtTrackEnd = false;
+
+					if (val === '0') {
+						sleepTimeRemaining = 0;
+						if (sleepBtnText) sleepBtnText.textContent = 'Hẹn giờ';
+						sleepBtn.classList.remove('active-timer');
+					} else if (val === 'end') {
+						stopAtTrackEnd = true;
+						if (sleepBtnText) sleepBtnText.textContent = 'Hết bài';
+						sleepBtn.classList.add('active-timer');
+					} else if (val) {
+						const minutes = parseInt(val, 10);
+						sleepTimeRemaining = minutes * 60;
+						sleepBtn.classList.add('active-timer');
+						
+						startSleepTimer();
+					}
+				});
+			});
+		}
+
+		function startSleepTimer() {
+			updateSleepButtonText();
+			sleepTimerInterval = setInterval(() => {
+				if (sleepTimeRemaining <= 0) {
+					clearInterval(sleepTimerInterval);
+					sleepTimerInterval = null;
+					triggerSleepStop();
+				} else {
+					sleepTimeRemaining--;
+					updateSleepButtonText();
+				}
+			}, 1000);
+		}
+
+		function updateSleepButtonText() {
+			if (!sleepBtnText) return;
+			const mins = Math.floor(sleepTimeRemaining / 60);
+			const secs = sleepTimeRemaining % 60;
+			sleepBtnText.textContent = `${String(mins).padStart(2, '0')}:${String(secs).padStart(2, '0')}`;
+		}
+
+		function triggerSleepStop() {
+			// Fade out âm lượng cực kỳ nhẹ nhàng trong 2 giây rồi pause để không làm giật mình khi đang ngủ
+			let vol = audio.volume;
+			const fadeInterval = setInterval(() => {
+				if (vol > 0.05) {
+					vol -= 0.05;
+					audio.volume = Math.max(0, vol);
+				} else {
+					clearInterval(fadeInterval);
+					audio.pause();
+					audio.volume = 1.0; // Reset âm lượng về ban đầu
+					if (sleepBtnText) sleepBtnText.textContent = 'Hẹn giờ';
+					sleepBtn?.classList.remove('active-timer');
+				}
+			}, 100);
 		}
 
 		// Tua lùi 10s và tua đi 30s
@@ -611,6 +727,14 @@ const defaultTrack = playlist.length > 0 ? playlist[0] : {
 
 		// Tự động chuyển bài khi kết thúc
 		audio.addEventListener('ended', () => {
+			if (stopAtTrackEnd) {
+				audio.pause();
+				stopAtTrackEnd = false;
+				if (sleepBtnText) sleepBtnText.textContent = 'Hẹn giờ';
+				sleepBtn?.classList.remove('active-timer');
+				return; // Dừng hẳn, không tự chuyển bài tiếp
+			}
+
 			if (isRandomMode) {
 				if (visibleItems.length > 0) {
 					const randomIndex = Math.floor(Math.random() * visibleItems.length);
@@ -993,25 +1117,103 @@ const defaultTrack = playlist.length > 0 ? playlist[0] : {
 		gap: 20px;
 	}
 
-	/* Nút hiển thị Tốc độ */
-	.speed-btn {
-		font-family: var(--font-sans);
-		font-size: 12px;
-		font-weight: 800;
-		color: #64748b;
-		border: 1px solid rgba(0, 0, 0, 0.05);
-		padding: 6px 12px;
-		border-radius: 16px;
-		min-width: 54px;
-		text-align: center;
-		background: rgba(255, 255, 255, 0.6);
-		box-shadow: 0 2px 5px rgba(0,0,0,0.02);
+	/* Hàng tiện ích phụ: Tốc độ, Hẹn giờ & Trạng thái */
+	.custom-utilities-row {
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		gap: var(--spacing-4);
+		border-top: 1px solid rgba(0, 0, 0, 0.05);
+		padding-top: var(--spacing-4);
+		margin-top: var(--spacing-2);
 	}
 
-	.speed-btn:hover {
+	.utility-btn {
+		background: rgba(255, 255, 255, 0.6);
+		border: 1px solid rgba(0, 0, 0, 0.05);
+		color: #64748b;
+		padding: 6px 14px;
+		border-radius: 20px;
+		font-family: var(--font-sans);
+		font-size: 11px;
+		font-weight: 700;
+		cursor: pointer;
+		transition: all var(--transition-fast);
+		display: inline-flex;
+		align-items: center;
+		box-shadow: 0 2px 5px rgba(0,0,0,0.02);
+		text-transform: uppercase;
+		letter-spacing: 0.05em;
+		min-width: 72px;
+		justify-content: center;
+	}
+
+	.utility-btn:hover {
 		border-color: #0ea5e9;
 		color: #0ea5e9;
 		background: #ffffff;
+		transform: translateY(-1px);
+	}
+
+	.utility-btn.active-timer {
+		background: rgba(240, 249, 255, 0.8);
+		border-color: #0ea5e9;
+		color: #0ea5e9;
+		animation: pulseTimerBorder 2s infinite;
+	}
+
+	@keyframes pulseTimerBorder {
+		0% { box-shadow: 0 0 0 0 rgba(14, 165, 233, 0.2); }
+		70% { box-shadow: 0 0 0 4px rgba(14, 165, 233, 0); }
+		100% { box-shadow: 0 0 0 0 rgba(14, 165, 233, 0); }
+	}
+
+	/* Hẹn giờ tắt (Sleep Timer) Dropdown */
+	.sleep-timer-container {
+		position: relative;
+	}
+
+	.sleep-timer-dropdown {
+		position: absolute;
+		bottom: calc(100% + 8px);
+		right: 0;
+		background: rgba(255, 255, 255, 0.95);
+		border: 1px solid rgba(0, 0, 0, 0.05);
+		border-radius: var(--radius-sm);
+		box-shadow: 0 -10px 30px rgba(0, 0, 0, 0.08);
+		z-index: 30;
+		backdrop-filter: blur(16px);
+		-webkit-backdrop-filter: blur(16px);
+		width: 140px;
+		animation: slideUpTimer 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+	}
+
+	@keyframes slideUpTimer {
+		from { opacity: 0; transform: translateY(10px); }
+		to { opacity: 1; transform: translateY(0); }
+	}
+
+	.sleep-timer-dropdown ul {
+		list-style: none;
+		padding: 6px 0;
+		margin: 0;
+	}
+
+	.sleep-timer-dropdown li {
+		padding: 8px 16px;
+		font-family: var(--font-sans);
+		font-size: 12px;
+		font-weight: 600;
+		color: #475569;
+		cursor: pointer;
+		transition: all var(--transition-fast);
+		text-align: right;
+	}
+
+	.sleep-timer-dropdown li:hover {
+		background: rgba(240, 249, 255, 1);
+		color: #0ea5e9;
+		padding-right: 20px;
 	}
 
 	/* Chỉ báo trạng thái thiền định */
@@ -1023,8 +1225,6 @@ const defaultTrack = playlist.length > 0 ? playlist[0] : {
 		font-size: 11px;
 		font-weight: 700;
 		color: #94a3b8;
-		min-width: 76px;
-		justify-content: flex-end;
 		text-transform: uppercase;
 		letter-spacing: 0.05em;
 	}
