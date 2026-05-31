@@ -20,12 +20,12 @@ const defaultTrack = playlist.length > 0 ? playlist[0] : {
 <!-- Thư viện Plyr.css từ CDN (chỉ nạp cho component này) -->
 <link rel="stylesheet" href="https://cdn.plyr.io/3.7.8/plyr.css" />
 
-<div class="emdash-radio-card">
-	{/* Hiệu ứng phát quang nhẹ ở viền thẻ */}
-	<div class="radio-glow-border"></div>
+<div class="emdash-radio-layout-container">
+	{/* Khối bên trái: Trình phát nhạc chính */}
+	<div class="emdash-player-card-premium">
+		{/* Hiệu ứng phát quang nhẹ ở viền thẻ */}
+		<div class="radio-glow-border"></div>
 
-	<div class="radio-grid-layout-premium">
-		{/* Panel bên trái: Trình phát nhạc chính */}
 		<div class="radio-left-panel-premium">
 			{/* Tiêu đề & Trạng thái phát */}
 			<header class="radio-header">
@@ -52,8 +52,13 @@ const defaultTrack = playlist.length > 0 ? playlist[0] : {
 				</audio>
 			</div>
 		</div>
+	</div>
 
-		{/* Panel bên phải: Danh sách phát */}
+	{/* Khối bên phải: Danh sách phát */}
+	<div class="emdash-playlist-card-premium">
+		{/* Hiệu ứng phát quang nhẹ ở viền thẻ */}
+		<div class="radio-glow-border"></div>
+
 		<div class="radio-right-panel-premium">
 			<div class="playlist-section">
 				<div class="playlist-header">
@@ -177,13 +182,13 @@ const defaultTrack = playlist.length > 0 ? playlist[0] : {
 						</ul>
 					</div>
 				</div>
-
+ 
 				<div class="playlist-scroll-container">
 					<!-- Thông báo nếu không có phát thanh trong mục chọn -->
 					<p id="empty-playlist-msg" class="empty-playlist-msg">
 						Không có phát thanh nào thuộc chuyên mục này.
 					</p>
-
+ 
 					<ul id="playlist">
 						{playlist.map((track, index) => {
 							// Định dạng số thứ tự dạng hai chữ số (01, 02...)
@@ -194,7 +199,7 @@ const defaultTrack = playlist.length > 0 ? playlist[0] : {
 							displayName = displayName.replace(/Phát thanh Minh Huệ:\s*/g, '');
 							displayName = displayName.replace(/Phát thanh Minh Huệ\s*\(.*?\):\s*/g, '');
 							displayName = displayName.trim();
-
+ 
 							return (
 								<li 
 									data-url={track.url} 
@@ -517,16 +522,33 @@ const defaultTrack = playlist.length > 0 ? playlist[0] : {
 		});
 	});
 </script>
-
 <style>
 	/* ============================================================================
-	   CSS Phong cách Premium Emdash Prime - Trình phát Radio Minh Huệ
+	   CSS Giao diện Emdash Prime - Tách Card, Tối ưu hóa Responsive Tuyệt vời nhất
 	   ============================================================================ */
 	
-	.emdash-radio-card {
-		position: relative;
+	/* Layout Grid phóng khoáng ở ngoài, tách biệt 2 thẻ Card */
+	.emdash-radio-layout-container {
 		display: flex;
 		flex-direction: column;
+		gap: var(--spacing-6);
+		width: 100%;
+		margin-top: var(--spacing-4);
+	}
+
+	@media (min-width: 900px) {
+		.emdash-radio-layout-container {
+			display: grid;
+			grid-template-columns: 1.15fr 0.85fr;
+			gap: var(--spacing-6);
+			align-items: start;
+		}
+	}
+
+	/* Thiết kế 2 thẻ Card độc lập, kính mờ siêu cao cấp */
+	.emdash-player-card-premium,
+	.emdash-playlist-card-premium {
+		position: relative;
 		background: rgba(255, 255, 255, 0.75);
 		backdrop-filter: blur(20px);
 		-webkit-backdrop-filter: blur(20px);
@@ -536,15 +558,15 @@ const defaultTrack = playlist.length > 0 ? playlist[0] : {
 		box-shadow: var(--shadow-lg), var(--shadow-glow);
 		overflow: hidden;
 		transition: all var(--transition-base);
-		margin-top: var(--spacing-4);
 	}
 
-	.emdash-radio-card:hover {
+	.emdash-player-card-premium:hover,
+	.emdash-playlist-card-premium:hover {
 		transform: translateY(-2px);
 		box-shadow: var(--shadow-lg), 0 0 35px rgba(0, 82, 163, 0.12);
 	}
 
-	/* Hiệu ứng phát quang ở viền phong cách Emdash Prime - Tinh tế bớt sặc sỡ */
+	/* Hiệu ứng phát quang ở viền phong cách Emdash Prime cho từng card */
 	.radio-glow-border {
 		display: block;
 		position: absolute;
@@ -562,14 +584,6 @@ const defaultTrack = playlist.length > 0 ? playlist[0] : {
 		z-index: 2;
 	}
 
-	/* Layout Grid cho trình phát radio */
-	.radio-grid-layout-premium {
-		display: flex;
-		flex-direction: column;
-		gap: var(--spacing-6);
-		width: 100%;
-	}
-
 	.radio-left-panel-premium {
 		display: flex;
 		flex-direction: column;
@@ -581,15 +595,6 @@ const defaultTrack = playlist.length > 0 ? playlist[0] : {
 		display: flex;
 		flex-direction: column;
 		min-width: 0;
-	}
-
-	@media (min-width: 900px) {
-		.radio-grid-layout-premium {
-			display: grid;
-			grid-template-columns: 1.15fr 0.85fr;
-			gap: var(--spacing-8);
-			align-items: start;
-		}
 	}
 
 	/* Header trình phát */
@@ -623,18 +628,9 @@ const defaultTrack = playlist.length > 0 ? playlist[0] : {
 	}
 
 	@keyframes pulseIndicator {
-		0% {
-			transform: scale(0.95);
-			box-shadow: 0 0 0 0 rgba(32, 201, 151, 0.7);
-		}
-		70% {
-			transform: scale(1);
-			box-shadow: 0 0 0 5px rgba(32, 201, 151, 0);
-		}
-		100% {
-			transform: scale(0.95);
-			box-shadow: 0 0 0 0 rgba(32, 201, 151, 0);
-		}
+		0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(32, 201, 151, 0.7); }
+		70% { transform: scale(1); box-shadow: 0 0 0 5px rgba(32, 201, 151, 0); }
+		100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(32, 201, 151, 0); }
 	}
 
 	.radio-main-title {
@@ -687,151 +683,17 @@ const defaultTrack = playlist.length > 0 ? playlist[0] : {
 		margin-bottom: var(--spacing-4);
 	}
 
-	/* Nâng cấp CSS của thư viện Plyr theo phong cách Emdash Prime cực kỳ bóng bẩy */
+	/* PHỤC HỒI Y NGUYÊN CSS COMMIT ĐẦU TIÊN CỦA PLYR - SẠCH SẼ VÀ SIÊU TỰ NHIÊN */
 	:global(.plyr--audio) {
 		--plyr-color-main: var(--color-accent);
 		--plyr-audio-controls-background: transparent;
 		--plyr-audio-control-color: var(--color-text-secondary);
 		--plyr-audio-control-color-hover: #ffffff;
-		border: 1px solid rgba(255, 255, 255, 0.6) !important;
+		border: 1px solid var(--color-border) !important;
 		border-radius: var(--radius) !important;
-		padding: 20px !important;
+		padding: 14px 20px !important;
 		background: rgba(255, 255, 255, 0.8) !important;
 		box-shadow: var(--shadow-sm);
-	}
-
-	:global(.plyr__controls) {
-		display: flex !important;
-		flex-wrap: wrap !important;
-		align-items: center !important;
-		gap: 12px !important;
-		width: 100% !important;
-		background: transparent !important;
-		padding: 0 !important;
-	}
-
-	:global(.plyr__progress) {
-		flex: 1 1 auto !important;
-		min-width: 120px !important;
-	}
-
-	/* Thiết kế bố cục trình phát thích ứng (Responsive) - Tối ưu Mobile */
-	@media (max-width: 600px) {
-		.emdash-radio-card {
-			margin-top: 0;
-			height: 100%;
-			padding: var(--spacing-5);
-			border-radius: 12px;
-		}
-
-		.radio-grid-layout-premium {
-			height: 100%;
-			display: flex;
-			flex-direction: column;
-			gap: var(--spacing-4);
-		}
-
-		/* SỬA LỖI: Thêm flex-shrink: 0 để panel chứa tiêu đề và trình phát không bị co bóp, che khuất tiêu đề */
-		.radio-left-panel-premium {
-			flex-shrink: 0;
-			gap: var(--spacing-2);
-		}
-
-		.now-playing-box {
-			padding: var(--spacing-4);
-			margin-bottom: var(--spacing-3);
-		}
-
-		.current-track-title {
-			font-size: 15px; /* Giảm cỡ chữ chút cho sắc sảo trên mobile nhỏ */
-		}
-
-		.radio-right-panel-premium {
-			flex: 1;
-			display: flex;
-			flex-direction: column;
-			min-height: 0; /* Quan trọng để flex child có thể scroll nội dung dư thừa */
-		}
-
-		.playlist-section {
-			flex: 1;
-			display: flex;
-			flex-direction: column;
-			min-height: 0;
-		}
-
-		.playlist-scroll-container {
-			flex: 1;
-			max-height: none !important;
-			overflow-y: auto;
-			padding-bottom: 20px; /* Thêm khoảng trống nhỏ ở đáy */
-		}
-
-		:global(.plyr__controls) {
-			display: grid !important;
-			grid-template-columns: auto 1fr auto !important;
-			grid-template-rows: auto auto !important;
-			gap: 12px 8px !important;
-		}
-
-		/* Nút Play/Pause thiết kế tinh gọn hơn dùng gradient rực rỡ */
-		:global(.plyr__control[data-plyr="play"]),
-		:global(.plyr__control[data-plyr="pause"]) {
-			grid-column: 1 !important;
-			grid-row: 1 !important;
-			background: var(--gradient-premium) !important;
-			color: #ffffff !important;
-			border-radius: 50% !important;
-			width: 44px !important;
-			height: 44px !important;
-			display: flex !important;
-			align-items: center !important;
-			justify-content: center !important;
-			box-shadow: 0 4px 12px rgba(0, 102, 204, 0.3) !important;
-			border: none !important;
-			transition: transform 0.2s ease, opacity 0.2s ease !important;
-		}
-
-		:global(.plyr__control[data-plyr="play"]:hover),
-		:global(.plyr__control[data-plyr="pause"]:hover) {
-			transform: scale(1.05) !important;
-			opacity: 0.95 !important;
-		}
-
-		/* Chỉ báo thời gian */
-		:global(.plyr__time) {
-			grid-row: 1 !important;
-			align-self: center !important;
-			font-size: 12px !important;
-			font-family: var(--font-sans) !important;
-			color: var(--color-text-secondary) !important;
-		}
-
-		:global(.plyr__time--current) {
-			grid-column: 2 !important;
-			justify-self: start !important;
-		}
-
-		:global(.plyr__time--duration) {
-			grid-column: 3 !important;
-			justify-self: end !important;
-		}
-
-		/* Đẩy thanh tua thời gian xuống một dòng hoàn toàn riêng biệt trên mobile. */
-		:global(.plyr__progress) {
-			grid-column: 1 / -1 !important;
-			grid-row: 2 !important;
-			width: 100% !important;
-			margin: 0 !important;
-			padding: 8px 0 !important; /* Mở rộng vùng tương tác chạm */
-		}
-
-		/* Ẩn các nút điều khiển phụ trên điện thoại để đạt sự liền mạch, tối giản */
-		:global(.plyr__volume),
-		:global(.plyr__control[data-plyr="mute"]),
-		:global(.plyr__menu) {
-			display: none !important;
-		}
 	}
 
 	/* Danh sách phát nhạc */
@@ -893,12 +755,10 @@ const defaultTrack = playlist.length > 0 ? playlist[0] : {
 		opacity: 1;
 	}
 
-	/* Click micro-animations */
 	.action-active {
 		transform: scale(0.95);
 	}
 
-	/* Trạng thái ngẫu nhiên đang được kích hoạt */
 	.action-btn.active-mode {
 		background: var(--gradient-premium);
 		border-color: transparent;
@@ -906,7 +766,6 @@ const defaultTrack = playlist.length > 0 ? playlist[0] : {
 		box-shadow: 0 4px 10px rgba(0, 102, 204, 0.25);
 	}
 
-	/* CẤU TRÚC DROPDOWN CHUYÊN MỤC ĐỒNG BỘ 100% GỐC */
 	.categories-filter-wrapper {
 		position: relative;
 		margin-bottom: var(--spacing-3);
@@ -935,7 +794,6 @@ const defaultTrack = playlist.length > 0 ? playlist[0] : {
 		color: var(--color-text);
 	}
 
-	/* Biểu tượng mũi tên kéo xuống đồng bộ Minh Huệ */
 	.sub-categories-nav-icon {
 		display: inline-block;
 		transition: transform var(--transition-fast);
@@ -953,7 +811,6 @@ const defaultTrack = playlist.length > 0 ? playlist[0] : {
 		border-color: var(--color-accent);
 	}
 
-	/* Trình đơn chuyên mục đồng bộ class sub-categories-nav-items */
 	.sub-categories-nav-items {
 		position: absolute;
 		top: calc(100% + 6px);
@@ -971,7 +828,6 @@ const defaultTrack = playlist.length > 0 ? playlist[0] : {
 		animation: slideDown 0.25s cubic-bezier(0.16, 1, 0.3, 1);
 	}
 
-	/* Tùy chỉnh thanh cuộn cho dropdown chuyên mục */
 	.sub-categories-nav-items::-webkit-scrollbar {
 		width: 4px;
 	}
@@ -1002,10 +858,6 @@ const defaultTrack = playlist.length > 0 ? playlist[0] : {
 		transition: all var(--transition-fast);
 	}
 
-	.sub-category-nav-item div {
-		padding: 0;
-	}
-
 	.sub-category-nav-item a {
 		display: block;
 		padding: 10px 16px;
@@ -1034,7 +886,6 @@ const defaultTrack = playlist.length > 0 ? playlist[0] : {
 		font-weight: 700;
 	}
 
-	/* Thông báo danh sách phát rỗng */
 	.empty-playlist-msg {
 		display: none;
 		font-family: var(--font-sans);
@@ -1049,14 +900,12 @@ const defaultTrack = playlist.length > 0 ? playlist[0] : {
 		background: rgba(0, 0, 0, 0.005);
 	}
 
-	/* Vùng danh sách phát có thanh cuộn mượt */
 	.playlist-scroll-container {
-		max-height: 260px;
+		max-height: 320px;
 		overflow-y: auto;
 		padding-right: var(--spacing-2);
 	}
 
-	/* Tùy chỉnh thanh cuộn siêu thanh lịch */
 	.playlist-scroll-container::-webkit-scrollbar {
 		width: 4px;
 	}
@@ -1119,7 +968,6 @@ const defaultTrack = playlist.length > 0 ? playlist[0] : {
 		text-overflow: ellipsis;
 	}
 
-	/* Trạng thái bài hát active */
 	#playlist li.active {
 		background: var(--color-surface);
 		border-color: var(--color-accent);
@@ -1144,5 +992,33 @@ const defaultTrack = playlist.length > 0 ? playlist[0] : {
 		0% { opacity: 0.4; }
 		50% { opacity: 1; }
 		100% { opacity: 0.4; }
+	}
+
+	/* RESPONSIVE LAYOUT TỐI ƯU TUYỆT VỜI CHO MOBILE */
+	@media (max-width: 600px) {
+		.emdash-player-card-premium,
+		.emdash-playlist-card-premium {
+			padding: var(--spacing-5);
+			border-radius: 12px;
+		}
+
+		.emdash-radio-layout-container {
+			gap: var(--spacing-5);
+		}
+
+		/* Trên di động, cho phép playlist dài ra và cuộn mượt mà tự nhiên, 
+		   toàn bộ trang web có thể cuộn rất phóng khoáng */
+		.playlist-scroll-container {
+			max-height: 380px;
+		}
+
+		.now-playing-box {
+			padding: var(--spacing-5);
+			margin-bottom: var(--spacing-4);
+		}
+
+		.current-track-title {
+			font-size: 15px;
+		}
 	}
 </style>
