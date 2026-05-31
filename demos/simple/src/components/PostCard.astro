@@ -114,10 +114,10 @@ const formattedDate = date
 		border: 1px solid var(--color-border);
 		border-radius: var(--radius-lg);
 		padding: var(--spacing-5);
-		transition: all var(--transition-base);
+		/* Use specific transition props instead of 'all' to reduce repaint scope */
+		transition: transform var(--transition-base), box-shadow var(--transition-base), border-color var(--transition-base);
 		box-shadow: var(--shadow-sm);
-		backdrop-filter: blur(10px);
-		-webkit-backdrop-filter: blur(10px);
+		/* Removed backdrop-filter: blur(10px) — bg is opaque, blur is wasted GPU work */
 	}
 
 	.post-card:hover {

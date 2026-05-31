@@ -333,7 +333,7 @@ const defaultTrack = playlist.length > 0 ? playlist[0] : {
 				const t = visibleTracks[i];
 				const num = String(t.originalIndex + 1).padStart(2, '0');
 				const isActive = t.url === activeTrackUrl;
-				html += `<li data-idx="${i}" style="position:absolute;top:${i * ITEM_HEIGHT}px;left:0;right:0;height:${ITEM_HEIGHT - 8}px;" class="${isActive ? 'active' : ''}"><span class="track-number">${num}</span><span class="track-name" title="${t.title.replace(/"/g, '&quot;')}">${cleanTitle(t.title)}</span></li>`;
+				html += `<li data-idx="${i}" style="position:absolute;top:${i * ITEM_HEIGHT}px;left:0;right:0;height:${ITEM_HEIGHT}px;" class="${isActive ? 'active' : ''}"><span class="track-number">${num}</span><span class="track-name" title="${t.title.replace(/"/g, '&quot;')}">${cleanTitle(t.title)}</span></li>`;
 			}
 			playlistContainer.innerHTML = html;
 		}
@@ -588,7 +588,7 @@ const defaultTrack = playlist.length > 0 ? playlist[0] : {
 		});
 	});
 </script>
-<style>
+<style is:global>
 	/* ============================================================================
 	   CSS Giao diện Emdash Prime — "Taste Skill" Edition
 	   Dark Glassmorphism · Premium Animations · Typography Sang trọng
@@ -601,6 +601,7 @@ const defaultTrack = playlist.length > 0 ? playlist[0] : {
 		gap: var(--spacing-6);
 		width: 100%;
 		margin-top: var(--spacing-12);
+		box-sizing: border-box;
 	}
 
 	@media (min-width: 900px) {
@@ -613,31 +614,30 @@ const defaultTrack = playlist.length > 0 ? playlist[0] : {
 	}
 
 	/* ============================================================================
-	   Thiết kế 2 thẻ Card độc lập, kính mờ siêu cao cấp (Light Mode)
+	   Thiết kế thẻ Card độc lập, kính mờ siêu cao cấp (Glassmorphism)
 	   ============================================================================ */
 	.emdash-player-card-premium,
 	.emdash-playlist-card-premium {
 		position: relative;
-		background: rgba(255, 255, 255, 0.75);
-		backdrop-filter: blur(24px);
-		-webkit-backdrop-filter: blur(24px);
+		background: rgba(255, 255, 255, 0.92);
 		border: 1px solid rgba(255, 255, 255, 0.6);
 		border-radius: var(--radius-lg);
-		padding: var(--spacing-8);
+		padding: var(--spacing-6);
 		box-shadow: 0 20px 40px -10px rgba(0, 0, 0, 0.05), 0 0 40px rgba(0, 82, 163, 0.06);
 		overflow: hidden;
-		/* Specific transitions instead of 'all' — reduces repaint scope */
 		transition: transform var(--transition-base), box-shadow var(--transition-base), border-color var(--transition-base);
 		color: #1e293b;
-		/* GPU layer promotion for iOS Safari */
 		transform: translate3d(0, 0, 0);
 	}
 
-	.emdash-player-card-premium:hover,
-	.emdash-playlist-card-premium:hover {
-		transform: translateY(-4px);
-		box-shadow: 0 25px 50px -15px rgba(0, 0, 0, 0.08), 0 0 50px rgba(0, 82, 163, 0.1);
-		border-color: rgba(255, 255, 255, 0.9);
+	/* Chỉ kích hoạt hiệu ứng hover dịch chuyển trên Desktop để tránh lỗi Touch trên Mobile */
+	@media (hover: hover) {
+		.emdash-player-card-premium:hover,
+		.emdash-playlist-card-premium:hover {
+			transform: translateY(-4px);
+			box-shadow: 0 25px 50px -15px rgba(0, 0, 0, 0.08), 0 0 50px rgba(0, 82, 163, 0.1);
+			border-color: rgba(255, 255, 255, 0.9);
+		}
 	}
 
 	/* Hiệu ứng phát quang ở viền phong cách Emdash Prime cho từng card */
@@ -677,7 +677,7 @@ const defaultTrack = playlist.length > 0 ? playlist[0] : {
 	}
 
 	.radio-live-tag {
-		background: linear-gradient(135deg, #0ea5e9, #2563eb); /* Xanh dương cao cấp đồng bộ */
+		background: linear-gradient(135deg, #0ea5e9, #2563eb);
 		color: #ffffff;
 		font-size: 10px;
 		font-weight: 800;
@@ -719,7 +719,7 @@ const defaultTrack = playlist.length > 0 ? playlist[0] : {
 
 	/* Hộp hiển thị bài hát đang phát sang trọng */
 	.now-playing-box {
-		background: rgba(248, 250, 252, 0.6); /* Slate 50 trong suốt */
+		background: rgba(248, 250, 252, 0.6);
 		border-radius: var(--radius);
 		padding: var(--spacing-6);
 		border: 1px solid rgba(255, 255, 255, 0.8);
@@ -740,7 +740,7 @@ const defaultTrack = playlist.length > 0 ? playlist[0] : {
 	.now-playing-label {
 		display: block;
 		font-size: 11px;
-		color: #64748b; /* Slate 500 */
+		color: #64748b;
 		text-transform: uppercase;
 		font-weight: 700;
 		letter-spacing: 0.1em;
@@ -751,7 +751,7 @@ const defaultTrack = playlist.length > 0 ? playlist[0] : {
 		font-family: var(--font-serif);
 		font-size: 20px;
 		font-weight: 700;
-		color: #0f172a; /* Slate 900 */
+		color: #0f172a;
 		line-height: 1.4;
 		margin: 0;
 		display: -webkit-box;
@@ -786,7 +786,7 @@ const defaultTrack = playlist.length > 0 ? playlist[0] : {
 		width: 100%;
 		height: 6px;
 		border-radius: 3px;
-		background: rgba(148, 163, 184, 0.2); /* Slate 400 trong suốt */
+		background: rgba(148, 163, 184, 0.2);
 		outline: none;
 		cursor: pointer;
 		transition: height 0.2s ease;
@@ -797,21 +797,21 @@ const defaultTrack = playlist.length > 0 ? playlist[0] : {
 		height: 8px;
 	}
 
-	/* Webkit thumb (Chrome, Safari, Edge) */
+	/* Webkit thumb */
 	.custom-seek-slider::-webkit-slider-thumb {
 		-webkit-appearance: none;
 		appearance: none;
 		width: 16px;
 		height: 16px;
 		border-radius: 50%;
-		background: #0ea5e9; /* Sky 500 */
+		background: #0ea5e9;
 		box-shadow: 0 0 10px rgba(14, 165, 233, 0.4), inset 0 0 0 4px #ffffff;
 		transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-		transform: scale(0); /* Ẩn đi mặc định */
+		transform: scale(0);
 	}
 
 	.custom-seek-slider:hover::-webkit-slider-thumb {
-		transform: scale(1); /* Hiện lên khi hover */
+		transform: scale(1);
 	}
 
 	/* Firefox thumb */
@@ -848,12 +848,11 @@ const defaultTrack = playlist.length > 0 ? playlist[0] : {
 		gap: var(--spacing-4);
 	}
 
-	/* Nút chơi nhạc dạng tròn nổi bật (3D Premium) */
 	.custom-play-main-btn {
 		width: 60px;
 		height: 60px;
 		border-radius: 50%;
-		background: linear-gradient(135deg, #0ea5e9, #2563eb); /* Sky to Blue */
+		background: linear-gradient(135deg, #0ea5e9, #2563eb);
 		border: 1px solid rgba(255, 255, 255, 0.4);
 		color: #ffffff;
 		display: flex;
@@ -877,13 +876,15 @@ const defaultTrack = playlist.length > 0 ? playlist[0] : {
 		transition: opacity 0.3s ease;
 	}
 
-	.custom-play-main-btn:hover {
-		transform: scale(1.05) translateY(-2px);
-		box-shadow: 0 12px 25px rgba(37, 99, 235, 0.35), inset 0 2px 4px rgba(255,255,255,0.4);
-	}
-	
-	.custom-play-main-btn:hover::before {
-		opacity: 0.6;
+	@media (hover: hover) {
+		.custom-play-main-btn:hover {
+			transform: scale(1.05) translateY(-2px);
+			box-shadow: 0 12px 25px rgba(37, 99, 235, 0.35), inset 0 2px 4px rgba(255,255,255,0.4);
+		}
+		
+		.custom-play-main-btn:hover::before {
+			opacity: 0.6;
+		}
 	}
 
 	.custom-play-main-btn:active {
@@ -917,12 +918,14 @@ const defaultTrack = playlist.length > 0 ? playlist[0] : {
 		border: 1px solid rgba(0, 0, 0, 0.03);
 	}
 
-	.control-secondary-btn:hover {
-		color: #0ea5e9;
-		background: #ffffff;
-		border-color: rgba(14, 165, 233, 0.2);
-		transform: translateY(-2px);
-		box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+	@media (hover: hover) {
+		.control-secondary-btn:hover {
+			color: #0ea5e9;
+			background: #ffffff;
+			border-color: rgba(14, 165, 233, 0.2);
+			transform: translateY(-2px);
+			box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+		}
 	}
 
 	.control-secondary-btn:active {
@@ -935,7 +938,7 @@ const defaultTrack = playlist.length > 0 ? playlist[0] : {
 		gap: 20px;
 	}
 
-	/* Hàng tiện ích phụ: Tốc độ, Hẹn giờ & Trạng thái */
+	/* Hàng tiện ích phụ */
 	.custom-utilities-row {
 		display: flex;
 		align-items: center;
@@ -966,11 +969,13 @@ const defaultTrack = playlist.length > 0 ? playlist[0] : {
 		justify-content: center;
 	}
 
-	.utility-btn:hover {
-		border-color: #0ea5e9;
-		color: #0ea5e9;
-		background: #ffffff;
-		transform: translateY(-1px);
+	@media (hover: hover) {
+		.utility-btn:hover {
+			border-color: #0ea5e9;
+			color: #0ea5e9;
+			background: #ffffff;
+			transform: translateY(-1px);
+		}
 	}
 
 	.utility-btn.active-timer {
@@ -995,7 +1000,7 @@ const defaultTrack = playlist.length > 0 ? playlist[0] : {
 		position: absolute;
 		bottom: calc(100% + 8px);
 		right: 0;
-		background: #ffffff; /* Opaque — no need for expensive blur on dropdown */
+		background: #ffffff;
 		border: 1px solid rgba(0, 0, 0, 0.05);
 		border-radius: var(--radius-sm);
 		box-shadow: 0 -10px 30px rgba(0, 0, 0, 0.08);
@@ -1026,10 +1031,12 @@ const defaultTrack = playlist.length > 0 ? playlist[0] : {
 		text-align: right;
 	}
 
-	.sleep-timer-dropdown li:hover {
-		background: rgba(240, 249, 255, 1);
-		color: #0ea5e9;
-		padding-right: 20px;
+	@media (hover: hover) {
+		.sleep-timer-dropdown li:hover {
+			background: rgba(240, 249, 255, 1);
+			color: #0ea5e9;
+			padding-right: 20px;
+		}
 	}
 
 	/* Chỉ báo trạng thái thiền định */
@@ -1054,7 +1061,7 @@ const defaultTrack = playlist.length > 0 ? playlist[0] : {
 	}
 
 	.status-dot.playing {
-		background: #10b981; /* Emerald 500 */
+		background: #10b981;
 		box-shadow: 0 0 10px rgba(16, 185, 129, 0.5);
 		animation: pulseDot 2s infinite;
 	}
@@ -1079,6 +1086,7 @@ const defaultTrack = playlist.length > 0 ? playlist[0] : {
 		align-items: center;
 		border-bottom: 1px solid rgba(0, 0, 0, 0.05);
 		padding-bottom: var(--spacing-3);
+		gap: var(--spacing-3);
 	}
 
 	.playlist-title {
@@ -1089,11 +1097,16 @@ const defaultTrack = playlist.length > 0 ? playlist[0] : {
 		letter-spacing: 0.1em;
 		color: #334155;
 		margin: 0;
+		flex-shrink: 1;
+		overflow: hidden;
+		text-overflow: ellipsis;
+		white-space: nowrap;
 	}
 
 	.playlist-actions {
 		display: flex;
 		gap: var(--spacing-2);
+		flex-shrink: 0;
 	}
 
 	.action-btn {
@@ -1111,13 +1124,16 @@ const defaultTrack = playlist.length > 0 ? playlist[0] : {
 		transition: all var(--transition-fast);
 		text-transform: uppercase;
 		letter-spacing: 0.05em;
+		white-space: nowrap;
 	}
 
-	.action-btn:hover {
-		background: #ffffff;
-		border-color: rgba(14, 165, 233, 0.3);
-		color: #0ea5e9;
-		box-shadow: 0 2px 8px rgba(0,0,0,0.03);
+	@media (hover: hover) {
+		.action-btn:hover {
+			background: #ffffff;
+			border-color: rgba(14, 165, 233, 0.3);
+			color: #0ea5e9;
+			box-shadow: 0 2px 8px rgba(0,0,0,0.03);
+		}
 	}
 
 	.action-btn svg {
@@ -1160,10 +1176,12 @@ const defaultTrack = playlist.length > 0 ? playlist[0] : {
 		user-select: none;
 	}
 
-	.sub-categories-nav-toggle:hover {
-		background: #ffffff;
-		border-color: rgba(14, 165, 233, 0.3);
-		color: #0f172a;
+	@media (hover: hover) {
+		.sub-categories-nav-toggle:hover {
+			background: #ffffff;
+			border-color: rgba(14, 165, 233, 0.3);
+			color: #0f172a;
+		}
 	}
 
 	.sub-categories-nav-icon {
@@ -1188,7 +1206,7 @@ const defaultTrack = playlist.length > 0 ? playlist[0] : {
 		top: calc(100% + 8px);
 		left: 0;
 		right: 0;
-		background: #ffffff; /* Opaque — eliminates expensive blur layer on iOS */
+		background: #ffffff;
 		border: 1px solid rgba(0, 0, 0, 0.05);
 		border-radius: var(--radius-sm);
 		box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
@@ -1238,13 +1256,15 @@ const defaultTrack = playlist.length > 0 ? playlist[0] : {
 		transition: all var(--transition-fast);
 	}
 
-	.sub-category-nav-item:hover {
-		background: rgba(248, 250, 252, 1);
-	}
+	@media (hover: hover) {
+		.sub-category-nav-item:hover {
+			background: rgba(248, 250, 252, 1);
+		}
 
-	.sub-category-nav-item:hover a {
-		color: #0ea5e9 !important;
-		padding-left: 24px;
+		.sub-category-nav-item:hover a {
+			color: #0ea5e9 !important;
+			padding-left: 24px;
+		}
 	}
 
 	.sub-category-nav-item.active-category {
@@ -1255,7 +1275,7 @@ const defaultTrack = playlist.length > 0 ? playlist[0] : {
 	.sub-category-nav-item.active-category a {
 		color: #0ea5e9 !important;
 		font-weight: 700;
-		padding-left: 17px; /* compensate for border */
+		padding-left: 17px;
 	}
 
 	.empty-playlist-msg {
@@ -1295,8 +1315,10 @@ const defaultTrack = playlist.length > 0 ? playlist[0] : {
 		border-radius: 10px;
 	}
 
-	.playlist-scroll-container::-webkit-scrollbar-thumb:hover {
-		background: rgba(14, 165, 233, 0.4);
+	@media (hover: hover) {
+		.playlist-scroll-container::-webkit-scrollbar-thumb:hover {
+			background: rgba(14, 165, 233, 0.4);
+		}
 	}
 
 	#playlist {
@@ -1313,36 +1335,41 @@ const defaultTrack = playlist.length > 0 ? playlist[0] : {
 		align-items: center;
 		gap: 12px;
 		padding: 12px 16px;
-		background: rgba(248, 250, 252, 0.6);
-		border: 1px solid rgba(255, 255, 255, 0.8);
-		border-radius: var(--radius-sm);
+		background: transparent;
+		border-bottom: 1px solid var(--color-border);
 		cursor: pointer;
 		font-size: 13px;
 		font-weight: 500;
 		color: #475569;
-		transition: background 0.15s ease, border-color 0.15s ease;
+		transition: background 0.15s ease, color 0.15s ease;
 		overflow: hidden;
+		box-sizing: border-box;
+	}
+
+	@media (hover: hover) {
+		#playlist li:hover {
+			background: rgba(248, 250, 252, 0.7);
+			color: #0ea5e9;
+		}
 	}
 
 	#playlist li::before {
 		content: "";
 		position: absolute;
-		left: 0; top: 0; bottom: 0; width: 3px;
+		left: 0; top: 12px; bottom: 12px; width: 3px;
 		background: transparent;
-		transition: background 0.2s ease;
-	}
-
-	#playlist li:hover {
-		background: #ffffff;
-		border-color: rgba(14, 165, 233, 0.15);
-		color: #0f172a;
+		border-radius: 0 4px 4px 0;
+		transition: all 0.2s ease;
 	}
 
 	.track-number {
+		display: inline-block;
 		font-size: 11px;
 		font-weight: 800;
 		color: #94a3b8;
-		width: 18px;
+		width: 24px;
+		min-width: 24px;
+		flex-shrink: 0;
 		text-align: right;
 	}
 
@@ -1354,122 +1381,52 @@ const defaultTrack = playlist.length > 0 ? playlist[0] : {
 	}
 
 	#playlist li.active {
-		background: rgba(240, 249, 255, 0.9);
-		border-color: #bae6fd;
-		color: #1e3a8a;
+		background: linear-gradient(90deg, rgba(240, 249, 255, 0.9) 0%, rgba(255, 255, 255, 0.95) 100%);
+		border-bottom-color: rgba(14, 165, 233, 0.2);
+		color: #0369a1;
 		font-weight: 700;
 	}
 
 	#playlist li.active::before {
 		background: #0ea5e9;
-		box-shadow: 0 0 10px #0ea5e9;
+		top: 0; bottom: 0;
+		box-shadow: 0 0 8px rgba(14, 165, 233, 0.6);
 	}
 
-	#playlist li.active .track-number {
-		color: #0ea5e9;
-	}
-
-	#playlist li.active .track-name::after {
-		content: "●";
-		font-size: 10px;
-		color: #0ea5e9;
-		margin-left: 8px;
-		display: inline-block;
-		vertical-align: middle;
-	}
-
-	/* RESPONSIVE LAYOUT TỐI ƯU TUYỆT VỜI CHO MOBILE */
+	/* RESPONSIVE LAYOUT TỐI ƯU TUYỆT VỜI CHO MOBILE (iPhone/iOS) - PHIÊN BẢN SIÊU NHẸ CHO ĐIỆN THOẠI YẾU */
 	@media (max-width: 768px) {
-		/* Hợp nhất 2 card làm một — dùng nền ĐỤC thay vì backdrop-filter để tránh lag iOS Safari */
 		.emdash-radio-layout-container {
-			background: rgba(255, 255, 255, 0.97); /* Gần đục hoàn toàn — không cần blur */
-			/* KHÔNG dùng backdrop-filter trên mobile — thủ phạm gây lag chính */
-			border: 1px solid rgba(255, 255, 255, 0.6);
-			border-radius: 24px;
-			padding: var(--spacing-6);
-			box-shadow: 0 20px 40px -10px rgba(0, 0, 0, 0.05), 0 0 40px rgba(0, 82, 163, 0.06);
-			gap: 0;
-			margin-top: var(--spacing-8);
-			overflow: hidden;
+			display: flex;
+			flex-direction: column;
+			gap: 16px;
+			padding: 0 16px;
+			margin: 20px 0;
+			width: 100%;
+			box-sizing: border-box;
 		}
 
-		/* Loại bỏ giao diện card riêng biệt của 2 thành phần */
+		/* Thay thế backdrop-filter và box-shadow phức tạp bằng màu solid + viền nhẹ để GPU/CPU của máy yếu không bị quá tải */
 		.emdash-player-card-premium,
 		.emdash-playlist-card-premium {
-			background: transparent !important;
-			backdrop-filter: none !important;
+			padding: 16px !important;
+			border-radius: 16px;
+			background: #ffffff !important; /* Solid trắng đục 100% siêu nhẹ cho GPU */
+			backdrop-filter: none !important; /* Tắt hoàn toàn blur ngốn GPU */
 			-webkit-backdrop-filter: none !important;
-			border: none !important;
-			box-shadow: none !important;
-			padding: 0 !important;
-			border-radius: 0 !important;
+			border: 1px solid rgba(0, 82, 163, 0.08) !important; /* Viền nhạt thay thế */
+			box-shadow: 0 10px 20px rgba(0, 0, 0, 0.03) !important; /* Đổ bóng cực nhẹ */
 			transform: none !important;
-			will-change: auto !important;
 		}
 
-		/* Ẩn viền phát quang của card con để tránh trùng lặp viền */
+		/* Ẩn viền phát quang động để CPU không phải tính toán render mask */
 		.emdash-player-card-premium .radio-glow-border,
 		.emdash-playlist-card-premium .radio-glow-border {
 			display: none !important;
 		}
 
-		/* Tắt hiệu ứng blur nặng trên nút Play */
+		/* Ẩn phần phát quang blur nền của nút Play chính trên di động */
 		.custom-play-main-btn::before {
-			filter: none !important;
-			opacity: 0.2;
-		}
-
-		/* Vách chia đứt nét tinh tế giữa Trình phát nhạc và Danh sách phát */
-		.emdash-player-card-premium {
-			padding-bottom: var(--spacing-6) !important;
-			border-bottom: 1px dashed rgba(0, 82, 163, 0.12) !important;
-			margin-bottom: var(--spacing-6) !important;
-		}
-
-		.custom-player-premium {
-			padding: var(--spacing-5);
-		}
-
-		.custom-center-controls {
-			gap: 12px;
-		}
-
-		.custom-play-main-btn {
-			width: 52px;
-			height: 52px;
-		}
-
-		/* Điều chỉnh chiều cao danh sách phát để card hợp nhất không quá cao */
-		.playlist-scroll-container {
-			max-height: 280px;
-		}
-
-		.now-playing-box {
-			padding: var(--spacing-5);
-		}
-
-		.current-track-title {
-			font-size: 18px;
-		}
-
-		/* Disable all infinite animations on mobile — saves battery & reduces jank */
-		.live-pulse,
-		.status-dot.playing,
-		.utility-btn.active-timer {
-			animation: none !important;
-		}
-		.live-pulse { opacity: 1; }
-		.status-dot.playing { background: #10b981; box-shadow: none; }
-
-		/* Remove hover transforms on mobile (no hover on touch) */
-		.emdash-player-card-premium:hover,
-		.emdash-playlist-card-premium:hover {
-			transform: none !important;
-			box-shadow: none !important;
-		}
-		.control-secondary-btn:hover {
-			transform: none;
-			box-shadow: none;
+			display: none !important;
 		}
 
 		/* Touch-optimized: larger tap targets (min 44px per Apple HIG) */
@@ -1477,25 +1434,50 @@ const defaultTrack = playlist.length > 0 ? playlist[0] : {
 			width: 48px;
 			height: 48px;
 		}
+
 		.custom-play-main-btn {
 			width: 56px;
 			height: 56px;
+			box-shadow: 0 4px 10px rgba(37, 99, 235, 0.2) !important; /* Đổ bóng nhẹ hơn */
 		}
+
 		.utility-btn {
 			min-height: 36px;
 			padding: 8px 14px;
 		}
+
 		#playlist li {
-			min-height: 48px;
 			padding: 10px 12px;
 		}
+
 		.custom-seek-slider {
 			height: 8px;
 		}
+
 		.custom-seek-slider::-webkit-slider-thumb {
-			width: 22px;
-			height: 22px;
+			width: 20px;
+			height: 20px;
 			transform: scale(1);
+		}
+
+		/* Tối ưu hóa Playlist Header để không bao giờ bị lệch hay chồng lề trên màn hình hẹp */
+		.playlist-header {
+			flex-direction: row;
+			justify-content: space-between;
+			align-items: center;
+			gap: 8px;
+			padding-bottom: 8px;
+		}
+
+		.playlist-title {
+			font-size: 12px;
+			letter-spacing: 0.05em;
+		}
+
+		.action-btn {
+			padding: 6px 8px;
+			font-size: 10px;
+			gap: 4px;
 		}
 	}
 
@@ -1503,7 +1485,7 @@ const defaultTrack = playlist.length > 0 ? playlist[0] : {
 	@media (prefers-reduced-motion: reduce) {
 		.live-pulse,
 		.status-dot.playing,
-		#playlist li.active .track-name::after,
+		#playlist li.active::before,
 		.utility-btn.active-timer {
 			animation: none !important;
 		}

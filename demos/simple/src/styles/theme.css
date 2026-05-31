@@ -1,79 +1,119 @@
 /*
-  theme.css -- Cấu hình giao diện siêu cao cấp "Emdash Prime / Cyber-Lux Media"
-  Được thiết kế tỉ mỉ với typography Serif cổ điển kết hợp hình học tinh tế, 
-  hiệu ứng kính mờ, bóng đổ phát quang và các dải gradient mềm mại lôi cuốn.
+  theme.css — Single source of truth for all design tokens
+  Phát Thanh Minh Huệ — "Emdash Prime" Light Mode
 */
 
 @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400..900;1,400..900&family=Plus+Jakarta+Sans:ital,wght@0,200..800;1,200..800&display=swap');
 
 :root {
-	/* --- Bảng màu Emdash Prime siêu sang trọng (Light Mode) --- */
-	--color-bg: #f8f9fa;          /* Nền xám nhạt hiện đại, cực kỳ sạch sẽ và tinh khiết */
-	--color-bg-subtle: #f1f3f5;   /* Màu nền phụ tối giản, êm dịu */
-	--color-text: #1a1a1a;        /* Màu chữ đen than đá sâu thẳm, dễ đọc */
-	--color-text-secondary: #495057; /* Màu chữ phụ hiện đại */
-	--color-muted: #868e96;       /* Màu chữ mờ tinh tế */
-	--color-border: #e9ecef;      /* Đường viền siêu mảnh, cực kỳ tinh khiết */
+	/* --- Colors --- */
+	--color-bg: #f8f9fa;
+	--color-bg-subtle: #f1f3f5;
+	--color-text: #1a1a1a;
+	--color-text-secondary: #495057;
+	--color-muted: #868e96;
+	--color-border: #e9ecef;
 	--color-border-subtle: #f8f9fa;
-	--color-surface: #ffffff;     /* Nền thẻ trắng tinh khiết */
-	
-	/* Tông màu nhấn gradient nghệ thuật tinh tế, bớt sặc sỡ */
-	--color-accent: #0052a3;      /* Xanh dương đại dương sẫm dịu mắt, nhã nhặn */
+	--color-surface: #ffffff;
+	--color-accent: #0052a3;
 	--color-accent-hover: #003d7a;
 	--color-on-accent: #ffffff;
-	--gradient-accent: linear-gradient(135deg, #0052a3 0%, #1e3a8a 50%, #475569 100%); /* Lam sẫm - Navy - Slate */
+	--color-accent-ring: color-mix(in srgb, var(--color-accent) 25%, transparent);
+	--gradient-accent: linear-gradient(135deg, #0052a3 0%, #1e3a8a 50%, #475569 100%);
 	--gradient-premium: linear-gradient(135deg, #0052a3, #1e3a8a, #475569);
 
-	/* --- Typography nâng cấp chất lượng cao --- */
+	/* --- Typography --- */
 	--font-serif: "Playfair Display", Georgia, Cambria, "Times New Roman", Times, serif;
 	--font-sans: "Plus Jakarta Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-	
-	/* Thiết lập phông mặc định */
 	--font-family-headings: var(--font-serif);
 	--font-family-body: var(--font-sans);
 
-	/* --- Thiết kế bo tròn hiện đại & Glassmorphic --- */
+	/* Type scale */
+	--font-size-xs: 0.8125rem;
+	--font-size-sm: 0.875rem;
+	--font-size-base: 1rem;
+	--font-size-lg: 1.125rem;
+	--font-size-xl: 1.25rem;
+	--font-size-2xl: 1.5rem;
+	--font-size-3xl: 2rem;
+	--font-size-4xl: 2.5rem;
+	--font-size-5xl: 3.5rem;
+
+	/* Line heights */
+	--leading-tight: 1.15;
+	--leading-snug: 1.3;
+	--leading-normal: 1.5;
+	--leading-relaxed: 1.7;
+
+	/* --- Border radius --- */
 	--radius: 12px;
 	--radius-lg: 24px;
 	--radius-sm: 8px;
 
-	/* --- Khoảng cách hoàn hảo --- */
+	/* --- Spacing --- */
 	--spacing-1: 0.25rem;
 	--spacing-2: 0.5rem;
 	--spacing-3: 0.75rem;
-	--spacing-4: 1.0rem;
+	--spacing-4: 1rem;
 	--spacing-5: 1.25rem;
 	--spacing-6: 1.5rem;
-	--spacing-8: 2.0rem;
+	--spacing-8: 2rem;
 	--spacing-10: 2.5rem;
-	--spacing-12: 3.0rem;
-	--spacing-16: 4.0rem;
+	--spacing-12: 3rem;
+	--spacing-16: 4rem;
+	--spacing-20: 5rem;
+	--spacing-24: 6rem;
 
-	/* --- Layout rộng rãi đẳng cấp --- */
+	/* --- Layout --- */
 	--wide-width: 1280px;
 	--content-width: 740px;
-	
-	/* --- Hiệu ứng đổ bóng có chiều sâu --- */
+	--nav-height: 64px;
+	--search-input-width: 180px;
+
+	/* --- Shadows --- */
 	--shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.04);
 	--shadow-md: 0 10px 30px -10px rgba(0, 102, 204, 0.06);
 	--shadow-lg: 0 20px 40px -15px rgba(0, 0, 0, 0.05);
 	--shadow-glow: 0 0 25px rgba(0, 102, 204, 0.15);
-	
-	/* --- Tốc độ chuyển động siêu mượt --- */
+	--shadow-dropdown: 0 8px 30px rgba(0, 0, 0, 0.12);
+
+	/* --- Transitions --- */
 	--transition-fast: 200ms cubic-bezier(0.16, 1, 0.3, 1);
 	--transition-base: 350ms cubic-bezier(0.16, 1, 0.3, 1);
+
+	/* --- Letter spacing --- */
+	--tracking-tight: -0.03em;
+	--tracking-snug: -0.02em;
+	--tracking-wide: 0.06em;
+	--tracking-wider: 0.08em;
+
+	/* --- EmDash search theming --- */
+	--emdash-search-bg: var(--color-bg);
+	--emdash-search-text: var(--color-text);
+	--emdash-search-muted: var(--color-muted);
+	--emdash-search-border: var(--color-border);
+	--emdash-search-hover: var(--color-surface);
+	--emdash-search-highlight: var(--color-text);
 }
 
-/* Áp dụng phông chữ trên toàn trang */
+/* Global base styles */
 body {
 	font-family: var(--font-family-body);
+	font-size: var(--font-size-base);
+	line-height: var(--leading-relaxed);
 	background-color: var(--color-bg);
 	color: var(--color-text);
-	transition: background-color var(--transition-base), color var(--transition-base);
+	-webkit-font-smoothing: antialiased;
+	-moz-osx-font-smoothing: grayscale;
 }
 
 h1, h2, h3, h4, h5, h6 {
 	font-family: var(--font-family-headings);
 	font-weight: 700;
+	line-height: var(--leading-tight);
 	letter-spacing: -0.02em;
+}
+
+h1 {
+	letter-spacing: var(--tracking-tight);
 }
