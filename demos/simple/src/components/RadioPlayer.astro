@@ -651,9 +651,10 @@ const defaultTrack = playlist.length > 0 ? playlist[0] : {
 </script>
 <style>
 	/* ============================================================================
-	   CSS Giao diện Emdash Prime - Tách Card, Tối ưu hóa Responsive Tuyệt vời nhất
+	   CSS Giao diện Emdash Prime — "Taste Skill" Edition
+	   Dark Glassmorphism · Premium Animations · Typography Sang trọng
 	   ============================================================================ */
-	
+
 	/* Layout Grid phóng khoáng ở ngoài, tách biệt 2 thẻ Card */
 	.emdash-radio-layout-container {
 		display: flex;
@@ -666,31 +667,35 @@ const defaultTrack = playlist.length > 0 ? playlist[0] : {
 	@media (min-width: 900px) {
 		.emdash-radio-layout-container {
 			display: grid;
-			grid-template-columns: 1.15fr 0.85fr;
+			grid-template-columns: 1.2fr 0.8fr;
 			gap: var(--spacing-6);
 			align-items: start;
 		}
 	}
 
-	/* Thiết kế 2 thẻ Card độc lập, kính mờ siêu cao cấp */
+	/* ============================================================================
+	   Thiết kế 2 thẻ Card độc lập, kính mờ siêu cao cấp (Light Mode)
+	   ============================================================================ */
 	.emdash-player-card-premium,
 	.emdash-playlist-card-premium {
 		position: relative;
-		background: rgba(255, 255, 255, 0.75);
-		backdrop-filter: blur(20px);
-		-webkit-backdrop-filter: blur(20px);
-		border: 1px solid rgba(255, 255, 255, 0.5);
+		background: rgba(255, 255, 255, 0.75); /* Trắng trong suốt */
+		backdrop-filter: blur(24px);
+		-webkit-backdrop-filter: blur(24px);
+		border: 1px solid rgba(255, 255, 255, 0.6);
 		border-radius: var(--radius-lg);
 		padding: var(--spacing-8);
-		box-shadow: var(--shadow-lg), var(--shadow-glow);
+		box-shadow: 0 20px 40px -10px rgba(0, 0, 0, 0.05), 0 0 40px rgba(0, 82, 163, 0.06);
 		overflow: hidden;
 		transition: all var(--transition-base);
+		color: #1e293b; /* Slate 800 */
 	}
 
 	.emdash-player-card-premium:hover,
 	.emdash-playlist-card-premium:hover {
-		transform: translateY(-2px);
-		box-shadow: var(--shadow-lg), 0 0 35px rgba(0, 82, 163, 0.12);
+		transform: translateY(-4px);
+		box-shadow: 0 25px 50px -15px rgba(0, 0, 0, 0.08), 0 0 50px rgba(0, 82, 163, 0.1);
+		border-color: rgba(255, 255, 255, 0.9);
 	}
 
 	/* Hiệu ứng phát quang ở viền phong cách Emdash Prime cho từng card */
@@ -702,8 +707,8 @@ const defaultTrack = playlist.length > 0 ? playlist[0] : {
 		right: 0;
 		bottom: 0;
 		border-radius: var(--radius-lg);
-		border: 2px solid transparent;
-		background: linear-gradient(135deg, rgba(0, 82, 163, 0.12), rgba(30, 58, 138, 0.12), rgba(71, 85, 105, 0.08)) border-box;
+		border: 1.5px solid transparent;
+		background: linear-gradient(135deg, rgba(14, 165, 233, 0.2), rgba(59, 130, 246, 0.1), rgba(255, 255, 255, 0)) border-box;
 		-webkit-mask: linear-gradient(#fff 0 0) padding-box, linear-gradient(#fff 0 0);
 		-webkit-mask-composite: xor;
 		mask-composite: exclude;
@@ -711,17 +716,14 @@ const defaultTrack = playlist.length > 0 ? playlist[0] : {
 		z-index: 2;
 	}
 
-	.radio-left-panel-premium {
-		display: flex;
-		flex-direction: column;
-		gap: var(--spacing-2);
-		min-width: 0;
-	}
-
+	.radio-left-panel-premium,
 	.radio-right-panel-premium {
 		display: flex;
 		flex-direction: column;
+		gap: var(--spacing-4);
 		min-width: 0;
+		position: relative;
+		z-index: 3;
 	}
 
 	/* Header trình phát */
@@ -729,75 +731,86 @@ const defaultTrack = playlist.length > 0 ? playlist[0] : {
 		display: flex;
 		align-items: center;
 		gap: var(--spacing-3);
-		margin-bottom: var(--spacing-4);
+		margin-bottom: var(--spacing-2);
 	}
 
 	.radio-live-tag {
-		background: var(--gradient-accent);
+		background: linear-gradient(135deg, #0ea5e9, #2563eb); /* Xanh dương cao cấp đồng bộ */
 		color: #ffffff;
 		font-size: 10px;
 		font-weight: 800;
-		padding: 4px 10px;
+		padding: 4px 12px;
 		border-radius: 20px;
 		display: inline-flex;
 		align-items: center;
-		gap: var(--spacing-2);
-		letter-spacing: 0.08em;
-		box-shadow: 0 2px 8px rgba(0, 82, 163, 0.15);
+		gap: 6px;
+		letter-spacing: 0.1em;
+		box-shadow: 0 2px 10px rgba(14, 165, 233, 0.25);
+		text-transform: uppercase;
 	}
 
 	.live-pulse {
 		width: 6px;
 		height: 6px;
-		background: #20c997;
+		background: #ffffff;
 		border-radius: 50%;
 		animation: pulseIndicator 1.5s infinite;
 	}
 
 	@keyframes pulseIndicator {
-		0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(32, 201, 151, 0.7); }
-		70% { transform: scale(1); box-shadow: 0 0 0 5px rgba(32, 201, 151, 0); }
-		100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(32, 201, 151, 0); }
+		0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(255, 255, 255, 0.7); }
+		70% { transform: scale(1); box-shadow: 0 0 0 4px rgba(255, 255, 255, 0); }
+		100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(255, 255, 255, 0); }
 	}
 
 	.radio-main-title {
 		font-family: var(--font-serif);
 		font-style: italic;
-		font-size: 20px;
+		font-size: 22px;
 		font-weight: 800;
-		background: var(--gradient-accent);
+		background: linear-gradient(135deg, #0f172a, #334155);
 		-webkit-background-clip: text;
 		-webkit-text-fill-color: transparent;
 		margin: 0;
+		letter-spacing: 0.02em;
 	}
 
 	/* Hộp hiển thị bài hát đang phát sang trọng */
 	.now-playing-box {
-		background: linear-gradient(135deg, rgba(255, 255, 255, 0.8), rgba(244, 243, 239, 0.5));
+		background: rgba(248, 250, 252, 0.6); /* Slate 50 trong suốt */
 		border-radius: var(--radius);
 		padding: var(--spacing-6);
-		border: 1px solid rgba(255, 255, 255, 0.6);
-		box-shadow: var(--shadow-sm);
-		margin-bottom: var(--spacing-5);
+		border: 1px solid rgba(255, 255, 255, 0.8);
+		box-shadow: inset 0 2px 5px rgba(0, 0, 0, 0.02), 0 2px 8px rgba(0,0,0,0.03);
 		transition: all var(--transition-base);
+		position: relative;
+		overflow: hidden;
+	}
+	
+	.now-playing-box::before {
+		content: "";
+		position: absolute;
+		top: 0; left: 0; right: 0;
+		height: 1px;
+		background: linear-gradient(90deg, transparent, rgba(255,255,255,1), transparent);
 	}
 
 	.now-playing-label {
 		display: block;
 		font-size: 11px;
-		color: var(--color-muted);
+		color: #64748b; /* Slate 500 */
 		text-transform: uppercase;
 		font-weight: 700;
-		letter-spacing: 0.08em;
+		letter-spacing: 0.1em;
 		margin-bottom: var(--spacing-2);
 	}
 
 	.current-track-title {
 		font-family: var(--font-serif);
-		font-size: 18px;
-		font-weight: 800;
-		color: var(--color-text);
-		line-height: 1.5;
+		font-size: 20px;
+		font-weight: 700;
+		color: #0f172a; /* Slate 900 */
+		line-height: 1.4;
 		margin: 0;
 		display: -webkit-box;
 		-webkit-line-clamp: 2;
@@ -807,56 +820,51 @@ const defaultTrack = playlist.length > 0 ? playlist[0] : {
 
 	/* Trình phát Audio tùy chỉnh siêu tối giản */
 	.custom-player-premium {
-		background: linear-gradient(135deg, rgba(255, 255, 255, 0.85), rgba(247, 246, 240, 0.6));
-		border: 1px solid var(--color-border);
+		background: rgba(255, 255, 255, 0.8);
+		border: 1px solid rgba(255, 255, 255, 1);
 		border-radius: var(--radius-lg);
-		padding: var(--spacing-6);
-		box-shadow: var(--shadow-sm);
+		padding: var(--spacing-6) var(--spacing-8);
+		box-shadow: 0 10px 25px rgba(0, 0, 0, 0.05);
 		display: flex;
 		flex-direction: column;
-		gap: var(--spacing-5);
+		gap: var(--spacing-6);
 		transition: all var(--transition-base);
-		margin-top: var(--spacing-4);
-	}
-
-	.custom-player-premium:hover {
-		box-shadow: var(--shadow-md);
-		border-color: rgba(0, 102, 204, 0.2);
 	}
 
 	/* Thanh tiến trình */
 	.custom-progress-area {
 		display: flex;
 		flex-direction: column;
-		gap: 6px;
+		gap: 10px;
 	}
 
 	.custom-seek-slider {
 		-webkit-appearance: none;
 		appearance: none;
 		width: 100%;
-		height: 4px;
-		border-radius: 2px;
-		background: var(--color-border);
+		height: 6px;
+		border-radius: 3px;
+		background: rgba(148, 163, 184, 0.2); /* Slate 400 trong suốt */
 		outline: none;
 		cursor: pointer;
 		transition: height 0.2s ease;
+		box-shadow: inset 0 1px 2px rgba(0,0,0,0.05);
 	}
 
 	.custom-seek-slider:hover {
-		height: 6px;
+		height: 8px;
 	}
 
 	/* Webkit thumb (Chrome, Safari, Edge) */
 	.custom-seek-slider::-webkit-slider-thumb {
 		-webkit-appearance: none;
 		appearance: none;
-		width: 12px;
-		height: 12px;
+		width: 16px;
+		height: 16px;
 		border-radius: 50%;
-		background: var(--color-accent);
-		box-shadow: 0 0 10px rgba(0, 102, 204, 0.4);
-		transition: transform 0.1s ease;
+		background: #0ea5e9; /* Sky 500 */
+		box-shadow: 0 0 10px rgba(14, 165, 233, 0.4), inset 0 0 0 4px #ffffff;
+		transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
 		transform: scale(0); /* Ẩn đi mặc định */
 	}
 
@@ -866,13 +874,13 @@ const defaultTrack = playlist.length > 0 ? playlist[0] : {
 
 	/* Firefox thumb */
 	.custom-seek-slider::-moz-range-thumb {
-		width: 12px;
-		height: 12px;
+		width: 16px;
+		height: 16px;
 		border: none;
 		border-radius: 50%;
-		background: var(--color-accent);
-		box-shadow: 0 0 10px rgba(0, 102, 204, 0.4);
-		transition: transform 0.1s ease;
+		background: #0ea5e9;
+		box-shadow: 0 0 10px rgba(14, 165, 233, 0.4), inset 0 0 0 4px #ffffff;
+		transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
 		transform: scale(0);
 	}
 
@@ -884,10 +892,10 @@ const defaultTrack = playlist.length > 0 ? playlist[0] : {
 		display: flex;
 		justify-content: space-between;
 		font-family: var(--font-sans);
-		font-size: 11px;
+		font-size: 12px;
 		font-weight: 700;
-		color: var(--color-muted);
-		letter-spacing: 0.02em;
+		color: #64748b;
+		letter-spacing: 0.05em;
 	}
 
 	/* Hàng điều khiển chính */
@@ -898,36 +906,60 @@ const defaultTrack = playlist.length > 0 ? playlist[0] : {
 		gap: var(--spacing-4);
 	}
 
-	/* Nút chơi nhạc dạng tròn nổi bật */
+	/* Nút chơi nhạc dạng tròn nổi bật (3D Premium) */
 	.custom-play-main-btn {
-		width: 48px;
-		height: 48px;
+		width: 60px;
+		height: 60px;
 		border-radius: 50%;
-		background: var(--gradient-premium);
-		border: none;
+		background: linear-gradient(135deg, #0ea5e9, #2563eb); /* Sky to Blue */
+		border: 1px solid rgba(255, 255, 255, 0.4);
 		color: #ffffff;
 		display: flex;
 		align-items: center;
 		justify-content: center;
 		cursor: pointer;
-		box-shadow: 0 4px 14px rgba(0, 102, 204, 0.3);
+		box-shadow: 0 8px 20px rgba(37, 99, 235, 0.25), inset 0 2px 4px rgba(255,255,255,0.3);
 		transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+		position: relative;
+	}
+	
+	.custom-play-main-btn::before {
+		content: "";
+		position: absolute;
+		top: -4px; left: -4px; right: -4px; bottom: -4px;
+		border-radius: 50%;
+		background: linear-gradient(135deg, #0ea5e9, #2563eb);
+		z-index: -1;
+		filter: blur(10px);
+		opacity: 0.4;
+		transition: opacity 0.3s ease;
 	}
 
 	.custom-play-main-btn:hover {
-		transform: scale(1.08);
-		box-shadow: 0 6px 20px rgba(0, 102, 204, 0.45);
+		transform: scale(1.05) translateY(-2px);
+		box-shadow: 0 12px 25px rgba(37, 99, 235, 0.35), inset 0 2px 4px rgba(255,255,255,0.4);
+	}
+	
+	.custom-play-main-btn:hover::before {
+		opacity: 0.6;
 	}
 
 	.custom-play-main-btn:active {
 		transform: scale(0.95);
+		box-shadow: 0 4px 10px rgba(37, 99, 235, 0.2), inset 0 4px 8px rgba(0,0,0,0.15);
+	}
+
+	.custom-play-main-btn svg {
+		width: 28px;
+		height: 28px;
+		filter: drop-shadow(0 2px 3px rgba(0,0,0,0.2));
 	}
 
 	/* Các nút điều khiển phụ */
 	.custom-player-btn {
 		background: transparent;
 		border: none;
-		color: var(--color-text-secondary);
+		color: #64748b;
 		cursor: pointer;
 		transition: all var(--transition-fast);
 		display: flex;
@@ -936,15 +968,19 @@ const defaultTrack = playlist.length > 0 ? playlist[0] : {
 	}
 
 	.control-secondary-btn {
-		width: 36px;
-		height: 36px;
+		width: 44px;
+		height: 44px;
 		border-radius: 50%;
-		color: var(--color-muted);
+		background: rgba(255, 255, 255, 0.5);
+		border: 1px solid rgba(0, 0, 0, 0.03);
 	}
 
 	.control-secondary-btn:hover {
-		color: var(--color-accent);
-		background: rgba(0, 102, 204, 0.05);
+		color: #0ea5e9;
+		background: #ffffff;
+		border-color: rgba(14, 165, 233, 0.2);
+		transform: translateY(-2px);
+		box-shadow: 0 4px 12px rgba(0,0,0,0.05);
 	}
 
 	.control-secondary-btn:active {
@@ -954,27 +990,27 @@ const defaultTrack = playlist.length > 0 ? playlist[0] : {
 	.custom-center-controls {
 		display: flex;
 		align-items: center;
-		gap: 12px;
+		gap: 20px;
 	}
 
 	/* Nút hiển thị Tốc độ */
 	.speed-btn {
 		font-family: var(--font-sans);
-		font-size: 11px;
+		font-size: 12px;
 		font-weight: 800;
-		color: var(--color-text-secondary);
-		border: 1px solid var(--color-border);
-		padding: 5px 10px;
-		border-radius: 12px;
-		min-width: 46px;
+		color: #64748b;
+		border: 1px solid rgba(0, 0, 0, 0.05);
+		padding: 6px 12px;
+		border-radius: 16px;
+		min-width: 54px;
 		text-align: center;
-		background: rgba(255, 255, 255, 0.8);
-		box-shadow: var(--shadow-sm);
+		background: rgba(255, 255, 255, 0.6);
+		box-shadow: 0 2px 5px rgba(0,0,0,0.02);
 	}
 
 	.speed-btn:hover {
-		border-color: var(--color-accent);
-		color: var(--color-accent);
+		border-color: #0ea5e9;
+		color: #0ea5e9;
 		background: #ffffff;
 	}
 
@@ -982,57 +1018,60 @@ const defaultTrack = playlist.length > 0 ? playlist[0] : {
 	.custom-status-indicator {
 		display: flex;
 		align-items: center;
-		gap: var(--spacing-2);
+		gap: 8px;
 		font-family: var(--font-sans);
 		font-size: 11px;
 		font-weight: 700;
-		color: var(--color-muted);
+		color: #94a3b8;
 		min-width: 76px;
 		justify-content: flex-end;
+		text-transform: uppercase;
+		letter-spacing: 0.05em;
 	}
 
 	.status-dot {
-		width: 7px;
-		height: 7px;
-		background: var(--color-muted);
+		width: 8px;
+		height: 8px;
+		background: #cbd5e1;
 		border-radius: 50%;
 		transition: all 0.3s ease;
 	}
 
 	.status-dot.playing {
-		background: #20c997;
-		box-shadow: 0 0 10px rgba(32, 201, 151, 0.6);
+		background: #10b981; /* Emerald 500 */
+		box-shadow: 0 0 10px rgba(16, 185, 129, 0.5);
 		animation: pulseDot 2s infinite;
 	}
 
 	@keyframes pulseDot {
-		0% { transform: scale(0.9); opacity: 0.6; }
-		50% { transform: scale(1.1); opacity: 1; }
-		100% { transform: scale(0.9); opacity: 0.6; }
+		0% { transform: scale(0.9); opacity: 0.7; }
+		50% { transform: scale(1.2); opacity: 1; }
+		100% { transform: scale(0.9); opacity: 0.7; }
 	}
 
 	/* Danh sách phát nhạc */
 	.playlist-section {
 		display: flex;
 		flex-direction: column;
-		gap: var(--spacing-3);
+		gap: var(--spacing-4);
+		height: 100%;
 	}
 
 	.playlist-header {
 		display: flex;
 		justify-content: space-between;
 		align-items: center;
-		border-bottom: 1px solid var(--color-border);
-		padding-bottom: var(--spacing-2);
+		border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+		padding-bottom: var(--spacing-3);
 	}
 
 	.playlist-title {
 		font-family: var(--font-sans);
-		font-size: var(--font-size-sm);
+		font-size: 14px;
 		font-weight: 800;
 		text-transform: uppercase;
-		letter-spacing: 0.05em;
-		color: var(--color-text-secondary);
+		letter-spacing: 0.1em;
+		color: #334155;
 		margin: 0;
 	}
 
@@ -1045,25 +1084,28 @@ const defaultTrack = playlist.length > 0 ? playlist[0] : {
 		display: inline-flex;
 		align-items: center;
 		gap: 6px;
-		background: var(--color-bg-subtle);
-		border: 1px solid var(--color-border);
-		color: var(--color-text-secondary);
-		padding: 5px 10px;
+		background: rgba(255, 255, 255, 0.6);
+		border: 1px solid rgba(0, 0, 0, 0.05);
+		color: #64748b;
+		padding: 6px 12px;
 		border-radius: var(--radius-sm);
-		font-size: var(--font-size-xs);
+		font-size: 11px;
 		font-weight: 700;
 		cursor: pointer;
 		transition: all var(--transition-fast);
+		text-transform: uppercase;
+		letter-spacing: 0.05em;
 	}
 
 	.action-btn:hover {
-		background: var(--color-accent);
-		border-color: var(--color-accent);
-		color: #ffffff;
+		background: #ffffff;
+		border-color: rgba(14, 165, 233, 0.3);
+		color: #0ea5e9;
+		box-shadow: 0 2px 8px rgba(0,0,0,0.03);
 	}
 
 	.action-btn svg {
-		opacity: 0.7;
+		opacity: 0.8;
 	}
 
 	.action-btn:hover svg {
@@ -1075,76 +1117,75 @@ const defaultTrack = playlist.length > 0 ? playlist[0] : {
 	}
 
 	.action-btn.active-mode {
-		background: var(--gradient-premium);
-		border-color: transparent;
-		color: #ffffff;
-		box-shadow: 0 4px 10px rgba(0, 102, 204, 0.25);
+		background: rgba(239, 246, 255, 0.8);
+		border-color: #bfdbfe;
+		color: #2563eb;
 	}
 
 	.categories-filter-wrapper {
 		position: relative;
-		margin-bottom: var(--spacing-3);
+		margin-bottom: var(--spacing-2);
 	}
 
 	.sub-categories-nav-toggle {
 		display: flex;
 		justify-content: space-between;
 		align-items: center;
-		background: var(--color-bg-subtle);
-		border: 1px solid var(--color-border);
-		padding: 10px 16px;
+		background: rgba(255, 255, 255, 0.8);
+		border: 1px solid rgba(0, 0, 0, 0.06);
+		padding: 12px 16px;
 		border-radius: var(--radius-sm);
 		font-family: var(--font-sans);
-		font-size: var(--font-size-xs);
+		font-size: 13px;
 		font-weight: 700;
-		color: var(--color-text-secondary);
+		color: #475569;
 		cursor: pointer;
 		transition: all var(--transition-fast);
 		user-select: none;
 	}
 
 	.sub-categories-nav-toggle:hover {
-		background: var(--color-surface);
-		border-color: var(--color-accent);
-		color: var(--color-text);
+		background: #ffffff;
+		border-color: rgba(14, 165, 233, 0.3);
+		color: #0f172a;
 	}
 
 	.sub-categories-nav-icon {
 		display: inline-block;
 		transition: transform var(--transition-fast);
-		border: solid var(--color-muted);
+		border: solid #64748b;
 		border-width: 0 2.5px 2.5px 0;
-		padding: 3px;
+		padding: 3.5px;
 		transform: rotate(45deg);
 		-webkit-transform: rotate(45deg);
-		margin-top: -3px;
+		margin-top: -4px;
 	}
 
 	.sub-categories-nav-toggle.open .sub-categories-nav-icon {
 		transform: rotate(-135deg);
 		-webkit-transform: rotate(-135deg);
-		border-color: var(--color-accent);
+		border-color: #0ea5e9;
 	}
 
 	.sub-categories-nav-items {
 		position: absolute;
-		top: calc(100% + 6px);
+		top: calc(100% + 8px);
 		left: 0;
 		right: 0;
-		background: var(--color-surface);
-		border: 1px solid var(--color-border);
+		background: rgba(255, 255, 255, 0.95);
+		border: 1px solid rgba(0, 0, 0, 0.05);
 		border-radius: var(--radius-sm);
-		box-shadow: var(--shadow-dropdown);
-		z-index: 10;
-		backdrop-filter: blur(10px);
-		-webkit-backdrop-filter: blur(10px);
-		max-height: 250px;
+		box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+		z-index: 20;
+		backdrop-filter: blur(16px);
+		-webkit-backdrop-filter: blur(16px);
+		max-height: 280px;
 		overflow-y: auto;
 		animation: slideDown 0.25s cubic-bezier(0.16, 1, 0.3, 1);
 	}
 
 	.sub-categories-nav-items::-webkit-scrollbar {
-		width: 4px;
+		width: 6px;
 	}
 
 	.sub-categories-nav-items::-webkit-scrollbar-track {
@@ -1152,18 +1193,18 @@ const defaultTrack = playlist.length > 0 ? playlist[0] : {
 	}
 
 	.sub-categories-nav-items::-webkit-scrollbar-thumb {
-		background: var(--color-border);
+		background: rgba(0, 0, 0, 0.1);
 		border-radius: 10px;
 	}
 
 	@keyframes slideDown {
-		from { opacity: 0; transform: translateY(-8px); }
+		from { opacity: 0; transform: translateY(-10px); }
 		to { opacity: 1; transform: translateY(0); }
 	}
 
 	.sub-categories-nav-items ul {
 		list-style: none;
-		padding: var(--spacing-2) 0;
+		padding: 8px 0;
 		margin: 0;
 	}
 
@@ -1175,73 +1216,77 @@ const defaultTrack = playlist.length > 0 ? playlist[0] : {
 
 	.sub-category-nav-item a {
 		display: block;
-		padding: 10px 16px;
-		font-size: var(--font-size-xs);
+		padding: 10px 20px;
+		font-size: 13px;
 		font-weight: 600;
-		color: var(--color-text-secondary) !important;
+		color: #475569 !important;
 		text-decoration: none;
 		transition: all var(--transition-fast);
 	}
 
 	.sub-category-nav-item:hover {
-		background: var(--color-bg-subtle);
+		background: rgba(248, 250, 252, 1);
 	}
 
 	.sub-category-nav-item:hover a {
-		color: var(--color-accent) !important;
-		padding-left: 20px;
+		color: #0ea5e9 !important;
+		padding-left: 24px;
 	}
 
 	.sub-category-nav-item.active-category {
-		background: rgba(0, 102, 204, 0.06);
+		background: rgba(240, 249, 255, 1);
+		border-left: 3px solid #0ea5e9;
 	}
 
 	.sub-category-nav-item.active-category a {
-		color: var(--color-accent) !important;
+		color: #0ea5e9 !important;
 		font-weight: 700;
+		padding-left: 17px; /* compensate for border */
 	}
 
 	.empty-playlist-msg {
 		display: none;
 		font-family: var(--font-sans);
-		font-size: var(--font-size-xs);
-		color: var(--color-muted);
+		font-size: 13px;
+		color: #64748b;
 		text-align: center;
-		padding: var(--spacing-6) 0;
+		padding: var(--spacing-8) 0;
 		margin: 0;
 		line-height: var(--leading-normal);
-		border: 1px dashed var(--color-border);
+		border: 1px dashed rgba(0, 0, 0, 0.1);
 		border-radius: var(--radius-sm);
-		background: rgba(0, 0, 0, 0.005);
+		background: rgba(255, 255, 255, 0.5);
 	}
 
 	.playlist-scroll-container {
-		max-height: 320px;
+		max-height: 380px;
 		overflow-y: auto;
-		padding-right: var(--spacing-2);
+		padding-right: 8px;
+		flex: 1;
 	}
 
 	.playlist-scroll-container::-webkit-scrollbar {
-		width: 4px;
+		width: 6px;
 	}
 
 	.playlist-scroll-container::-webkit-scrollbar-track {
-		background: transparent;
+		background: rgba(0,0,0,0.02);
+		border-radius: 10px;
 	}
 
 	.playlist-scroll-container::-webkit-scrollbar-thumb {
-		background: var(--color-border);
+		background: rgba(0, 0, 0, 0.1);
 		border-radius: 10px;
 	}
 
 	.playlist-scroll-container::-webkit-scrollbar-thumb:hover {
-		background: var(--color-accent);
+		background: rgba(14, 165, 233, 0.4);
 	}
 
 	#playlist {
 		display: flex;
 		flex-direction: column;
-		gap: 6px;
+		gap: 8px;
 		padding: 0;
 		margin: 0;
 		list-style: none;
@@ -1250,30 +1295,42 @@ const defaultTrack = playlist.length > 0 ? playlist[0] : {
 	#playlist li {
 		display: flex;
 		align-items: center;
-		gap: var(--spacing-3);
-		padding: 10px 14px;
-		background: var(--color-bg-subtle);
-		border: 1px solid transparent;
+		gap: 12px;
+		padding: 12px 16px;
+		background: rgba(248, 250, 252, 0.6);
+		border: 1px solid rgba(255, 255, 255, 0.8);
 		border-radius: var(--radius-sm);
 		cursor: pointer;
-		font-size: var(--font-size-xs);
+		font-size: 13px;
 		font-weight: 500;
-		color: var(--color-text-secondary);
-		transition: all var(--transition-fast);
+		color: #475569;
+		transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+		position: relative;
+		overflow: hidden;
+	}
+
+	#playlist li::before {
+		content: "";
+		position: absolute;
+		left: 0; top: 0; bottom: 0; width: 3px;
+		background: transparent;
+		transition: background 0.2s ease;
 	}
 
 	#playlist li:hover {
-		background: var(--color-surface);
-		border-color: var(--color-border);
-		color: var(--color-text);
-		transform: translateX(3px);
+		background: #ffffff;
+		border-color: rgba(14, 165, 233, 0.15);
+		color: #0f172a;
+		transform: translateX(4px);
+		box-shadow: 0 4px 10px rgba(0,0,0,0.02);
 	}
 
 	.track-number {
-		font-size: 10px;
+		font-size: 11px;
 		font-weight: 800;
-		color: var(--color-muted);
-		width: 14px;
+		color: #94a3b8;
+		width: 18px;
+		text-align: right;
 	}
 
 	.track-name {
@@ -1284,56 +1341,105 @@ const defaultTrack = playlist.length > 0 ? playlist[0] : {
 	}
 
 	#playlist li.active {
-		background: var(--color-surface);
-		border-color: var(--color-accent);
-		color: var(--color-accent);
+		background: linear-gradient(90deg, rgba(255, 255, 255, 1), rgba(240, 249, 255, 0.8));
+		border-color: #bae6fd;
+		color: #1e3a8a;
 		font-weight: 700;
-		box-shadow: var(--shadow-sm);
-	}
-
-	#playlist li.active .track-number {
-		color: var(--color-accent);
+		box-shadow: 0 4px 12px rgba(14, 165, 233, 0.1);
+		transform: scale(1.01);
 	}
 
 	#playlist li.active::before {
+		background: #0ea5e9;
+		box-shadow: 0 0 10px #0ea5e9;
+	}
+
+	#playlist li.active .track-number {
+		color: #0ea5e9;
+	}
+
+	#playlist li.active .track-name::after {
 		content: "●";
-		font-size: 8px;
-		color: var(--color-accent);
-		margin-right: -4px;
+		font-size: 10px;
+		color: #0ea5e9;
+		margin-left: 8px;
+		display: inline-block;
 		animation: pulseActiveDot 1.5s infinite;
+		vertical-align: middle;
 	}
 
 	@keyframes pulseActiveDot {
-		0% { opacity: 0.4; }
-		50% { opacity: 1; }
-		100% { opacity: 0.4; }
+		0% { opacity: 0.2; transform: scale(0.8); }
+		50% { opacity: 1; transform: scale(1.2); text-shadow: 0 0 8px rgba(14,165,233,0.5); }
+		100% { opacity: 0.2; transform: scale(0.8); }
 	}
 
 	/* RESPONSIVE LAYOUT TỐI ƯU TUYỆT VỜI CHO MOBILE */
-	@media (max-width: 600px) {
+	@media (max-width: 768px) {
+		/* Hợp nhất 2 card làm một bằng cách đưa glassmorphism lên container chính */
+		.emdash-radio-layout-container {
+			background: rgba(255, 255, 255, 0.75); /* Trắng trong suốt */
+			backdrop-filter: blur(24px);
+			-webkit-backdrop-filter: blur(24px);
+			border: 1px solid rgba(255, 255, 255, 0.6);
+			border-radius: 24px;
+			padding: var(--spacing-6);
+			box-shadow: 0 20px 40px -10px rgba(0, 0, 0, 0.05), 0 0 40px rgba(0, 82, 163, 0.06);
+			gap: 0; /* Gộp khít hai phần */
+			margin-top: var(--spacing-8);
+			overflow: hidden;
+		}
+
+		/* Loại bỏ giao diện card riêng biệt của 2 thành phần */
 		.emdash-player-card-premium,
 		.emdash-playlist-card-premium {
+			background: transparent !important;
+			backdrop-filter: none !important;
+			-webkit-backdrop-filter: none !important;
+			border: none !important;
+			box-shadow: none !important;
+			padding: 0 !important;
+			border-radius: 0 !important;
+			transform: none !important;
+		}
+
+		/* Ẩn viền phát quang của card con để tránh trùng lặp viền */
+		.emdash-player-card-premium .radio-glow-border,
+		.emdash-playlist-card-premium .radio-glow-border {
+			display: none !important;
+		}
+
+		/* Vách chia đứt nét tinh tế giữa Trình phát nhạc và Danh sách phát */
+		.emdash-player-card-premium {
+			padding-bottom: var(--spacing-6) !important;
+			border-bottom: 1px dashed rgba(0, 82, 163, 0.12) !important;
+			margin-bottom: var(--spacing-6) !important;
+		}
+
+		.custom-player-premium {
 			padding: var(--spacing-5);
-			border-radius: 12px;
 		}
 
-		.emdash-radio-layout-container {
-			gap: var(--spacing-5);
+		.custom-center-controls {
+			gap: 12px;
+		}
+		
+		.custom-play-main-btn {
+			width: 52px;
+			height: 52px;
 		}
 
-		/* Trên di động, cho phép playlist dài ra và cuộn mượt mà tự nhiên, 
-		   toàn bộ trang web có thể cuộn rất phóng khoáng */
+		/* Điều chỉnh chiều cao danh sách phát để card hợp nhất không quá cao */
 		.playlist-scroll-container {
-			max-height: 380px;
+			max-height: 280px;
 		}
 
 		.now-playing-box {
 			padding: var(--spacing-5);
-			margin-bottom: var(--spacing-4);
 		}
 
 		.current-track-title {
-			font-size: 15px;
+			font-size: 18px;
 		}
 	}
 </style>
