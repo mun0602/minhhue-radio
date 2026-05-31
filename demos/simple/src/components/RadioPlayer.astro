@@ -227,9 +227,9 @@ const defaultTrack = playlist.length > 0 ? playlist[0] : {
 	declare const Plyr: any;
 
 	document.addEventListener('DOMContentLoaded', () => {
-		// 1. Khởi tạo Plyr
+		// 1. Khởi tạo Plyr - Bỏ các nút điều chỉnh âm thanh (mute, volume) để giao diện liền mạch
 		const player = new Plyr('#audio-player', {
-			controls: ['play', 'progress', 'current-time', 'mute', 'volume', 'settings'],
+			controls: ['play', 'progress', 'current-time', 'settings'],
 			tooltips: { controls: true, seek: true }
 		});
 

@@ -93,8 +93,14 @@ const isLoggedIn = !!Astro.locals.user;
 			{/* 2. Header chính */}
 			<nav class="nav">
 				<a href="/" class="site-logo-premium">
-					<span class="logo-badge-premium">M</span>
-					<span class="logo-text-premium">MINH HUỆ <span class="logo-serif-sub">RADIO</span></span>
+					<div class="logo-badge-premium">
+						<svg viewBox="0 0 100 100" class="logo-lotus-svg" width="28" height="28">
+							<path d="M50 15 C42 35 30 45 30 60 C30 72 39 78 50 78 C61 78 70 72 70 60 C70 45 58 35 50 15 Z" fill="#ffffff" opacity="0.95"/>
+							<path d="M50 30 C35 45 20 55 20 65 C20 74 28 78 38 76 C44 71 48 61 50 51 C52 61 56 71 62 76 C72 78 80 74 80 65 C80 55 65 45 50 30 Z" fill="#ffffff" opacity="0.8"/>
+							<path d="M50 45 C40 55 32 65 32 70 C32 75 40 77 50 75 C60 77 68 80 68 75 C68 70 60 55 50 45 Z" fill="#ffffff" opacity="0.35"/>
+						</svg>
+					</div>
+					<span class="logo-text-premium">Minh Huệ <span class="logo-serif-sub">Radio</span></span>
 				</a>
 				
 				<div class="nav-links">
@@ -150,8 +156,14 @@ const isLoggedIn = !!Astro.locals.user;
 				<div class="footer-grid">
 					<div class="footer-brand">
 						<a href="/" class="site-logo-premium footer-logo-premium">
-							<span class="logo-badge-premium">M</span>
-							<span class="logo-text-premium">MINH HUỆ <span class="logo-serif-sub">RADIO</span></span>
+							<div class="logo-badge-premium">
+								<svg viewBox="0 0 100 100" class="logo-lotus-svg" width="28" height="28">
+									<path d="M50 15 C42 35 30 45 30 60 C30 72 39 78 50 78 C61 78 70 72 70 60 C70 45 58 35 50 15 Z" fill="#ffffff" opacity="0.95"/>
+									<path d="M50 30 C35 45 20 55 20 65 C20 74 28 78 38 76 C44 71 48 61 50 51 C52 61 56 71 62 76 C72 78 80 74 80 65 C80 55 65 45 50 30 Z" fill="#ffffff" opacity="0.8"/>
+									<path d="M50 45 C40 55 32 65 32 70 C32 75 40 77 50 75 C60 77 68 80 68 75 C68 70 60 55 50 45 Z" fill="#ffffff" opacity="0.35"/>
+								</svg>
+							</div>
+							<span class="logo-text-premium">Minh Huệ <span class="logo-serif-sub">Radio</span></span>
 						</a>
 						<p class="footer-tagline">Trang phát thanh chia sẻ trải nghiệm tu luyện và tin tức Pháp Luân Đại Pháp trên toàn thế giới.</p>
 					</div>
@@ -505,35 +517,31 @@ const isLoggedIn = !!Astro.locals.user;
 			}
 			.site-logo-premium .logo-badge-premium {
 				background: var(--gradient-premium);
-				color: #ffffff;
-				font-family: var(--font-sans);
-				font-weight: 900;
-				font-size: 20px;
-				line-height: 1;
-				width: 36px;
-				height: 36px;
+				width: 38px;
+				height: 38px;
 				display: inline-flex;
 				align-items: center;
 				justify-content: center;
-				border-radius: 10px;
-				box-shadow: 0 4px 15px rgba(0, 82, 163, 0.2);
+				border-radius: 12px;
+				box-shadow: 0 4px 15px rgba(0, 82, 163, 0.15);
+				transition: transform 0.3s ease;
 			}
 			.site-logo-premium .logo-text-premium {
 				color: var(--color-text);
-				font-family: var(--font-sans);
-				font-weight: 800;
-				font-size: 20px;
-				letter-spacing: -0.04em;
+				font-family: var(--font-serif);
+				font-weight: 700;
+				font-size: 21px;
+				letter-spacing: -0.02em;
 				display: flex;
 				align-items: center;
-				gap: 4px;
+				gap: 5px;
 				transition: color var(--transition-fast);
 			}
 			.site-logo-premium .logo-serif-sub {
 				font-family: var(--font-serif);
-				font-weight: 700;
+				font-weight: 600;
 				font-style: italic;
-				font-size: 18px;
+				font-size: 19px;
 				background: var(--gradient-accent);
 				-webkit-background-clip: text;
 				-webkit-text-fill-color: transparent;
