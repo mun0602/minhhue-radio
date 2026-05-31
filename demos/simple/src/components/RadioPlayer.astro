@@ -17,9 +17,6 @@ const defaultTrack = playlist.length > 0 ? playlist[0] : {
 };
 ---
 
-<!-- Thư viện Plyr.css từ CDN (chỉ nạp cho component này) -->
-<link rel="stylesheet" href="https://cdn.plyr.io/3.7.8/plyr.css" />
-
 <div class="emdash-radio-layout-container">
 	{/* Khối bên trái: Trình phát nhạc chính */}
 	<div class="emdash-player-card-premium">
@@ -44,12 +41,53 @@ const defaultTrack = playlist.length > 0 ? playlist[0] : {
 				</h4>
 			</div>
 
-			{/* Trình phát Audio của Plyr */}
-			<div class="plyr-wrapper">
-				<audio id="audio-player" controls>
+			{/* Trình phát Audio tùy chỉnh siêu tối giản */}
+			<div class="custom-player-premium">
+				<audio id="audio-player" preload="metadata">
 					<source src={`/api/audio-proxy?url=${encodeURIComponent(defaultTrack.url)}`} type="audio/mpeg" />
 					Trình duyệt của bạn không hỗ trợ phát âm thanh trực tiếp.
 				</audio>
+
+				{/* 1. Thanh Tiến Trình (Progress Slider) */}
+				<div class="custom-progress-area">
+					<input type="range" id="custom-seek-slider" class="custom-seek-slider" min="0" max="100" value="0" step="0.1" />
+					<div class="custom-time-display">
+						<span id="custom-time-current">00:00</span>
+						<span id="custom-time-duration">00:00</span>
+					</div>
+				</div>
+
+				{/* 2. Hàng điều khiển tối giản (Controls) */}
+				<div class="custom-controls-row">
+					{/* Điều chỉnh tốc độ */}
+					<button id="custom-speed-btn" class="custom-player-btn speed-btn" title="Tốc độ phát">
+						1.0x
+					</button>
+
+					<div class="custom-center-controls">
+						{/* Tua lùi 10s */}
+						<button id="custom-rewind-btn" class="custom-player-btn control-secondary-btn" title="Lùi 10 giây">
+							<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M16 14 12 10 16 6"/><path d="M12 14 8 10 12 6"/><path d="M20 18a8 8 0 1 0-8 8h1"/></svg>
+						</button>
+
+						{/* Nút Play/Pause chính */}
+						<button id="custom-play-btn" class="custom-play-main-btn" title="Phát / Tạm dừng">
+							<svg id="play-icon" xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
+							<svg id="pause-icon" xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="currentColor" style="display:none;"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></svg>
+						</button>
+
+						{/* Tua đi 30s */}
+						<button id="custom-forward-btn" class="custom-player-btn control-secondary-btn" title="Tiến 30 giây">
+							<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M8 6l4 4-4 4"/><path d="M12 6l4 4-4 4"/><path d="M4 18a8 8 0 1 1 8 8h-1"/></svg>
+						</button>
+					</div>
+
+					{/* Chỉ báo trạng thái thiền định */}
+					<div class="custom-status-indicator">
+						<span id="player-status-dot" class="status-dot"></span>
+						<span id="player-status-text" class="status-text">Đang dừng</span>
+					</div>
+				</div>
 			</div>
 		</div>
 	</div>
@@ -219,20 +257,8 @@ const defaultTrack = playlist.length > 0 ? playlist[0] : {
 	</div>
 </div>
 
-<!-- Nạp Plyr.js động từ CDN và chạy logic xử lý danh sách phát -->
-<script is:inline src="https://cdn.plyr.io/3.7.8/plyr.js"></script>
-
 <script>
-	// Khai báo kiểu cho Plyr từ CDN để tránh lỗi build TypeScript
-	declare const Plyr: any;
-
 	document.addEventListener('DOMContentLoaded', () => {
-		// 1. Khởi tạo Plyr - Bỏ các nút điều chỉnh âm thanh (mute, volume) để giao diện liền mạch
-		const player = new Plyr('#audio-player', {
-			controls: ['play', 'progress', 'current-time', 'settings'],
-			tooltips: { controls: true, seek: true }
-		});
-
 		const audio = document.getElementById('audio-player') as HTMLAudioElement;
 		const currentTrackTitle = document.getElementById('current-track-title');
 		const playlistContainer = document.getElementById('playlist');
@@ -246,7 +272,130 @@ const defaultTrack = playlist.length > 0 ? playlist[0] : {
 		const emptyPlaylistMsg = document.getElementById('empty-playlist-msg');
 		const dropdownItems = categoriesDropdown ? Array.from(categoriesDropdown.querySelectorAll('.sub-category-nav-item')) : [];
 
+		// Custom Player Controls
+		const playBtn = document.getElementById('custom-play-btn');
+		const playIcon = document.getElementById('play-icon');
+		const pauseIcon = document.getElementById('pause-icon');
+		const seekSlider = document.getElementById('custom-seek-slider') as HTMLInputElement;
+		const timeCurrent = document.getElementById('custom-time-current');
+		const timeDuration = document.getElementById('custom-time-duration');
+		const speedBtn = document.getElementById('custom-speed-btn');
+		const rewindBtn = document.getElementById('custom-rewind-btn');
+		const forwardBtn = document.getElementById('custom-forward-btn');
+		const statusDot = document.getElementById('player-status-dot');
+		const statusText = document.getElementById('player-status-text');
+
 		if (!audio || !currentTrackTitle || !playlistContainer) return;
+
+		// Hỗ trợ tốc độ phát
+		const speeds = [1.0, 1.25, 1.5, 2.0, 0.75];
+		let currentSpeedIndex = 0;
+
+		if (speedBtn) {
+			speedBtn.addEventListener('click', () => {
+				currentSpeedIndex = (currentSpeedIndex + 1) % speeds.length;
+				const newSpeed = speeds[currentSpeedIndex];
+				audio.playbackRate = newSpeed;
+				speedBtn.textContent = `${newSpeed.toFixed(2).replace('.00', '')}x`;
+			});
+		}
+
+		// Tua lùi 10s và tua đi 30s
+		if (rewindBtn) {
+			rewindBtn.addEventListener('click', () => {
+				audio.currentTime = Math.max(0, audio.currentTime - 10);
+			});
+		}
+		if (forwardBtn) {
+			forwardBtn.addEventListener('click', () => {
+				audio.currentTime = Math.min(audio.duration || 0, audio.currentTime + 30);
+			});
+		}
+
+		// Hàm định dạng thời gian (mm:ss)
+		const formatTime = (secs: number) => {
+			if (isNaN(secs)) return "00:00";
+			const minutes = Math.floor(secs / 60);
+			const seconds = Math.floor(secs % 60);
+			return `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
+		};
+
+		// Cập nhật trạng thái giao diện phát/tạm dừng
+		const updatePlayState = (isPlaying: boolean) => {
+			if (!playIcon || !pauseIcon || !statusDot || !statusText) return;
+			if (isPlaying) {
+				playIcon.style.display = 'none';
+				pauseIcon.style.display = 'block';
+				statusDot.classList.add('playing');
+				statusText.textContent = 'Đang phát';
+				playBtn?.classList.add('playing');
+			} else {
+				playIcon.style.display = 'block';
+				pauseIcon.style.display = 'none';
+				statusDot.classList.remove('playing');
+				statusText.textContent = 'Đang dừng';
+				playBtn?.classList.remove('playing');
+			}
+		};
+
+		// Play / Pause toggle
+		if (playBtn) {
+			playBtn.addEventListener('click', () => {
+				if (audio.paused) {
+					audio.play().catch(err => console.log("Playback error", err));
+				} else {
+					audio.pause();
+				}
+			});
+		}
+
+		audio.addEventListener('play', () => updatePlayState(true));
+		audio.addEventListener('pause', () => updatePlayState(false));
+
+		// Đồng bộ tiến trình thời gian
+		audio.addEventListener('timeupdate', () => {
+			if (seekSlider && !isDraggingSlider) {
+				const duration = audio.duration || 0;
+				const currentTime = audio.currentTime || 0;
+				seekSlider.value = duration > 0 ? String((currentTime / duration) * 100) : "0";
+				
+				// Đổi màu nền background cho input range để tạo track fill tự nhiên
+				const percent = duration > 0 ? (currentTime / duration) * 100 : 0;
+				seekSlider.style.background = `linear-gradient(to right, var(--color-accent) ${percent}%, var(--color-border) ${percent}%)`;
+			}
+			if (timeCurrent) {
+				timeCurrent.textContent = formatTime(audio.currentTime);
+			}
+		});
+
+		// Khi load xong metadata
+		audio.addEventListener('loadedmetadata', () => {
+			if (timeDuration) {
+				timeDuration.textContent = formatTime(audio.duration);
+			}
+			if (seekSlider) {
+				seekSlider.style.background = `linear-gradient(to right, var(--color-accent) 0%, var(--color-border) 0%)`;
+			}
+		});
+
+		// Kéo thanh trượt
+		let isDraggingSlider = false;
+		if (seekSlider) {
+			seekSlider.addEventListener('input', () => {
+				isDraggingSlider = true;
+				if (timeCurrent) {
+					const duration = audio.duration || 0;
+					const targetTime = (parseFloat(seekSlider.value) / 100) * duration;
+					timeCurrent.textContent = formatTime(targetTime);
+				}
+			});
+
+			seekSlider.addEventListener('change', () => {
+				isDraggingSlider = false;
+				const duration = audio.duration || 0;
+				audio.currentTime = (parseFloat(seekSlider.value) / 100) * duration;
+			});
+		}
 
 		// Khôi phục trạng thái phát nhạc từ localStorage
 		const savedStateStr = localStorage.getItem('minhhue_radio_state');
@@ -257,10 +406,15 @@ const defaultTrack = playlist.length > 0 ? playlist[0] : {
 					audio.src = `/api/audio-proxy?url=${encodeURIComponent(savedState.url)}`;
 					currentTrackTitle.textContent = savedState.title;
 					
-					// Đặt lại thời gian khi metadata đã tải xong
+					// Đặt lại tốc độ hiện tại nếu có lưu
+					audio.playbackRate = speeds[currentSpeedIndex];
+					
 					const setSavedTime = () => {
 						if (savedState.time) {
 							audio.currentTime = savedState.time;
+						}
+						if (timeDuration) {
+							timeDuration.textContent = formatTime(audio.duration);
 						}
 						audio.removeEventListener('loadedmetadata', setSavedTime);
 					};
@@ -272,7 +426,6 @@ const defaultTrack = playlist.length > 0 ? playlist[0] : {
 					const targetItem = playlistItemsForRestoration.find(i => i.getAttribute('data-url') === savedState.url);
 					if (targetItem) {
 						targetItem.classList.add('active');
-						// Scroll delay nhẹ để đảm bảo DOM đã hiện danh sách
 						setTimeout(() => targetItem.scrollIntoView({ behavior: 'smooth', block: 'center' }), 800);
 					}
 				}
@@ -313,15 +466,14 @@ const defaultTrack = playlist.length > 0 ? playlist[0] : {
 			if (targetItem) {
 				setTimeout(() => {
 					(targetItem as HTMLElement).click();
-				}, 150); // Delay nhẹ đảm bảo DOM và Plyr đã sẵn sàng
+				}, 150);
 			}
 		}
 
 		let playlistItems = Array.from(playlistContainer.querySelectorAll('li'));
-		let visibleItems = [...playlistItems]; // Chứa danh sách các bài phát hiển thị sau lọc
+		let visibleItems = [...playlistItems];
 		let isRandomMode = false;
 
-		// 2. Click chọn bài hát
 		const attachClickHandlers = () => {
 			playlistItems.forEach((item) => {
 				item.removeEventListener('click', handleTrackClick);
@@ -339,26 +491,21 @@ const defaultTrack = playlist.length > 0 ? playlist[0] : {
 			
 			if (url && title) {
 				audio.src = `/api/audio-proxy?url=${encodeURIComponent(url)}`;
-				player.play();
+				audio.playbackRate = speeds[currentSpeedIndex]; // Duy trì tốc độ phát đã chọn
+				audio.play().catch(err => console.log("Playback error", err));
 				
-				// Cập nhật giao diện active
 				playlistItems.forEach(i => i.classList.remove('active'));
 				item.classList.add('active');
 				
-				// Cập nhật tiêu đề bài phát
 				currentTrackTitle!.textContent = title;
-				
-				// Cuộn mượt mà đến bài hát được chọn
 				item.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
 			}
 		}
 
-		// Khởi động lắng nghe sự kiện lúc đầu
 		attachClickHandlers();
 
-		// 3. Xử lý bộ lọc chuyên mục (Dropdown)
+		// Xử lý bộ lọc chuyên mục (Dropdown)
 		if (categoriesToggle && categoriesDropdown) {
-			// Bấm mở/đóng dropdown
 			categoriesToggle.addEventListener('click', (e) => {
 				e.stopPropagation();
 				const isShow = categoriesDropdown.style.display === 'block';
@@ -366,15 +513,12 @@ const defaultTrack = playlist.length > 0 ? playlist[0] : {
 				categoriesToggle.classList.toggle('open');
 			});
 
-			// Đóng dropdown khi bấm ra ngoài
 			document.addEventListener('click', () => {
 				categoriesDropdown.style.display = 'none';
 				categoriesToggle.classList.remove('open');
 			});
 
-			// Lắng nghe chọn chuyên mục
 			dropdownItems.forEach((item) => {
-				// Ngăn chặn chuyển trang thực tế khi click link để nhạc không bị dừng
 				const link = item.querySelector('a');
 				if (link) {
 					link.addEventListener('click', (e) => {
@@ -387,16 +531,13 @@ const defaultTrack = playlist.length > 0 ? playlist[0] : {
 					const filter = item.getAttribute('data-filter');
 					const categoryText = item.querySelector('a')?.textContent;
 
-					// Cập nhật lớp active cho nút chọn trong dropdown
 					dropdownItems.forEach(i => i.classList.remove('active-category'));
 					item.classList.add('active-category');
 
-					// Cập nhật nhãn đã chọn
 					if (selectedCategoryText && categoryText) {
 						selectedCategoryText.textContent = categoryText;
 					}
 
-					// Lọc các li bài phát tương ứng
 					playlistItems.forEach((li) => {
 						const trackCategory = li.getAttribute('data-category');
 						let isMatch = false;
@@ -404,10 +545,8 @@ const defaultTrack = playlist.length > 0 ? playlist[0] : {
 						if (filter === 'all') {
 							isMatch = true;
 						} else if (filter === 'ngay-phap-luan-dai-phap-the-gioi-radio') {
-							// Khớp cả các chuyên mục con theo năm của Ngày Pháp Luân Đại Pháp
 							isMatch = trackCategory === filter || (trackCategory && trackCategory.startsWith('ngay-phap-luan-dai-phap-the-gioi'));
 						} else if (filter === 'phap-hoi-trung-quoc-radio') {
-							// Khớp cả các chuyên mục con theo kỳ của Pháp hội Trung Quốc
 							isMatch = trackCategory === filter || (trackCategory && trackCategory.startsWith('phap-hoi-trung-quoc'));
 						} else {
 							isMatch = trackCategory === filter;
@@ -420,10 +559,8 @@ const defaultTrack = playlist.length > 0 ? playlist[0] : {
 						}
 					});
 
-					// Cập nhật mảng visibleItems dùng cho chuyển bài
 					visibleItems = playlistItems.filter(li => li.style.display !== 'none');
 
-					// Hiển thị thông báo rỗng nếu không có bài hát nào thuộc chuyên mục này
 					if (emptyPlaylistMsg) {
 						if (visibleItems.length === 0) {
 							emptyPlaylistMsg.style.display = 'block';
@@ -432,45 +569,37 @@ const defaultTrack = playlist.length > 0 ? playlist[0] : {
 						}
 					}
 
-					// Đóng dropdown
 					categoriesDropdown.style.display = 'none';
 					categoriesToggle.classList.remove('open');
 				});
 			});
 		}
 
-		// 4. Nút đảo thứ tự phát (áp dụng cho visibleItems hiện tại)
+		// Nút đảo thứ tự phát
 		if (revertButton) {
 			revertButton.addEventListener('click', () => {
-				// Đảo ngược các bài viết hiển thị hiện tại
 				visibleItems.reverse();
-				// Sắp xếp lại DOM
 				playlistContainer.innerHTML = '';
 				playlistItems.forEach(item => {
 					if (visibleItems.includes(item)) {
 						playlistContainer.appendChild(item);
 					} else {
-						// Giữ các bài bị ẩn vào cuối DOM
 						playlistContainer.appendChild(item);
 					}
 				});
-				// Gắn lại sự kiện click
 				attachClickHandlers();
-				
-				// Hiệu ứng tương tác micro-animation
 				revertButton.classList.add('action-active');
 				setTimeout(() => revertButton.classList.remove('action-active'), 300);
 			});
 		}
 
-		// 5. Nút phát ngẫu nhiên
+		// Nút phát ngẫu nhiên
 		if (randomButton) {
 			randomButton.addEventListener('click', () => {
 				isRandomMode = !isRandomMode;
 				if (isRandomMode) {
 					randomButton.classList.add('active-mode');
 					if (visibleItems.length > 0) {
-						// Chọn ngẫu nhiên bài để phát từ các bài đang hiển thị
 						const randomIndex = Math.floor(Math.random() * visibleItems.length);
 						playTrack(visibleItems[randomIndex]);
 					}
@@ -480,7 +609,7 @@ const defaultTrack = playlist.length > 0 ? playlist[0] : {
 			});
 		}
 
-		// 6. Tự động chuyển bài khi kết thúc (sử dụng visibleItems hiện có để chuyển đúng bài trong chuyên mục)
+		// Tự động chuyển bài khi kết thúc
 		audio.addEventListener('ended', () => {
 			if (isRandomMode) {
 				if (visibleItems.length > 0) {
@@ -494,14 +623,13 @@ const defaultTrack = playlist.length > 0 ? playlist[0] : {
 					if (currentVisibleIndex !== -1 && currentVisibleIndex < visibleItems.length - 1) {
 						playTrack(visibleItems[currentVisibleIndex + 1]);
 					} else if (visibleItems.length > 0) {
-						// Nếu là bài cuối của bộ lọc, quay lại bài đầu tiên của bộ lọc
 						playTrack(visibleItems[0]);
 					}
 				}
 			}
 		});
 
-		// Lắng nghe sự kiện click từ các link menu chuyên mục trên Header để chuyển đổi mượt mà không reload trang (SPA Experience)
+		// Lắng nghe sự kiện click từ các link menu chuyên mục trên Header
 		document.querySelectorAll('.dropdown-menu-item').forEach(link => {
 			link.addEventListener('click', (e) => {
 				const currentPath = window.location.pathname;
@@ -510,7 +638,6 @@ const defaultTrack = playlist.length > 0 ? playlist[0] : {
 					const url = new URL((link as HTMLAnchorElement).href);
 					const filterVal = url.searchParams.get('filter');
 					if (filterVal) {
-						// Cập nhật URL trình duyệt mượt mà (không reload trang)
 						window.history.pushState({}, '', url.pathname + url.search);
 						const targetItem = dropdownItems.find(item => item.getAttribute('data-filter') === filterVal);
 						if (targetItem) {
@@ -678,22 +805,210 @@ const defaultTrack = playlist.length > 0 ? playlist[0] : {
 		overflow: hidden;
 	}
 
-	/* Wrapper cho trình phát Plyr */
-	.plyr-wrapper {
-		margin-bottom: var(--spacing-4);
+	/* Trình phát Audio tùy chỉnh siêu tối giản */
+	.custom-player-premium {
+		background: linear-gradient(135deg, rgba(255, 255, 255, 0.85), rgba(247, 246, 240, 0.6));
+		border: 1px solid var(--color-border);
+		border-radius: var(--radius-lg);
+		padding: var(--spacing-6);
+		box-shadow: var(--shadow-sm);
+		display: flex;
+		flex-direction: column;
+		gap: var(--spacing-5);
+		transition: all var(--transition-base);
+		margin-top: var(--spacing-4);
 	}
 
-	/* PHỤC HỒI Y NGUYÊN CSS COMMIT ĐẦU TIÊN CỦA PLYR - SẠCH SẼ VÀ SIÊU TỰ NHIÊN */
-	:global(.plyr--audio) {
-		--plyr-color-main: var(--color-accent);
-		--plyr-audio-controls-background: transparent;
-		--plyr-audio-control-color: var(--color-text-secondary);
-		--plyr-audio-control-color-hover: #ffffff;
-		border: 1px solid var(--color-border) !important;
-		border-radius: var(--radius) !important;
-		padding: 14px 20px !important;
-		background: rgba(255, 255, 255, 0.8) !important;
+	.custom-player-premium:hover {
+		box-shadow: var(--shadow-md);
+		border-color: rgba(0, 102, 204, 0.2);
+	}
+
+	/* Thanh tiến trình */
+	.custom-progress-area {
+		display: flex;
+		flex-direction: column;
+		gap: 6px;
+	}
+
+	.custom-seek-slider {
+		-webkit-appearance: none;
+		appearance: none;
+		width: 100%;
+		height: 4px;
+		border-radius: 2px;
+		background: var(--color-border);
+		outline: none;
+		cursor: pointer;
+		transition: height 0.2s ease;
+	}
+
+	.custom-seek-slider:hover {
+		height: 6px;
+	}
+
+	/* Webkit thumb (Chrome, Safari, Edge) */
+	.custom-seek-slider::-webkit-slider-thumb {
+		-webkit-appearance: none;
+		appearance: none;
+		width: 12px;
+		height: 12px;
+		border-radius: 50%;
+		background: var(--color-accent);
+		box-shadow: 0 0 10px rgba(0, 102, 204, 0.4);
+		transition: transform 0.1s ease;
+		transform: scale(0); /* Ẩn đi mặc định */
+	}
+
+	.custom-seek-slider:hover::-webkit-slider-thumb {
+		transform: scale(1); /* Hiện lên khi hover */
+	}
+
+	/* Firefox thumb */
+	.custom-seek-slider::-moz-range-thumb {
+		width: 12px;
+		height: 12px;
+		border: none;
+		border-radius: 50%;
+		background: var(--color-accent);
+		box-shadow: 0 0 10px rgba(0, 102, 204, 0.4);
+		transition: transform 0.1s ease;
+		transform: scale(0);
+	}
+
+	.custom-seek-slider:hover::-moz-range-thumb {
+		transform: scale(1);
+	}
+
+	.custom-time-display {
+		display: flex;
+		justify-content: space-between;
+		font-family: var(--font-sans);
+		font-size: 11px;
+		font-weight: 700;
+		color: var(--color-muted);
+		letter-spacing: 0.02em;
+	}
+
+	/* Hàng điều khiển chính */
+	.custom-controls-row {
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		gap: var(--spacing-4);
+	}
+
+	/* Nút chơi nhạc dạng tròn nổi bật */
+	.custom-play-main-btn {
+		width: 48px;
+		height: 48px;
+		border-radius: 50%;
+		background: var(--gradient-premium);
+		border: none;
+		color: #ffffff;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		cursor: pointer;
+		box-shadow: 0 4px 14px rgba(0, 102, 204, 0.3);
+		transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+	}
+
+	.custom-play-main-btn:hover {
+		transform: scale(1.08);
+		box-shadow: 0 6px 20px rgba(0, 102, 204, 0.45);
+	}
+
+	.custom-play-main-btn:active {
+		transform: scale(0.95);
+	}
+
+	/* Các nút điều khiển phụ */
+	.custom-player-btn {
+		background: transparent;
+		border: none;
+		color: var(--color-text-secondary);
+		cursor: pointer;
+		transition: all var(--transition-fast);
+		display: flex;
+		align-items: center;
+		justify-content: center;
+	}
+
+	.control-secondary-btn {
+		width: 36px;
+		height: 36px;
+		border-radius: 50%;
+		color: var(--color-muted);
+	}
+
+	.control-secondary-btn:hover {
+		color: var(--color-accent);
+		background: rgba(0, 102, 204, 0.05);
+	}
+
+	.control-secondary-btn:active {
+		transform: scale(0.92);
+	}
+
+	.custom-center-controls {
+		display: flex;
+		align-items: center;
+		gap: 12px;
+	}
+
+	/* Nút hiển thị Tốc độ */
+	.speed-btn {
+		font-family: var(--font-sans);
+		font-size: 11px;
+		font-weight: 800;
+		color: var(--color-text-secondary);
+		border: 1px solid var(--color-border);
+		padding: 5px 10px;
+		border-radius: 12px;
+		min-width: 46px;
+		text-align: center;
+		background: rgba(255, 255, 255, 0.8);
 		box-shadow: var(--shadow-sm);
+	}
+
+	.speed-btn:hover {
+		border-color: var(--color-accent);
+		color: var(--color-accent);
+		background: #ffffff;
+	}
+
+	/* Chỉ báo trạng thái thiền định */
+	.custom-status-indicator {
+		display: flex;
+		align-items: center;
+		gap: var(--spacing-2);
+		font-family: var(--font-sans);
+		font-size: 11px;
+		font-weight: 700;
+		color: var(--color-muted);
+		min-width: 76px;
+		justify-content: flex-end;
+	}
+
+	.status-dot {
+		width: 7px;
+		height: 7px;
+		background: var(--color-muted);
+		border-radius: 50%;
+		transition: all 0.3s ease;
+	}
+
+	.status-dot.playing {
+		background: #20c997;
+		box-shadow: 0 0 10px rgba(32, 201, 151, 0.6);
+		animation: pulseDot 2s infinite;
+	}
+
+	@keyframes pulseDot {
+		0% { transform: scale(0.9); opacity: 0.6; }
+		50% { transform: scale(1.1); opacity: 1; }
+		100% { transform: scale(0.9); opacity: 0.6; }
 	}
 
 	/* Danh sách phát nhạc */
