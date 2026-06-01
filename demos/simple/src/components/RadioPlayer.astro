@@ -409,6 +409,22 @@ const defaultTrack = playlist.length > 0 ? playlist[0] : {
 		let visibleTracks = allTracks.map((t, i) => ({...t, originalIndex: i}));
 		let activeTrackUrl = allTracks[0]?.url || '';
 
+		// Đọc/ghi nhận danh sách các bài đã nghe từ localStorage
+		let listenedTracks: string[] = [];
+		try {
+			const savedListened = localStorage.getItem('minhhue_listened_tracks');
+			if (savedListened) listenedTracks = JSON.parse(savedListened);
+		} catch (e) {}
+
+		function markTrackAsListened(url: string) {
+			if (!listenedTracks.includes(url)) {
+				listenedTracks.push(url);
+				localStorage.setItem('minhhue_listened_tracks', JSON.stringify(listenedTracks));
+				lastRenderStart = -1; // buộc render lại
+				renderVirtualList();
+			}
+		}
+
 		function cleanTitle(title: string) {
 			return title.replace(/\[\d{2}-\d{2}-\d{4}\]/g, '')
 				.replace(/Phát thanh Minh Huệ:\s*/g, '')
@@ -435,7 +451,9 @@ const defaultTrack = playlist.length > 0 ? playlist[0] : {
 				const t = visibleTracks[i];
 				const num = String(t.originalIndex + 1).padStart(2, '0');
 				const isActive = t.url === activeTrackUrl;
-				html += `<li data-idx="${i}" style="position:absolute;top:${i * ITEM_HEIGHT}px;left:0;right:0;height:${ITEM_HEIGHT}px;" class="${isActive ? 'active' : ''}"><span class="track-number">${num}</span><span class="track-name" title="${t.title.replace(/"/g, '&quot;')}">${cleanTitle(t.title)}</span></li>`;
+				const isListened = listenedTracks.includes(t.url);
+				const cssClass = `${isActive ? 'active' : ''} ${isListened ? 'listened' : ''}`.trim();
+				html += `<li data-idx="${i}" style="position:absolute;top:${i * ITEM_HEIGHT}px;left:0;right:0;height:${ITEM_HEIGHT}px;" class="${cssClass}"><span class="track-number">${num}</span><span class="track-name" title="${t.title.replace(/"/g, '&quot;')}">${cleanTitle(t.title)}</span></li>`;
 			}
 			playlistContainer.innerHTML = html;
 		}
@@ -699,6 +717,7 @@ const defaultTrack = playlist.length > 0 ? playlist[0] : {
 			}
 			
 			activeTrackUrl = t.url;
+			markTrackAsListened(t.url); // Đánh dấu đã nghe bài này
 			currentTrackTitle!.textContent = t.title;
 			if (mobileTrackTitle) mobileTrackTitle.textContent = cleanTitle(t.title);
 			lastRenderStart = -1; // force re-render
@@ -714,6 +733,7 @@ const defaultTrack = playlist.length > 0 ? playlist[0] : {
 					audio.src = `/api/audio-proxy?url=${encodeURIComponent(s.url)}`;
 					currentTrackTitle.textContent = s.title;
 					activeTrackUrl = s.url;
+					markTrackAsListened(s.url); // Đánh dấu đã nghe bài khôi phục từ trước
 					audio.playbackRate = speeds[currentSpeedIndex];
 					const setSavedTime = () => {
 						// Đảm bảo gỡ bỏ lắng nghe ngay lập tức ở dòng đầu tiên để tránh lặp lại hoặc rò rỉ nếu xảy ra lỗi
@@ -1798,6 +1818,24 @@ const defaultTrack = playlist.length > 0 ? playlist[0] : {
 		background: #0ea5e9;
 		top: 0; bottom: 0;
 		box-shadow: 0 0 8px rgba(14, 165, 233, 0.6);
+	}
+
+	/* CSS Cho các bài phát thanh đã nghe */
+	#playlist li.listened .track-name {
+		color: #94a3b8; /* Màu xám mờ tinh tế */
+		font-weight: 400;
+	}
+	#playlist li.listened .track-number {
+		color: #cbd5e1;
+	}
+
+	/* Đảm bảo bài đang phát luôn nổi bật màu xanh kể cả khi đã nghe trước đó */
+	#playlist li.active.listened .track-name {
+		color: #0369a1 !important;
+		font-weight: 700 !important;
+	}
+	#playlist li.active.listened .track-number {
+		color: #0ea5e9 !important;
 	}
 
 	/* RESPONSIVE LAYOUT TỐI ƯU TUYỆT VỜI CHO MOBILE (iPhone/iOS) - PHIÊN BẢN SIÊU NHẸ CHO ĐIỆN THOẠI YẾU */
