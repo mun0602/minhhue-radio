@@ -186,7 +186,7 @@ const defaultTrack = playlist.length > 0 ? playlist[0] : {
 						</button>
 						<button id="search-toggle-btn" class="action-btn" title="Tìm kiếm phát thanh">
 							<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
-							Tìm kiếm
+							<span class="search-btn-text">Tìm kiếm</span>
 						</button>
 					</div>
 				</div>
@@ -688,7 +688,16 @@ const defaultTrack = playlist.length > 0 ? playlist[0] : {
 			if (!t) return;
 			audio.src = `/api/audio-proxy?url=${encodeURIComponent(t.url)}`;
 			audio.playbackRate = speeds[currentSpeedIndex];
-			audio.play().catch(() => {});
+			
+			// Gọi load() và play() để vượt qua cơ chế chặn tự động phát của iOS/Safari
+			audio.load();
+			const playPromise = audio.play();
+			if (playPromise !== undefined) {
+				playPromise.catch(error => {
+					console.warn("Autoplay bị chặn hoặc thất bại trên thiết bị di động:", error);
+				});
+			}
+			
 			activeTrackUrl = t.url;
 			currentTrackTitle!.textContent = t.title;
 			if (mobileTrackTitle) mobileTrackTitle.textContent = cleanTitle(t.title);
@@ -877,11 +886,25 @@ const defaultTrack = playlist.length > 0 ? playlist[0] : {
 
 		// ===== AUTO-NEXT =====
 		audio.addEventListener('ended', () => {
-			if (stopAtTrackEnd) { audio.pause(); stopAtTrackEnd = false; if (sleepBtnText) sleepBtnText.textContent = 'Hẹn giờ'; sleepBtn?.classList.remove('active-timer'); return; }
-			if (isRandomMode) { playTrackByIndex(Math.floor(Math.random() * visibleTracks.length)); return; }
+			if (stopAtTrackEnd) {
+				audio.pause();
+				stopAtTrackEnd = false;
+				if (sleepBtnText) sleepBtnText.textContent = 'Hẹn giờ';
+				if (mobileSleepBtnText) mobileSleepBtnText.textContent = 'Hẹn giờ';
+				sleepBtn?.classList.remove('active-timer');
+				mobileSleepBtn?.classList.remove('active-timer');
+				return;
+			}
+			if (isRandomMode) {
+				playTrackByIndex(Math.floor(Math.random() * visibleTracks.length));
+				return;
+			}
 			const idx = visibleTracks.findIndex(t => t.url === activeTrackUrl);
-			if (idx >= 0 && idx < visibleTracks.length - 1) playTrackByIndex(idx + 1);
-			else if (visibleTracks.length > 0) playTrackByIndex(0);
+			if (idx >= 0 && idx < visibleTracks.length - 1) {
+				playTrackByIndex(idx + 1);
+			} else if (visibleTracks.length > 0) {
+				playTrackByIndex(0);
+			}
 		});
 
 		// ===== HEADER MENU LINKS =====
@@ -1802,6 +1825,11 @@ const defaultTrack = playlist.length > 0 ? playlist[0] : {
 			align-items: center;
 			gap: 12px;
 			width: 100%;
+		}
+
+		/* Ẩn chữ của nút Tìm kiếm trên mobile, chỉ giữ lại icon kính lúp */
+		.search-btn-text {
+			display: none;
 		}
 
 		.mobile-progress-row {
