@@ -414,9 +414,25 @@ const defaultTrack = playlist.length > 0 ? playlist[0] : {
 			}, 100);
 		}
 
-		// ===== PLAYER CONTROLS =====
-		if (rewindBtn) rewindBtn.addEventListener('click', () => { audio.currentTime = Math.max(0, audio.currentTime - 10); });
-		if (forwardBtn) forwardBtn.addEventListener('click', () => { audio.currentTime = Math.min(audio.duration || 0, audio.currentTime + 30); });
+		// Tua lùi 10s và tua đi 30s
+		if (rewindBtn) {
+			rewindBtn.addEventListener('click', () => {
+				try {
+					audio.currentTime = Math.max(0, audio.currentTime - 10);
+				} catch (e) {
+					console.warn("Lỗi tua lùi (đặc thù iOS):", e);
+				}
+			});
+		}
+		if (forwardBtn) {
+			forwardBtn.addEventListener('click', () => {
+				try {
+					audio.currentTime = Math.min(audio.duration || 0, audio.currentTime + 30);
+				} catch (e) {
+					console.warn("Lỗi tua đi (đặc thù iOS):", e);
+				}
+			});
+		}
 
 		const formatTime = (secs: number) => isNaN(secs) ? "00:00" : `${String(Math.floor(secs / 60)).padStart(2, '0')}:${String(Math.floor(secs % 60)).padStart(2, '0')}`;
 
@@ -447,8 +463,24 @@ const defaultTrack = playlist.length > 0 ? playlist[0] : {
 			if (seekSlider) seekSlider.style.background = `linear-gradient(to right, var(--color-accent) 0%, var(--color-border) 0%)`;
 		});
 		if (seekSlider) {
-			seekSlider.addEventListener('input', () => { isDraggingSlider = true; if (timeCurrent) timeCurrent.textContent = formatTime((parseFloat(seekSlider.value) / 100) * (audio.duration || 0)); });
-			seekSlider.addEventListener('change', () => { isDraggingSlider = false; audio.currentTime = (parseFloat(seekSlider.value) / 100) * (audio.duration || 0); });
+			seekSlider.addEventListener('input', () => {
+				isDraggingSlider = true;
+				if (timeCurrent) {
+					const duration = audio.duration || 0;
+					const targetTime = (parseFloat(seekSlider.value) / 100) * duration;
+					timeCurrent.textContent = formatTime(targetTime);
+				}
+			});
+
+			seekSlider.addEventListener('change', () => {
+				isDraggingSlider = false;
+				const duration = audio.duration || 0;
+				try {
+					audio.currentTime = (parseFloat(seekSlider.value) / 100) * duration;
+				} catch (e) {
+					console.warn("Lỗi kéo thanh trượt (đặc thù iOS):", e);
+				}
+			});
 		}
 
 		// ===== PLAY TRACK BY INDEX (virtual) =====
@@ -474,8 +506,26 @@ const defaultTrack = playlist.length > 0 ? playlist[0] : {
 					currentTrackTitle.textContent = s.title;
 					activeTrackUrl = s.url;
 					audio.playbackRate = speeds[currentSpeedIndex];
-					const setSavedTime = () => { if (s.time) audio.currentTime = s.time; if (timeDuration) timeDuration.textContent = formatTime(audio.duration); audio.removeEventListener('loadedmetadata', setSavedTime); };
+					const setSavedTime = () => {
+						// Đảm bảo gỡ bỏ lắng nghe ngay lập tức ở dòng đầu tiên để tránh lặp lại hoặc rò rỉ nếu xảy ra lỗi
+						audio.removeEventListener('loadedmetadata', setSavedTime);
+						audio.removeEventListener('loadeddata', setSavedTime);
+						audio.removeEventListener('canplay', setSavedTime);
+						
+						try {
+							if (s.time && isFinite(audio.duration) && audio.duration > 0) {
+								audio.currentTime = Math.min(s.time, audio.duration);
+							}
+						} catch (e) {
+							console.warn("Không thể khôi phục currentTime (đặc thù iOS):", e);
+						}
+						if (timeDuration) {
+							timeDuration.textContent = formatTime(audio.duration);
+						}
+					};
 					audio.addEventListener('loadedmetadata', setSavedTime);
+					audio.addEventListener('loadeddata', setSavedTime);
+					audio.addEventListener('canplay', setSavedTime);
 					lastRenderStart = -1;
 					renderVirtualList();
 					setTimeout(() => scrollToTrack(s.url), 300);
