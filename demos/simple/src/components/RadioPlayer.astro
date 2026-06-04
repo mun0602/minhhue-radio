@@ -735,26 +735,57 @@ const defaultTrack = playlist.length > 0 ? playlist[0] : {
 					activeTrackUrl = s.url;
 					markTrackAsListened(s.url); // Đánh dấu đã nghe bài khôi phục từ trước
 					audio.playbackRate = speeds[currentSpeedIndex];
+
+					// Khôi phục giao diện hiển thị thời gian ngay lập tức để người dùng thấy trạng thái cũ
+					if (s.time) {
+						if (timeCurrent) timeCurrent.textContent = formatTime(s.time);
+						if (mobileTimeCurrent) mobileTimeCurrent.textContent = formatTime(s.time);
+						if (s.duration) {
+							if (timeDuration) timeDuration.textContent = formatTime(s.duration);
+							if (mobileTimeDuration) mobileTimeDuration.textContent = formatTime(s.duration);
+							const pct = (s.time / s.duration) * 100;
+							if (seekSlider) {
+								seekSlider.value = String(pct);
+								seekSlider.style.background = `linear-gradient(to right, var(--color-accent) ${pct}%, var(--color-border) ${pct}%)`;
+							}
+							if (mobileSeekSlider) {
+								mobileSeekSlider.value = String(pct);
+								mobileSeekSlider.style.background = `linear-gradient(to right, var(--color-accent) ${pct}%, var(--color-border) ${pct}%)`;
+							}
+						}
+					}
+
+					// Khôi phục thời gian phát thực tế trên iOS/Safari
+					let hasSetTime = false;
 					const setSavedTime = () => {
-						// Đảm bảo gỡ bỏ lắng nghe ngay lập tức ở dòng đầu tiên để tránh lặp lại hoặc rò rỉ nếu xảy ra lỗi
-						audio.removeEventListener('loadedmetadata', setSavedTime);
-						audio.removeEventListener('loadeddata', setSavedTime);
-						audio.removeEventListener('canplay', setSavedTime);
-						
+						if (hasSetTime) return;
 						try {
-							if (s.time && isFinite(audio.duration) && audio.duration > 0) {
-								audio.currentTime = Math.min(s.time, audio.duration);
+							const targetDuration = audio.duration || s.duration;
+							if (s.time && isFinite(targetDuration) && targetDuration > 0) {
+								audio.currentTime = Math.min(s.time, targetDuration);
+								hasSetTime = true;
+								
+								// Gỡ bỏ lắng nghe sau khi đã thiết lập thời gian thành công
+								audio.removeEventListener('loadedmetadata', setSavedTime);
+								audio.removeEventListener('loadeddata', setSavedTime);
+								audio.removeEventListener('canplay', setSavedTime);
+								audio.removeEventListener('play', setSavedTime);
 							}
 						} catch (e) {
 							console.warn("Không thể khôi phục currentTime (đặc thù iOS):", e);
 						}
-						if (timeDuration) {
+						if (timeDuration && isFinite(audio.duration) && audio.duration > 0) {
 							timeDuration.textContent = formatTime(audio.duration);
+						}
+						if (mobileTimeDuration && isFinite(audio.duration) && audio.duration > 0) {
+							mobileTimeDuration.textContent = formatTime(audio.duration);
 						}
 					};
 					audio.addEventListener('loadedmetadata', setSavedTime);
 					audio.addEventListener('loadeddata', setSavedTime);
 					audio.addEventListener('canplay', setSavedTime);
+					audio.addEventListener('play', setSavedTime);
+
 					lastRenderStart = -1;
 					renderVirtualList();
 					setTimeout(() => scrollToTrack(s.url), 300);
@@ -768,7 +799,14 @@ const defaultTrack = playlist.length > 0 ? playlist[0] : {
 			if (Date.now() - lastSaveTime > 5000) {
 				lastSaveTime = Date.now();
 				const t = visibleTracks.find(t => t.url === activeTrackUrl);
-				if (t) localStorage.setItem('minhhue_radio_state', JSON.stringify({ url: t.url, title: t.title, time: audio.currentTime }));
+				if (t) {
+					localStorage.setItem('minhhue_radio_state', JSON.stringify({
+						url: t.url,
+						title: t.title,
+						time: audio.currentTime,
+						duration: isFinite(audio.duration) && audio.duration > 0 ? audio.duration : null
+					}));
+				}
 			}
 		});
 
@@ -793,8 +831,8 @@ const defaultTrack = playlist.length > 0 ? playlist[0] : {
 			renderVirtualList();
 		}
 
-		// URL filter param
-		const filterParam = new URLSearchParams(window.location.search).get('filter');
+		// URL filter param hoặc khôi phục chuyên mục đã lưu từ localStorage
+		const filterParam = new URLSearchParams(window.location.search).get('filter') || localStorage.getItem('minhhue_selected_category');
 		if (filterParam) {
 			const targetItem = dropdownItems.find(item => item.getAttribute('data-filter') === filterParam);
 			if (targetItem) setTimeout(() => (targetItem as HTMLElement).click(), 100);
@@ -813,6 +851,7 @@ const defaultTrack = playlist.length > 0 ? playlist[0] : {
 					item.classList.add('active-category');
 					if (selectedCategoryText) selectedCategoryText.textContent = item.querySelector('a')?.textContent || '';
 					applyFilter(filter);
+					localStorage.setItem('minhhue_selected_category', filter);
 					categoriesDropdown.style.display = 'none';
 					categoriesToggle.classList.remove('open');
 				});
