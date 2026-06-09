@@ -663,11 +663,12 @@ export default function RadioPlayer() {
               onClick={() => setMobileSleepDropdownOpen(!mobileSleepDropdownOpen)} 
               className={`mobile-sleep-btn ${timerActive ? "active-timer" : ""}`}
               aria-label="Hẹn giờ tắt"
+              title={sleepText}
             >
-              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" style={{ marginRight: 4, verticalAlign: "middle" }}>
-                <path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z" />
+              <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                <circle cx="12" cy="12" r="10" />
+                <polyline points="12 6 12 12 16 14" />
               </svg>
-              <span style={{ verticalAlign: "middle" }}>{sleepText}</span>
             </button>
             {mobileSleepDropdownOpen && (
               <div className="mobile-sleep-dropdown">
