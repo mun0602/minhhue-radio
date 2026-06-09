@@ -1,0 +1,23 @@
+{
+  "name": "Phát Thanh Minh Huệ",
+  "short_name": "Minh Huệ Radio",
+  "description": "Ứng dụng nghe phát thanh Minh Huệ Radio cao cấp.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#07080a",
+  "theme_color": "#0ea5e9",
+  "orientation": "portrait",
+  "icons": [
+    {
+      "src": "/icons/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/icons/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}
