@@ -93,6 +93,16 @@ export default function RadioPlayer() {
   const [stopAtTrackEnd, setStopAtTrackEnd] = useState(false);
   const sleepTimerRef = useRef<NodeJS.Timeout | null>(null);
 
+  // Restore state flags
+  const [pendingRestoreTime, setPendingRestoreTime] = useState<number | null>(null);
+  const [isRestoreCompleted, setIsRestoreCompleted] = useState(false);
+  const pendingRestoreTimeRef = useRef<number | null>(null);
+
+  // Sync ref with state
+  useEffect(() => {
+    pendingRestoreTimeRef.current = pendingRestoreTime;
+  }, [pendingRestoreTime]);
+
   // Virtual Scrolling state
   const scrollContainerRef = useRef<HTMLDivElement | null>(null);
   const [scrollTop, setScrollTop] = useState(0);
@@ -157,8 +167,11 @@ export default function RadioPlayer() {
                 setCurrentTrack({ title: s.title, url: s.url, category: s.category || "", originalIndex: 0 });
               }
               if (s.time) {
+                setPendingRestoreTime(s.time);
                 setCurrentTime(s.time);
                 if (s.duration) setDuration(s.duration);
+              } else {
+                setIsRestoreCompleted(true);
               }
               // Smooth scroll to the current track
               setTimeout(() => {
@@ -168,12 +181,18 @@ export default function RadioPlayer() {
                   scrollContainerRef.current.scrollTop = Math.max(0, targetTop);
                 }
               }, 300);
+            } else {
+              setIsRestoreCompleted(true);
             }
-          } else if (tracks.length > 0) {
-            setCurrentTrack(tracks[0]);
+          } else {
+            if (tracks.length > 0) {
+              setCurrentTrack(tracks[0]);
+            }
+            setIsRestoreCompleted(true);
           }
         } catch (e) {
           console.error(e);
+          setIsRestoreCompleted(true);
         }
       })
       .catch((err) => {
@@ -192,30 +211,14 @@ export default function RadioPlayer() {
     // Set initial source
     audio.src = `/api/audio-proxy?url=${encodeURIComponent(currentTrack.url)}`;
 
-    // Restore progress on first load
-    const savedStateStr = localStorage.getItem("minhhue_radio_state");
-    if (savedStateStr) {
-      try {
-        const s = JSON.parse(savedStateStr);
-        if (s.url === currentTrack.url && s.time) {
-          const setTime = () => {
-            if (isFinite(audio.duration) && audio.duration > 0) {
-              audio.currentTime = Math.min(s.time, audio.duration);
-              audio.removeEventListener("loadedmetadata", setTime);
-            }
-          };
-          audio.addEventListener("loadedmetadata", setTime);
-        }
-      } catch (e) {
-        console.error(e);
-      }
-    }
-
     // Event listeners
     const handlePlay = () => setIsPlaying(true);
     const handlePause = () => setIsPlaying(false);
     const handleTimeUpdate = () => {
-      setCurrentTime(audio.currentTime);
+      // Chỉ cập nhật currentTime khi không có tiến trình chờ khôi phục để tránh việc ghi đè thời gian 0s
+      if (pendingRestoreTimeRef.current === null) {
+        setCurrentTime(audio.currentTime);
+      }
     };
     const handleLoadedMetadata = () => {
       setDuration(audio.duration);
@@ -241,14 +244,49 @@ export default function RadioPlayer() {
     };
   }, [isMounted]);
 
-  // Sync track changes to audio ref
+  // Sync track changes to audio ref and restore progress safely
   useEffect(() => {
     if (!isMounted || !audioRef.current) return;
-    const currentSrc = audioRef.current.src;
-    if (!currentSrc.includes(encodeURIComponent(currentTrack.url))) {
-      audioRef.current.src = `/api/audio-proxy?url=${encodeURIComponent(currentTrack.url)}`;
+    const audio = audioRef.current;
+    
+    // Nếu source thay đổi
+    if (!audio.src.includes(encodeURIComponent(currentTrack.url))) {
+      audio.src = `/api/audio-proxy?url=${encodeURIComponent(currentTrack.url)}`;
+      audio.playbackRate = SPEEDS[speedIndex];
+      
+      // Khôi phục progress nếu có pendingRestoreTime
+      if (pendingRestoreTime !== null) {
+        const restoreTime = pendingRestoreTime;
+        const setTime = () => {
+          if (isFinite(audio.duration) && audio.duration > 0) {
+            audio.currentTime = Math.min(restoreTime, audio.duration);
+            audio.removeEventListener("loadedmetadata", setTime);
+            setPendingRestoreTime(null);
+            setIsRestoreCompleted(true);
+          }
+        };
+        audio.addEventListener("loadedmetadata", setTime);
+      }
+    } else if (pendingRestoreTime !== null) {
+      // Nếu source trùng (lần đầu mount) nhưng cần khôi phục thời gian
+      const restoreTime = pendingRestoreTime;
+      const setTime = () => {
+        if (isFinite(audio.duration) && audio.duration > 0) {
+          audio.currentTime = Math.min(restoreTime, audio.duration);
+          audio.removeEventListener("loadedmetadata", setTime);
+          setPendingRestoreTime(null);
+          setIsRestoreCompleted(true);
+        }
+      };
+      if (isFinite(audio.duration) && audio.duration > 0) {
+        audio.currentTime = Math.min(restoreTime, audio.duration);
+        setPendingRestoreTime(null);
+        setIsRestoreCompleted(true);
+      } else {
+        audio.addEventListener("loadedmetadata", setTime);
+      }
     }
-  }, [currentTrack, isMounted]);
+  }, [currentTrack, isMounted, pendingRestoreTime]);
 
   // Handle Track ended
   const handleTrackEnded = () => {
@@ -284,7 +322,7 @@ export default function RadioPlayer() {
 
   // Save current radio state
   useEffect(() => {
-    if (!isMounted || !currentTrack) return;
+    if (!isMounted || !currentTrack || !isRestoreCompleted || pendingRestoreTime !== null) return;
     const stateObj = {
       url: currentTrack.url,
       title: currentTrack.title,
@@ -293,7 +331,7 @@ export default function RadioPlayer() {
       duration: duration > 0 ? duration : null
     };
     localStorage.setItem("minhhue_radio_state", JSON.stringify(stateObj));
-  }, [currentTrack, currentTime, duration, isMounted]);
+  }, [currentTrack, currentTime, duration, isMounted, isRestoreCompleted, pendingRestoreTime]);
 
   // Sleep Timer countdown
   useEffect(() => {

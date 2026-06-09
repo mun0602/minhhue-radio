@@ -6,6 +6,9 @@ export const metadata: Metadata = {
   title: "Phát Thanh Minh Huệ",
   description: "Trang tuyển tập phát thanh Minh Huệ Radio cao cấp.",
   manifest: "/manifest.json",
+  icons: {
+    icon: "/favicon.png",
+  },
   appleWebApp: {
     capable: true,
     statusBarStyle: "black-translucent",
