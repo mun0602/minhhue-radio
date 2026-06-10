@@ -1239,7 +1239,8 @@
 	.bottom-sheet-close {
 		background: rgba(0, 0, 0, 0.04) !important;
 		border: none !important;
-		font-size: 20px !important;
+		padding: 0 !important;
+		line-height: 1 !important;
 		color: #64748b !important;
 		cursor: pointer !important;
 		width: 30px !important;
