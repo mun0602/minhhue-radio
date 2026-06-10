@@ -912,23 +912,31 @@ export default function RadioPlayer() {
               </div>
 
               {categoryDropdownOpen && (
-                <div className="sub-categories-nav-items">
-                  <ul>
-                    {CATEGORIES.map((cat) => (
-                      <li 
-                        key={cat.id} 
-                        onClick={() => selectCategoryFilter(cat.id)}
-                        className={`sub-category-nav-item ${selectedCategory === cat.id ? "active-category" : ""}`}
-                      >
-                        <div>
-                          <a href="#" onClick={(e) => e.preventDefault()}>
-                            {cat.name}
-                          </a>
-                        </div>
-                      </li>
-                    ))}
-                  </ul>
-                </div>
+                <>
+                  <div className="category-dropdown-backdrop" onClick={() => setCategoryDropdownOpen(false)}></div>
+                  <div className="sub-categories-nav-items">
+                    <div className="bottom-sheet-handle"></div>
+                    <div className="bottom-sheet-header">
+                      <h3>Chọn chuyên mục</h3>
+                      <button className="bottom-sheet-close" onClick={() => setCategoryDropdownOpen(false)} aria-label="Đóng bảng chọn">&times;</button>
+                    </div>
+                    <ul>
+                      {CATEGORIES.map((cat) => (
+                        <li 
+                          key={cat.id} 
+                          onClick={() => selectCategoryFilter(cat.id)}
+                          className={`sub-category-nav-item ${selectedCategory === cat.id ? "active-category" : ""}`}
+                        >
+                          <div>
+                            <a href="#" onClick={(e) => e.preventDefault()}>
+                              {cat.name}
+                            </a>
+                          </div>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                </>
               )}
             </div>
 

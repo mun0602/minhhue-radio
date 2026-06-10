@@ -784,6 +784,19 @@
 	padding-left: 17px;
 }
 
+
+.category-dropdown-backdrop {
+	display: none;
+}
+
+.bottom-sheet-handle {
+	display: none;
+}
+
+.bottom-sheet-header {
+	display: none;
+}
+
 .empty-playlist-msg {
 	display: none;
 	font-family: var(--font-sans);
@@ -1149,6 +1162,90 @@
 		height: 0 !important;
 		max-height: none !important;
 	}
+
+	.category-dropdown-backdrop {
+		display: block !important;
+		position: fixed !important;
+		top: 0 !important;
+		left: 0 !important;
+		right: 0 !important;
+		bottom: 0 !important;
+		background: rgba(15, 23, 42, 0.4) !important;
+		backdrop-filter: blur(4px) !important;
+		-webkit-backdrop-filter: blur(4px) !important;
+		z-index: 9998 !important;
+		animation: fadeInOverlay 0.2s ease-out !important;
+	}
+
+	.sub-categories-nav-items {
+		position: fixed !important;
+		bottom: 0 !important;
+		top: auto !important;
+		left: 0 !important;
+		right: 0 !important;
+		background: #ffffff !important;
+		border-radius: 24px 24px 0 0 !important;
+		box-shadow: 0 -10px 40px rgba(15, 23, 42, 0.15) !important;
+		z-index: 9999 !important;
+		max-height: 70vh !important;
+		max-height: 70dvh !important;
+		overflow-y: auto !important;
+		animation: slideUpBottomSheet 0.3s cubic-bezier(0.16, 1, 0.3, 1) !important;
+		padding-bottom: calc(20px + env(safe-area-inset-bottom)) !important;
+		overscroll-behavior: contain !important;
+	}
+
+	@keyframes slideUpBottomSheet {
+		from { transform: translateY(100%); }
+		to { transform: translateY(0); }
+	}
+
+	.bottom-sheet-handle {
+		display: block !important;
+		width: 40px !important;
+		height: 5px !important;
+		background: #cbd5e1 !important;
+		border-radius: 3px !important;
+		margin: 12px auto 8px auto !important;
+	}
+
+	.bottom-sheet-header {
+		display: flex !important;
+		align-items: center !important;
+		justify-content: space-between !important;
+		padding: 4px 20px 12px 20px !important;
+		border-bottom: 1px solid rgba(0, 0, 0, 0.05) !important;
+	}
+
+	.bottom-sheet-header h3 {
+		font-family: var(--font-sans) !important;
+		font-size: 14px !important;
+		font-weight: 800 !important;
+		text-transform: uppercase !important;
+		letter-spacing: 0.05em !important;
+		color: #334155 !important;
+		margin: 0 !important;
+	}
+
+	.bottom-sheet-close {
+		background: rgba(0, 0, 0, 0.04) !important;
+		border: none !important;
+		font-size: 20px !important;
+		color: #64748b !important;
+		cursor: pointer !important;
+		width: 30px !important;
+		height: 30px !important;
+		border-radius: 50% !important;
+		display: flex !important;
+		align-items: center !important;
+		justify-content: center !important;
+		transition: all 0.2s !important;
+	}
+
+	.bottom-sheet-close:active {
+		background: rgba(0, 0, 0, 0.1) !important;
+	}
+
 
 
 	/* Playlist header gọn hơn */
