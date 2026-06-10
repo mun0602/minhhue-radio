@@ -1119,15 +1119,37 @@
 		border-top: 1px solid rgba(180, 83, 9, 0.08) !important;
 		box-shadow: none !important;
 		transform: none !important;
+		display: flex !important;
+		flex-direction: column !important;
+		height: calc(100vh - 90px - env(safe-area-inset-top) - env(safe-area-inset-bottom)) !important;
+		height: calc(100dvh - 90px - env(safe-area-inset-top) - env(safe-area-inset-bottom)) !important;
+		box-sizing: border-box !important;
 	}
 
 	.emdash-playlist-card-premium .radio-glow-border {
 		display: none !important;
 	}
 
-	.playlist-scroll-container {
-		max-height: calc(100vh - 280px);
+	.radio-right-panel-premium {
+		flex: 1 !important;
+		display: flex !important;
+		flex-direction: column !important;
+		min-height: 0 !important;
 	}
+
+	.playlist-section {
+		flex: 1 !important;
+		display: flex !important;
+		flex-direction: column !important;
+		min-height: 0 !important;
+	}
+
+	.playlist-scroll-container {
+		flex: 1 !important;
+		height: 0 !important;
+		max-height: none !important;
+	}
+
 
 	/* Playlist header gọn hơn */
 	.playlist-header {
