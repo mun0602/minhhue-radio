@@ -951,6 +951,7 @@
 		padding-top: calc(10px + env(safe-area-inset-top));
 		padding-bottom: 10px;
 		box-shadow: 0 2px 15px rgba(120, 53, 15, 0.04);
+		touch-action: auto !important;
 	}
 
 	.mobile-top-row {
@@ -982,6 +983,7 @@
 		background: rgba(180, 83, 9, 0.15);
 		outline: none;
 		cursor: pointer;
+		touch-action: pan-x !important;
 	}
 
 	.mobile-seek-slider::-webkit-slider-thumb {
@@ -1114,6 +1116,8 @@
 		margin: 0;
 		width: 100%;
 		box-sizing: border-box;
+		touch-action: none !important;
+		overscroll-behavior: none !important;
 	}
 
 	/* Ẩn player card chính trên mobile - dùng bottom bar thay thế */
@@ -1137,6 +1141,8 @@
 		height: calc(100vh - 90px - env(safe-area-inset-top) - env(safe-area-inset-bottom)) !important;
 		height: calc(100dvh - 90px - env(safe-area-inset-top) - env(safe-area-inset-bottom)) !important;
 		box-sizing: border-box !important;
+		touch-action: none !important;
+		overscroll-behavior: none !important;
 	}
 
 	.emdash-playlist-card-premium .radio-glow-border {
@@ -1161,6 +1167,8 @@
 		flex: 1 !important;
 		height: 0 !important;
 		max-height: none !important;
+		touch-action: pan-y !important;
+		overscroll-behavior: contain !important;
 	}
 
 	.category-dropdown-backdrop {
@@ -1193,6 +1201,7 @@
 		animation: slideUpBottomSheet 0.3s cubic-bezier(0.16, 1, 0.3, 1) !important;
 		padding-bottom: calc(20px + env(safe-area-inset-bottom)) !important;
 		overscroll-behavior: contain !important;
+		touch-action: pan-y !important;
 	}
 
 	@keyframes slideUpBottomSheet {
