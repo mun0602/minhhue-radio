@@ -838,10 +838,15 @@ export default function RadioPlayer() {
               <h2 className="playlist-title" style={{ fontSize: "14px", fontWeight: "800", margin: 0 }}>Danh Sách Phát</h2>
               <div className="playlist-actions">
                 <button 
-                  onClick={() => setIsRandomMode(!isRandomMode)} 
-                  className={`action-btn ${isRandomMode ? "active-mode" : ""}`} 
-                  title="Phát ngẫu nhiên"
-                  aria-label="Phát ngẫu nhiên"
+                  onClick={() => {
+                    if (filteredAndOrderedTracks.length > 0) {
+                      const randomIdx = Math.floor(Math.random() * filteredAndOrderedTracks.length);
+                      playTrack(filteredAndOrderedTracks[randomIdx]);
+                    }
+                  }} 
+                  className="action-btn"
+                  title="Phát bài ngẫu nhiên ngay"
+                  aria-label="Phát bài ngẫu nhiên ngay"
                 >
                   <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                     <polyline points="16 3 21 3 21 8" />
