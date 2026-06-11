@@ -12,9 +12,9 @@
   --text-secondary: #78350f;
   --text-muted: #b45309;
   
-  --primary: #d97706;
-  --primary-glow: rgba(217, 119, 6, 0.15);
-  --accent: #b45309;
+  --primary: #0ea5e9;
+  --primary-glow: rgba(14, 165, 233, 0.15);
+  --accent: #2563eb;
   --success: #15803d;
   --danger: #b91c1c;
   
@@ -53,10 +53,10 @@ html, body {
 }
 
 body {
-  /* Premium subtle background glow - Warm gold tints */
+  /* Premium subtle background glow - Sky blue tints */
   background-image: 
-    radial-gradient(circle at 10% 20%, rgba(217, 119, 6, 0.08) 0%, transparent 40%),
-    radial-gradient(circle at 90% 80%, rgba(245, 158, 11, 0.06) 0%, transparent 40%);
+    radial-gradient(circle at 10% 20%, rgba(14, 165, 233, 0.08) 0%, transparent 40%),
+    radial-gradient(circle at 90% 80%, rgba(37, 99, 235, 0.06) 0%, transparent 40%);
   background-attachment: fixed;
 }
 

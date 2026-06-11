@@ -40,7 +40,14 @@ function removeTones(str: string) {
     .normalize("NFD")
     .replace(/[\u0300-\u036f]/g, "")
     .replace(/đ/g, "d")
-    .replace(/Đ/g, "D");
+    .replace(/Đ/g, "d")
+    .replace(/[àáạảãâầấậẩẫăằắặẳẵ]/g, "a")
+    .replace(/[èéẹẻẽêềếệểễ]/g, "e")
+    .replace(/[ìíịỉĩ]/g, "i")
+    .replace(/[òóọỏõôồốộổỗơờớợởỡ]/g, "o")
+    .replace(/[ùúụủũưừứựửữ]/g, "u")
+    .replace(/[ỳýỵỷỹ]/g, "y")
+    .toLowerCase();
 }
 
 function cleanTitle(title: string) {
@@ -401,7 +408,11 @@ export default function RadioPlayer() {
     // 2. Filter by Search Query
     if (searchQuery.trim()) {
       const q = removeTones(searchQuery.toLowerCase().trim());
-      list = list.filter(t => removeTones(t.title.toLowerCase()).includes(q));
+      const keywords = q.split(/\s+/).filter(Boolean);
+      list = list.filter(t => {
+        const titleNormalized = removeTones(t.title.toLowerCase());
+        return keywords.every(kw => titleNormalized.includes(kw));
+      });
     }
 
     // 3. Revert order
@@ -833,10 +844,11 @@ export default function RadioPlayer() {
                   aria-label="Phát ngẫu nhiên"
                 >
                   <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                    <rect width="18" height="18" x="3" y="3" rx="2" />
-                    <path d="M7 17h10" />
-                    <path d="M7 12h10" />
-                    <path d="M7 7h10" />
+                    <polyline points="16 3 21 3 21 8" />
+                    <line x1="4" y1="20" x2="21" y2="3" />
+                    <polyline points="21 16 21 21 16 21" />
+                    <line x1="15" y1="15" x2="21" y2="21" />
+                    <line x1="4" y1="4" x2="9" y2="9" />
                   </svg>
                   Ngẫu nhiên
                 </button>
