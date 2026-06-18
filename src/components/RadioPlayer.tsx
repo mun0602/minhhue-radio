@@ -9,30 +9,44 @@ interface Track {
   originalIndex?: number;
 }
 
-const CATEGORIES = [
-  { id: "all", name: "Tất cả phát thanh", path: "#" },
-  { id: "tru-bo-chap-truoc-vao-dien-thoai", name: "Trừ bỏ chấp trước vào điện thoại", path: "/news/category/tru-bo-chap-truoc-vao-dien-thoai" },
-  { id: "ngay-phap-luan-dai-phap-the-gioi-radio", name: "Ngày Pháp Luân Đại Pháp Thế giới", path: "/news/category/ngay-phap-luan-dai-phap-the-gioi" },
-  { id: "phap-hoi-trung-quoc-radio", name: "Pháp hội Trung Quốc", path: "/news/category/phap-hoi-trung-quoc" },
-  { id: "tin-tuc-tai-dai-luc", name: "Tin tức tại Đại Lục", path: "/news/category/tin-tuc-tai-dai-luc" },
-  { id: "tin-tuc-tren-the-gioi", name: "Tin tức trên thế giới", path: "/news/category/tin-tuc-tren-the-gioi" },
-  { id: "thien-am-tinh-nhac", name: "Thiên Âm Tịnh Nhạc", path: "/news/category/thien-am-tinh-nhac" },
-  { id: "kien-tri-hoc-thuoc-phap", name: "Kiên trì học thuộc Pháp", path: "/news/category/kien-tri-hoc-thuoc-phap" },
-  { id: "tin-tuc-tong-hop", name: "Tin tức tổng hợp", path: "/news/category/tin-tuc" },
-  { id: "cau-chuyen-tu-luyen", name: "Câu chuyện tu luyện", path: "/news/category/cau-chuyen-tu-luyen" },
-  { id: "giai-the-van-hoa-dang", name: "Giải thể văn hóa đảng", path: "/news/category/giai-the-van-hoa-dang" },
-  { id: "radio-hoi-uc-ve-su-phu", name: "Hồi ức về Sư Phụ", path: "/news/category/radio-hoi-uc-ve-su-phu" },
-  { id: "tuyen-tap-bai-chia-se-cua-tieu-de-tu-dai-phap", name: "Tiểu đệ tử Đại Pháp", path: "/news/category/tuyen-tap-bai-chia-se-cua-tieu-de-tu-dai-phap" },
-  { id: "tuyen-tap-cac-bai-chia-se-cua-de-tu-dai-phap-tre-tuoi", name: "Đệ tử Đại Pháp trẻ tuổi", path: "/news/category/tuyen-tap-cac-bai-chia-se-cua-de-tu-dai-phap-tre-tuoi" },
-  { id: "tuyen-tap-cac-bai-chia-se-tu-luyen-chinh-phap", name: "Tu luyện Chính Pháp", path: "/news/category/tuyen-tap-cac-bai-chia-se-tu-luyen-chinh-phap" },
-  { id: "dot-pha-gia-tuong-nghiep-benh", name: "Đột phá giả tướng nghiệp bệnh", path: "/news/category/dot-pha-gia-tuong-nghiep-benh" },
-  { id: "mot-niem-giua-thien-va-ac", name: "Một niệm giữa thiện và ác", path: "/news/category/mot-niem-giua-thien-va-ac" },
-  { id: "cuoc-song-va-hy-vong-da-quay-tro-lai", name: "Cuộc sống và hy vọng đã quay trở lại", path: "/news/category/cuoc-song-va-hy-vong-da-quay-tro-lai" },
-  { id: "bai-chia-se-co-loi-binh-cua-su-phu", name: "Bài chia sẻ có lời bình của Sư phụ", path: "/news/category/bai-chia-se-co-loi-binh-cua-su-phu" }
+interface Category {
+  id: string;
+  name: string;
+  path: string;
+  group: "minh-hue" | "tu-kiem";
+}
+
+const CATEGORIES: Category[] = [
+  { id: "all", name: "Tất cả phát thanh", path: "#", group: "minh-hue" },
+  { id: "tru-bo-chap-truoc-vao-dien-thoai", name: "Trừ bỏ chấp trước vào điện thoại", path: "/news/category/tru-bo-chap-truoc-vao-dien-thoai", group: "minh-hue" },
+  { id: "ngay-phap-luan-dai-phap-the-gioi-radio", name: "Ngày Pháp Luân Đại Pháp Thế giới", path: "/news/category/ngay-phap-luan-dai-phap-the-gioi", group: "minh-hue" },
+  { id: "phap-hoi-trung-quoc-radio", name: "Pháp hội Trung Quốc", path: "/news/category/phap-hoi-trung-quoc", group: "minh-hue" },
+  { id: "tin-tuc-tai-dai-luc", name: "Tin tức tại Đại Lục", path: "/news/category/tin-tuc-tai-dai-luc", group: "minh-hue" },
+  { id: "tin-tuc-tren-the-gioi", name: "Tin tức trên thế giới", path: "/news/category/tin-tuc-tren-the-gioi", group: "minh-hue" },
+  { id: "thien-am-tinh-nhac", name: "Thiên Âm Tịnh Nhạc", path: "/news/category/thien-am-tinh-nhac", group: "minh-hue" },
+  { id: "kien-tri-hoc-thuoc-phap", name: "Kiên trì học thuộc Pháp", path: "/news/category/kien-tri-hoc-thuoc-phap", group: "minh-hue" },
+  { id: "tin-tuc-tong-hop", name: "Tin tức tổng hợp", path: "/news/category/tin-tuc", group: "minh-hue" },
+  { id: "cau-chuyen-tu-luyen", name: "Câu chuyện tu luyện", path: "/news/category/cau-chuyen-tu-luyen", group: "minh-hue" },
+  
+  // Nhóm Tứ kiếm
+  { id: "all-tu-kiem", name: "Tất cả sách Tứ kiếm", path: "#", group: "tu-kiem" },
+  { id: "cuu-binh", name: "Cửu Bình - Chín bài bình luận về ĐCS", path: "/news/category/cuu-binh", group: "tu-kiem" },
+  { id: "giai-the-van-hoa-dang", name: "Giải thể văn hóa đảng", path: "/news/category/giai-the-van-hoa-dang", group: "tu-kiem" },
+  { id: "muc-dich-cuoi-cung-cua-chu-nghia-cong-san", name: "Mục đích cuối cùng của CNCS", path: "/news/category/muc-dich-cuoi-cung-cua-chu-nghia-cong-san", group: "tu-kiem" },
+  { id: "ma-quy-dang-thong-tri-the-gioi-cua-chung-ta", name: "Ma quỷ đang thống trị thế giới của chúng ta", path: "/news/category/ma-quy-dang-thong-tri-the-gioi-cua-chung-ta", group: "tu-kiem" },
+  
+  { id: "radio-hoi-uc-ve-su-phu", name: "Hồi ức về Sư Phụ", path: "/news/category/radio-hoi-uc-ve-su-phu", group: "minh-hue" },
+  { id: "tuyen-tap-bai-chia-se-cua-tieu-de-tu-dai-phap", name: "Tiểu đệ tử Đại Pháp", path: "/news/category/tuyen-tap-bai-chia-se-cua-tieu-de-tu-dai-phap", group: "minh-hue" },
+  { id: "tuyen-tap-cac-bai-chia-se-cua-de-tu-dai-phap-tre-tuoi", name: "Đệ tử Đại Pháp trẻ tuổi", path: "/news/category/tuyen-tap-cac-bai-chia-se-cua-de-tu-dai-phap-tre-tuoi", group: "minh-hue" },
+  { id: "tuyen-tap-cac-bai-chia-se-tu-luyen-chinh-phap", name: "Tu luyện Chính Pháp", path: "/news/category/tuyen-tap-cac-bai-chia-se-tu-luyen-chinh-phap", group: "minh-hue" },
+  { id: "dot-pha-gia-tuong-nghiep-benh", name: "Đột phá giả tướng nghiệp bệnh", path: "/news/category/dot-pha-gia-tuong-nghiep-benh", group: "minh-hue" },
+  { id: "mot-niem-giua-thien-va-ac", name: "Một niệm giữa thiện và ác", path: "/news/category/mot-niem-giua-thien-va-ac", group: "minh-hue" },
+  { id: "cuoc-song-va-hy-vong-da-quay-tro-lai", name: "Cuộc sống và hy vọng đã quay trở lại", path: "/news/category/cuoc-song-va-hy-vong-da-quay-tro-lai", group: "minh-hue" },
+  { id: "bai-chia-se-co-loi-binh-cua-su-phu", name: "Bài chia sẻ có lời bình của Sư phụ", path: "/news/category/bai-chia-se-co-loi-binh-cua-su-phu", group: "minh-hue" }
 ];
 
 const SPEEDS = [1.0, 1.25, 1.5, 2.0, 0.75];
-const ITEM_HEIGHT = 52; 
+const ITEM_HEIGHT = 52;
 const BUFFER = 10;
 
 function removeTones(str: string) {
@@ -86,6 +100,7 @@ export default function RadioPlayer() {
 
   // Playlist options
   const [selectedCategory, setSelectedCategory] = useState("all");
+  const [activeTab, setActiveTab] = useState<"minh-hue" | "tu-kiem">("minh-hue");
   const [categoryDropdownOpen, setCategoryDropdownOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const [isSearchOpen, setIsSearchOpen] = useState(false);
@@ -96,7 +111,7 @@ export default function RadioPlayer() {
   // Sleep Timer state
   const [sleepDropdownOpen, setSleepDropdownOpen] = useState(false);
   const [mobileSleepDropdownOpen, setMobileSleepDropdownOpen] = useState(false);
-  const [sleepTimeRemaining, setSleepTimeRemaining] = useState(0); 
+  const [sleepTimeRemaining, setSleepTimeRemaining] = useState(0);
   const [stopAtTrackEnd, setStopAtTrackEnd] = useState(false);
   const sleepTimerRef = useRef<NodeJS.Timeout | null>(null);
 
@@ -149,12 +164,15 @@ export default function RadioPlayer() {
     // Load category preference
     const savedCat = localStorage.getItem("minhhue_selected_category");
     if (savedCat) {
-      const catExists = CATEGORIES.some(c => c.id === savedCat);
-      if (catExists) setSelectedCategory(savedCat);
+      const catObj = CATEGORIES.find(c => c.id === savedCat);
+      if (catObj) {
+        setSelectedCategory(savedCat);
+        setActiveTab(catObj.group as "minh-hue" | "tu-kiem");
+      }
     }
 
     // Fetch radio playlist asynchronously (keeps JS bundle extremely lightweight)
-    fetch("/radio-playlist.json")
+    fetch("/radio-playlist.json?v=" + Date.now())
       .then((res) => res.json())
       .then((data) => {
         const tracks = (data as Track[]).map((t, idx) => ({ ...t, originalIndex: idx }));
@@ -255,12 +273,12 @@ export default function RadioPlayer() {
   useEffect(() => {
     if (!isMounted || !audioRef.current) return;
     const audio = audioRef.current;
-    
+
     // Nếu source thay đổi
     if (!audio.src.includes(encodeURIComponent(currentTrack.url))) {
       audio.src = `/api/audio-proxy?url=${encodeURIComponent(currentTrack.url)}`;
       audio.playbackRate = SPEEDS[speedIndex];
-      
+
       // Khôi phục progress nếu có pendingRestoreTime
       if (pendingRestoreTime !== null) {
         const restoreTime = pendingRestoreTime;
@@ -298,7 +316,7 @@ export default function RadioPlayer() {
   // Handle Track ended
   const handleTrackEnded = () => {
     if (!audioRef.current) return;
-    
+
     if (stopAtTrackEnd) {
       audioRef.current.pause();
       setStopAtTrackEnd(false);
@@ -392,7 +410,7 @@ export default function RadioPlayer() {
     let list = [...allTracks];
 
     // 1. Filter by category
-    if (selectedCategory !== "all") {
+    if (selectedCategory !== "all" && selectedCategory !== "all-tu-kiem") {
       list = list.filter(t => {
         let match = t.category === selectedCategory;
         if (!match && selectedCategory === "ngay-phap-luan-dai-phap-the-gioi-radio") {
@@ -403,6 +421,12 @@ export default function RadioPlayer() {
         }
         return match;
       });
+    } else if (selectedCategory === "all") {
+      const tuKiemIds = CATEGORIES.filter(c => c.group === "tu-kiem" && c.id !== "all-tu-kiem").map(c => c.id);
+      list = list.filter(t => !tuKiemIds.includes(t.category));
+    } else if (selectedCategory === "all-tu-kiem") {
+      const tuKiemIds = CATEGORIES.filter(c => c.group === "tu-kiem" && c.id !== "all-tu-kiem").map(c => c.id);
+      list = list.filter(t => tuKiemIds.includes(t.category));
     }
 
     // 2. Filter by Search Query
@@ -452,11 +476,11 @@ export default function RadioPlayer() {
   // Click handle for list items
   const playTrack = (track: Track) => {
     if (!audioRef.current) return;
-    
+
     audioRef.current.src = `/api/audio-proxy?url=${encodeURIComponent(track.url)}`;
     audioRef.current.playbackRate = SPEEDS[speedIndex];
     audioRef.current.load();
-    
+
     const playPromise = audioRef.current.play();
     if (playPromise !== undefined) {
       playPromise.catch(error => {
@@ -525,6 +549,12 @@ export default function RadioPlayer() {
   const selectCategoryFilter = (catId: string) => {
     setSelectedCategory(catId);
     localStorage.setItem("minhhue_selected_category", catId);
+    
+    const catObj = CATEGORIES.find(c => c.id === catId);
+    if (catObj) {
+      setActiveTab(catObj.group as "minh-hue" | "tu-kiem");
+    }
+
     setCategoryDropdownOpen(false);
     setScrollTop(0);
     if (scrollContainerRef.current) {
@@ -599,9 +629,9 @@ export default function RadioPlayer() {
 
   const progressPct = duration > 0 ? (currentTime / duration) * 100 : 0;
   const timerActive = sleepTimeRemaining > 0 || stopAtTrackEnd;
-  const sleepText = stopAtTrackEnd 
-    ? "Hết bài" 
-    : sleepTimeRemaining > 0 
+  const sleepText = stopAtTrackEnd
+    ? "Hết bài"
+    : sleepTimeRemaining > 0
       ? `${String(Math.floor(sleepTimeRemaining / 60)).padStart(2, "0")}:${String(sleepTimeRemaining % 60).padStart(2, "0")}`
       : "Hẹn giờ";
 
@@ -627,19 +657,19 @@ export default function RadioPlayer() {
               </p>
             </div>
             <div className="copyright-modal-footer">
-              <button 
+              <button
                 onClick={() => {
                   localStorage.setItem("minhhue_copyright_accepted", "true");
                   setShowCopyright(false);
-                }} 
+                }}
                 className="modal-btn btn-continue"
               >
                 Tiếp tục
               </button>
-              <a 
-                href="https://vi.minghui.org/news/category/radio" 
-                target="_blank" 
-                rel="noopener noreferrer" 
+              <a
+                href="https://vi.minghui.org/news/category/radio"
+                target="_blank"
+                rel="noopener noreferrer"
                 className="modal-btn btn-original"
               >
                 Truy cập trang gốc
@@ -670,8 +700,8 @@ export default function RadioPlayer() {
             </span>
           </div>
           <div className="mobile-sleep-timer-container">
-            <button 
-              onClick={() => setMobileSleepDropdownOpen(!mobileSleepDropdownOpen)} 
+            <button
+              onClick={() => setMobileSleepDropdownOpen(!mobileSleepDropdownOpen)}
               className={`mobile-sleep-btn ${timerActive ? "active-timer" : ""}`}
               aria-label="Hẹn giờ tắt"
               title={sleepText}
@@ -696,14 +726,14 @@ export default function RadioPlayer() {
           </div>
         </div>
         <div className="mobile-progress-row">
-          <input 
-            type="range" 
-            className="mobile-seek-slider" 
-            min="0" 
-            max="100" 
-            value={progressPct} 
+          <input
+            type="range"
+            className="mobile-seek-slider"
+            min="0"
+            max="100"
+            value={progressPct}
             onChange={handleSeek}
-            step="0.1" 
+            step="0.1"
             aria-label="Thanh trượt tiến trình di động"
             style={{
               background: `linear-gradient(to right, var(--color-accent) ${progressPct}%, rgba(148, 163, 184, 0.2) ${progressPct}%)`
@@ -732,12 +762,12 @@ export default function RadioPlayer() {
           <div className="custom-player-premium">
             {/* Progress Slider */}
             <div className="custom-progress-area">
-              <input 
-                type="range" 
-                className="custom-seek-slider" 
-                min="0" 
-                max="100" 
-                value={progressPct} 
+              <input
+                type="range"
+                className="custom-seek-slider"
+                min="0"
+                max="100"
+                value={progressPct}
                 onChange={handleSeek}
                 step="0.1"
                 aria-label="Thanh trượt tiến trình"
@@ -800,9 +830,9 @@ export default function RadioPlayer() {
               </div>
 
               <div className="sleep-timer-container">
-                <button 
-                  onClick={() => setSleepDropdownOpen(!sleepDropdownOpen)} 
-                  className={`utility-btn sleep-btn ${timerActive ? "active-timer" : ""}`} 
+                <button
+                  onClick={() => setSleepDropdownOpen(!sleepDropdownOpen)}
+                  className={`utility-btn sleep-btn ${timerActive ? "active-timer" : ""}`}
                   title="Hẹn giờ tắt"
                   aria-label="Hẹn giờ tắt"
                 >
@@ -835,15 +865,44 @@ export default function RadioPlayer() {
         <div className="radio-right-panel-premium">
           <div className="playlist-section">
             <div className="playlist-header">
-              <h2 className="playlist-title" style={{ fontSize: "14px", fontWeight: "800", margin: 0 }}>Danh Sách Phát</h2>
+              <div className="playlist-tabs">
+                <button
+                  className={`playlist-tab-btn ${activeTab === "minh-hue" ? "active" : ""}`}
+                  onClick={() => {
+                    setActiveTab("minh-hue");
+                    setSelectedCategory("all");
+                    localStorage.setItem("minhhue_selected_category", "all");
+                    setScrollTop(0);
+                    if (scrollContainerRef.current) {
+                      scrollContainerRef.current.scrollTop = 0;
+                    }
+                  }}
+                >
+                  Phát thanh Minh Huệ
+                </button>
+                <button
+                  className={`playlist-tab-btn ${activeTab === "tu-kiem" ? "active" : ""}`}
+                  onClick={() => {
+                    setActiveTab("tu-kiem");
+                    setSelectedCategory("all-tu-kiem");
+                    localStorage.setItem("minhhue_selected_category", "all-tu-kiem");
+                    setScrollTop(0);
+                    if (scrollContainerRef.current) {
+                      scrollContainerRef.current.scrollTop = 0;
+                    }
+                  }}
+                >
+                  Tứ kiếm
+                </button>
+              </div>
               <div className="playlist-actions">
-                <button 
+                <button
                   onClick={() => {
                     if (filteredAndOrderedTracks.length > 0) {
                       const randomIdx = Math.floor(Math.random() * filteredAndOrderedTracks.length);
                       playTrack(filteredAndOrderedTracks[randomIdx]);
                     }
-                  }} 
+                  }}
                   className="action-btn"
                   title="Phát bài ngẫu nhiên ngay"
                   aria-label="Phát bài ngẫu nhiên ngay"
@@ -858,28 +917,12 @@ export default function RadioPlayer() {
                   Ngẫu nhiên
                 </button>
 
-                <button 
-                  onClick={() => setIsReverted(!isReverted)} 
-                  className={`action-btn ${isReverted ? "rotated" : ""}`} 
-                  id="revert-playlist"
-                  title="Đảo thứ tự bài"
-                  aria-label="Đảo thứ tự danh sách phát"
-                >
-                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                    <path d="m3 16 4 4 4-4" />
-                    <path d="M7 20V4" />
-                    <path d="m21 8-4-4-4 4" />
-                    <path d="M17 4v16" />
-                  </svg>
-                  Đảo thứ tự
-                </button>
-
-                <button 
+                <button
                   onClick={() => {
                     setIsSearchOpen(!isSearchOpen);
                     if (isSearchOpen) setSearchQuery("");
-                  }} 
-                  className={`action-btn ${isSearchOpen ? "active-mode" : ""}`} 
+                  }}
+                  className={`action-btn ${isSearchOpen ? "active-mode" : ""}`}
                   title="Tìm kiếm phát thanh"
                   aria-label="Tìm kiếm phát thanh"
                 >
@@ -896,10 +939,10 @@ export default function RadioPlayer() {
             {isSearchOpen && (
               <div className="search-bar-wrapper">
                 <div className="search-input-container">
-                  <input 
-                    type="text" 
-                    placeholder="Tìm kiếm trong 3,400+ phát thanh..." 
-                    className="playlist-search-input" 
+                  <input
+                    type="text"
+                    placeholder="Tìm kiếm trong 3,400+ phát thanh..."
+                    className="playlist-search-input"
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
                     autoFocus
@@ -916,8 +959,8 @@ export default function RadioPlayer() {
 
             {/* Categories filter selector */}
             <div className="categories-filter-wrapper">
-              <div 
-                onClick={() => setCategoryDropdownOpen(!categoryDropdownOpen)} 
+              <div
+                onClick={() => setCategoryDropdownOpen(!categoryDropdownOpen)}
                 className={`sub-categories-nav-toggle ${categoryDropdownOpen ? "open" : ""}`}
                 role="button"
                 aria-haspopup="listbox"
@@ -943,9 +986,9 @@ export default function RadioPlayer() {
                       </button>
                     </div>
                     <ul>
-                      {CATEGORIES.map((cat) => (
-                        <li 
-                          key={cat.id} 
+                      {CATEGORIES.filter(cat => cat.group === activeTab).map((cat) => (
+                        <li
+                          key={cat.id}
                           onClick={() => selectCategoryFilter(cat.id)}
                           className={`sub-category-nav-item ${selectedCategory === cat.id ? "active-category" : ""}`}
                         >
@@ -963,7 +1006,7 @@ export default function RadioPlayer() {
             </div>
 
             {/* Playlist Scroll Container */}
-            <div 
+            <div
               ref={scrollContainerRef}
               onScroll={handleScroll}
               className="playlist-scroll-container"
@@ -989,7 +1032,7 @@ export default function RadioPlayer() {
                       const cssClass = `${isActive ? "active" : ""} ${isListened ? "listened" : ""}`.trim();
 
                       return (
-                        <li 
+                        <li
                           key={track.url}
                           onClick={() => playTrack(track)}
                           style={{
