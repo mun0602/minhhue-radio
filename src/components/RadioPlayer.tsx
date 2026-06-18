@@ -496,6 +496,10 @@ export default function RadioPlayer() {
       setListenedTracks(updated);
       localStorage.setItem("minhhue_listened_tracks", JSON.stringify(updated));
     }
+
+    setTimeout(() => {
+      scrollToActiveTrack(track);
+    }, 50);
   };
 
   const togglePlay = () => {
@@ -581,8 +585,9 @@ export default function RadioPlayer() {
     return cat ? cat.name : "Danh sách chuyên mục";
   }, [selectedCategory]);
 
-  const scrollToActiveTrack = () => {
-    const idx = filteredAndOrderedTracks.findIndex(t => t.url === currentTrack.url);
+  const scrollToActiveTrack = (trackToScroll?: Track) => {
+    const track = trackToScroll || currentTrack;
+    const idx = filteredAndOrderedTracks.findIndex(t => t.url === track.url);
     if (idx >= 0 && scrollContainerRef.current) {
       const targetTop = idx * ITEM_HEIGHT - containerHeight / 2 + ITEM_HEIGHT / 2;
       scrollContainerRef.current.scrollTop = Math.max(0, targetTop);
