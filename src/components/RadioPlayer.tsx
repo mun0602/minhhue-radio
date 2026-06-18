@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect, useRef, useMemo } from "react";
+import React, { useState, useEffect, useRef, useMemo, useCallback } from "react";
 
 interface Track {
   title: string;
@@ -80,7 +80,12 @@ const formatTime = (secs: number) => {
   return `${String(m).padStart(2, "0")}:${String(s).padStart(2, "0")}`;
 };
 
+const getRandomIndex = (length: number) => {
+  return Math.floor(Math.random() * length);
+};
+
 export default function RadioPlayer() {
+  "use no memo";
   const [isMounted, setIsMounted] = useState(false);
   const [showCopyright, setShowCopyright] = useState(false);
   const [allTracks, setAllTracks] = useState<Track[]>([]);
@@ -105,7 +110,9 @@ export default function RadioPlayer() {
   const [categoryDropdownOpen, setCategoryDropdownOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const [isSearchOpen, setIsSearchOpen] = useState(false);
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [isReverted, setIsReverted] = useState(false);
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [isRandomMode, setIsRandomMode] = useState(false);
   const [listenedTracks, setListenedTracks] = useState<string[]>([]);
 
@@ -131,6 +138,107 @@ export default function RadioPlayer() {
   const [scrollTop, setScrollTop] = useState(0);
   const [containerHeight, setContainerHeight] = useState(380);
 
+  // Track filtering & ordering
+  const filteredAndOrderedTracks = useMemo(() => {
+    let list = [...allTracks];
+
+    // 1. Filter by category
+    if (selectedCategory !== "all" && selectedCategory !== "all-tu-kiem") {
+      list = list.filter(t => {
+        let match = t.category === selectedCategory;
+        if (!match && selectedCategory === "ngay-phap-luan-dai-phap-the-gioi-radio") {
+          match = t.category?.startsWith("ngay-phap-luan-dai-phap-the-gioi") ?? false;
+        }
+        if (!match && selectedCategory === "phap-hoi-trung-quoc-radio") {
+          match = t.category?.startsWith("phap-hoi-trung-quoc") ?? false;
+        }
+        return match;
+      });
+    } else if (selectedCategory === "all") {
+      const tuKiemIds = CATEGORIES.filter(c => c.group === "tu-kiem" && c.id !== "all-tu-kiem").map(c => c.id);
+      list = list.filter(t => !tuKiemIds.includes(t.category));
+    } else if (selectedCategory === "all-tu-kiem") {
+      const tuKiemIds = CATEGORIES.filter(c => c.group === "tu-kiem" && c.id !== "all-tu-kiem").map(c => c.id);
+      list = list.filter(t => tuKiemIds.includes(t.category));
+    }
+
+    // 2. Filter by Search Query
+    if (searchQuery.trim()) {
+      const q = removeTones(searchQuery.toLowerCase().trim());
+      const keywords = q.split(/\s+/).filter(Boolean);
+      list = list.filter(t => {
+        const titleNormalized = removeTones(t.title.toLowerCase());
+        return keywords.every(kw => titleNormalized.includes(kw));
+      });
+    }
+
+    // 3. Revert order
+    const finalList = isReverted ? [...list].reverse() : list;
+
+    return finalList;
+  }, [allTracks, selectedCategory, searchQuery, isReverted]);
+
+  const scrollToActiveTrack = useCallback((trackToScroll?: Track) => {
+    const track = trackToScroll || currentTrack;
+    const idx = filteredAndOrderedTracks.findIndex(t => t.url === track.url);
+    if (idx >= 0 && scrollContainerRef.current) {
+      const targetTop = idx * ITEM_HEIGHT - containerHeight / 2 + ITEM_HEIGHT / 2;
+      scrollContainerRef.current.scrollTop = Math.max(0, targetTop);
+    }
+  }, [currentTrack, filteredAndOrderedTracks, containerHeight]);
+
+  const playTrack = useCallback((track: Track) => {
+    if (!audioRef.current) return;
+
+    audioRef.current.src = track.url;
+    audioRef.current.playbackRate = SPEEDS[speedIndex];
+    audioRef.current.load();
+
+    const playPromise = audioRef.current.play();
+    if (playPromise !== undefined) {
+      playPromise.catch(error => {
+        console.warn("Autoplay blocked or failed:", error);
+      });
+    }
+
+    setCurrentTrack(track);
+    setIsPlaying(true);
+
+    if (!listenedTracks.includes(track.url)) {
+      const updated = [...listenedTracks, track.url];
+      setListenedTracks(updated);
+      localStorage.setItem("minhhue_listened_tracks", JSON.stringify(updated));
+    }
+
+    setTimeout(() => {
+      scrollToActiveTrack(track);
+    }, 50);
+  }, [listenedTracks, speedIndex, scrollToActiveTrack]);
+
+  const handleTrackEnded = useCallback(() => {
+    if (!audioRef.current) return;
+
+    if (stopAtTrackEnd) {
+      audioRef.current.pause();
+      setStopAtTrackEnd(false);
+      setSleepTimeRemaining(0);
+      return;
+    }
+
+    if (isRandomMode && filteredAndOrderedTracks.length > 0) {
+      const randomIdx = getRandomIndex(filteredAndOrderedTracks.length);
+      playTrack(filteredAndOrderedTracks[randomIdx]);
+      return;
+    }
+
+    const idx = filteredAndOrderedTracks.findIndex(t => t.url === currentTrack.url);
+    if (idx >= 0 && idx < filteredAndOrderedTracks.length - 1) {
+      playTrack(filteredAndOrderedTracks[idx + 1]);
+    } else if (filteredAndOrderedTracks.length > 0) {
+      playTrack(filteredAndOrderedTracks[0]);
+    }
+  }, [stopAtTrackEnd, isRandomMode, filteredAndOrderedTracks, currentTrack, playTrack]);
+
   // Đăng ký Service Worker kích hoạt PWA
   useEffect(() => {
     if (typeof window !== "undefined" && "serviceWorker" in navigator) {
@@ -144,33 +252,35 @@ export default function RadioPlayer() {
 
   // Mounted effect & fetch data
   useEffect(() => {
-    setIsMounted(true);
+    const timer = setTimeout(() => {
+      setIsMounted(true);
 
-    // Copyright check
-    const accepted = localStorage.getItem("minhhue_copyright_accepted");
-    if (!accepted) {
-      setShowCopyright(true);
-    }
-
-    // Load listened tracks
-    try {
-      const savedListened = localStorage.getItem("minhhue_listened_tracks");
-      if (savedListened) {
-        setListenedTracks(JSON.parse(savedListened));
+      // Copyright check
+      const accepted = localStorage.getItem("minhhue_copyright_accepted");
+      if (!accepted) {
+        setShowCopyright(true);
       }
-    } catch (e) {
-      console.error(e);
-    }
 
-    // Load category preference
-    const savedCat = localStorage.getItem("minhhue_selected_category");
-    if (savedCat) {
-      const catObj = CATEGORIES.find(c => c.id === savedCat);
-      if (catObj) {
-        setSelectedCategory(savedCat);
-        setActiveTab(catObj.group as "minh-hue" | "tu-kiem");
+      // Load listened tracks
+      try {
+        const savedListened = localStorage.getItem("minhhue_listened_tracks");
+        if (savedListened) {
+          setListenedTracks(JSON.parse(savedListened));
+        }
+      } catch (e) {
+        console.error(e);
       }
-    }
+
+      // Load category preference
+      const savedCat = localStorage.getItem("minhhue_selected_category");
+      if (savedCat) {
+        const catObj = CATEGORIES.find(c => c.id === savedCat);
+        if (catObj) {
+          setSelectedCategory(savedCat);
+          setActiveTab(catObj.group as "minh-hue" | "tu-kiem");
+        }
+      }
+    }, 0);
 
     // Fetch radio playlist asynchronously (keeps JS bundle extremely lightweight)
     fetch("/radio-playlist.json?v=" + Date.now())
@@ -225,6 +335,8 @@ export default function RadioPlayer() {
         console.error("Lỗi tải playlist phát thanh:", err);
         setIsLoadingPlaylist(false);
       });
+
+    return () => clearTimeout(timer);
   }, []);
 
   // Audio setup after mount
@@ -235,7 +347,7 @@ export default function RadioPlayer() {
     audioRef.current = audio;
 
     // Set initial source
-    audio.src = `/api/audio-proxy?url=${encodeURIComponent(currentTrack.url)}`;
+    audio.src = currentTrack.url;
 
     // Event listeners
     const handlePlay = () => setIsPlaying(true);
@@ -268,6 +380,7 @@ export default function RadioPlayer() {
       audio.removeEventListener("ended", handleEnded);
       audioRef.current = null;
     };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isMounted]);
 
   // Sync track changes to audio ref and restore progress safely
@@ -276,8 +389,8 @@ export default function RadioPlayer() {
     const audio = audioRef.current;
 
     // Nếu source thay đổi
-    if (!audio.src.includes(encodeURIComponent(currentTrack.url))) {
-      audio.src = `/api/audio-proxy?url=${encodeURIComponent(currentTrack.url)}`;
+    if (!audio.src.includes(currentTrack.url)) {
+      audio.src = currentTrack.url;
       audio.playbackRate = SPEEDS[speedIndex];
 
       // Khôi phục progress nếu có pendingRestoreTime
@@ -312,32 +425,7 @@ export default function RadioPlayer() {
         audio.addEventListener("loadedmetadata", setTime);
       }
     }
-  }, [currentTrack, isMounted, pendingRestoreTime]);
-
-  // Handle Track ended
-  const handleTrackEnded = () => {
-    if (!audioRef.current) return;
-
-    if (stopAtTrackEnd) {
-      audioRef.current.pause();
-      setStopAtTrackEnd(false);
-      setSleepTimeRemaining(0);
-      return;
-    }
-
-    if (isRandomMode && filteredAndOrderedTracks.length > 0) {
-      const randomIdx = Math.floor(Math.random() * filteredAndOrderedTracks.length);
-      playTrack(filteredAndOrderedTracks[randomIdx]);
-      return;
-    }
-
-    const idx = filteredAndOrderedTracks.findIndex(t => t.url === currentTrack.url);
-    if (idx >= 0 && idx < filteredAndOrderedTracks.length - 1) {
-      playTrack(filteredAndOrderedTracks[idx + 1]);
-    } else if (filteredAndOrderedTracks.length > 0) {
-      playTrack(filteredAndOrderedTracks[0]);
-    }
-  };
+  }, [currentTrack, isMounted, pendingRestoreTime, speedIndex]);
 
   // Sync speed index to audio
   useEffect(() => {
@@ -358,6 +446,25 @@ export default function RadioPlayer() {
     };
     localStorage.setItem("minhhue_radio_state", JSON.stringify(stateObj));
   }, [currentTrack, currentTime, duration, isMounted, isRestoreCompleted, pendingRestoreTime]);
+
+  const triggerSleepStop = useCallback(() => {
+    const audio = audioRef.current;
+    if (!audio) return;
+
+    let vol = audio.volume;
+    const fade = setInterval(() => {
+      if (vol > 0.05) {
+        vol -= 0.05;
+        audio.volume = Math.max(0, vol);
+      } else {
+        clearInterval(fade);
+        audio.pause();
+        audio.volume = 1.0;
+        setSleepTimeRemaining(0);
+        setStopAtTrackEnd(false);
+      }
+    }, 100);
+  }, []);
 
   // Sleep Timer countdown
   useEffect(() => {
@@ -385,68 +492,7 @@ export default function RadioPlayer() {
         clearInterval(sleepTimerRef.current);
       }
     };
-  }, [sleepTimeRemaining, isPlaying]);
-
-  const triggerSleepStop = () => {
-    const audio = audioRef.current;
-    if (!audio) return;
-
-    let vol = audio.volume;
-    const fade = setInterval(() => {
-      if (vol > 0.05) {
-        vol -= 0.05;
-        audio.volume = Math.max(0, vol);
-      } else {
-        clearInterval(fade);
-        audio.pause();
-        audio.volume = 1.0;
-        setSleepTimeRemaining(0);
-        setStopAtTrackEnd(false);
-      }
-    }, 100);
-  };
-
-  // Track filtering & ordering
-  const filteredAndOrderedTracks = useMemo(() => {
-    let list = [...allTracks];
-
-    // 1. Filter by category
-    if (selectedCategory !== "all" && selectedCategory !== "all-tu-kiem") {
-      list = list.filter(t => {
-        let match = t.category === selectedCategory;
-        if (!match && selectedCategory === "ngay-phap-luan-dai-phap-the-gioi-radio") {
-          match = t.category?.startsWith("ngay-phap-luan-dai-phap-the-gioi") ?? false;
-        }
-        if (!match && selectedCategory === "phap-hoi-trung-quoc-radio") {
-          match = t.category?.startsWith("phap-hoi-trung-quoc") ?? false;
-        }
-        return match;
-      });
-    } else if (selectedCategory === "all") {
-      const tuKiemIds = CATEGORIES.filter(c => c.group === "tu-kiem" && c.id !== "all-tu-kiem").map(c => c.id);
-      list = list.filter(t => !tuKiemIds.includes(t.category));
-    } else if (selectedCategory === "all-tu-kiem") {
-      const tuKiemIds = CATEGORIES.filter(c => c.group === "tu-kiem" && c.id !== "all-tu-kiem").map(c => c.id);
-      list = list.filter(t => tuKiemIds.includes(t.category));
-    }
-
-    // 2. Filter by Search Query
-    if (searchQuery.trim()) {
-      const q = removeTones(searchQuery.toLowerCase().trim());
-      const keywords = q.split(/\s+/).filter(Boolean);
-      list = list.filter(t => {
-        const titleNormalized = removeTones(t.title.toLowerCase());
-        return keywords.every(kw => titleNormalized.includes(kw));
-      });
-    }
-
-    // 3. Revert order
-    if (isReverted) {
-      list.reverse();
-    }
-
-    return list;
-  }, [allTracks, selectedCategory, searchQuery, isReverted]);
+  }, [sleepTimeRemaining, isPlaying, triggerSleepStop]);
 
   // Virtual scrolling parameters
   const totalHeight = filteredAndOrderedTracks.length * ITEM_HEIGHT;
@@ -466,42 +512,13 @@ export default function RadioPlayer() {
   useEffect(() => {
     if (!scrollContainerRef.current) return;
     const observer = new ResizeObserver((entries) => {
-      for (let entry of entries) {
+      for (const entry of entries) {
         setContainerHeight(entry.contentRect.height);
       }
     });
     observer.observe(scrollContainerRef.current);
     return () => observer.disconnect();
   }, [isMounted]);
-
-  // Click handle for list items
-  const playTrack = (track: Track) => {
-    if (!audioRef.current) return;
-
-    audioRef.current.src = `/api/audio-proxy?url=${encodeURIComponent(track.url)}`;
-    audioRef.current.playbackRate = SPEEDS[speedIndex];
-    audioRef.current.load();
-
-    const playPromise = audioRef.current.play();
-    if (playPromise !== undefined) {
-      playPromise.catch(error => {
-        console.warn("Autoplay blocked or failed:", error);
-      });
-    }
-
-    setCurrentTrack(track);
-    setIsPlaying(true);
-
-    if (!listenedTracks.includes(track.url)) {
-      const updated = [...listenedTracks, track.url];
-      setListenedTracks(updated);
-      localStorage.setItem("minhhue_listened_tracks", JSON.stringify(updated));
-    }
-
-    setTimeout(() => {
-      scrollToActiveTrack(track);
-    }, 50);
-  };
 
   const togglePlay = () => {
     const audio = audioRef.current;
@@ -586,20 +603,11 @@ export default function RadioPlayer() {
     return cat ? cat.name : "Danh sách chuyên mục";
   }, [selectedCategory]);
 
-  const scrollToActiveTrack = (trackToScroll?: Track) => {
-    const track = trackToScroll || currentTrack;
-    const idx = filteredAndOrderedTracks.findIndex(t => t.url === track.url);
-    if (idx >= 0 && scrollContainerRef.current) {
-      const targetTop = idx * ITEM_HEIGHT - containerHeight / 2 + ITEM_HEIGHT / 2;
-      scrollContainerRef.current.scrollTop = Math.max(0, targetTop);
-    }
-  };
-
   useEffect(() => {
     if (isMounted && filteredAndOrderedTracks.length > 0) {
       scrollToActiveTrack();
     }
-  }, [selectedCategory, searchQuery]);
+  }, [isMounted, filteredAndOrderedTracks.length, scrollToActiveTrack]);
 
   if (!isMounted) {
     return (
@@ -705,30 +713,41 @@ export default function RadioPlayer() {
               {formatTime(currentTime)} / {formatTime(duration)}
             </span>
           </div>
-          <div className="mobile-sleep-timer-container">
+          <div className="mobile-right-actions" style={{ display: "flex", alignItems: "center", gap: "8px" }}>
             <button
-              onClick={() => setMobileSleepDropdownOpen(!mobileSleepDropdownOpen)}
-              className={`mobile-sleep-btn ${timerActive ? "active-timer" : ""}`}
-              aria-label="Hẹn giờ tắt"
-              title={sleepText}
+              onClick={changeSpeed}
+              className="mobile-speed-btn"
+              title="Tốc độ phát"
+              aria-label={`Tốc độ phát ${SPEEDS[speedIndex]}x`}
             >
-              <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                <circle cx="12" cy="12" r="10" />
-                <polyline points="12 6 12 12 16 14" />
-              </svg>
+              <span>{SPEEDS[speedIndex]}x</span>
             </button>
-            {mobileSleepDropdownOpen && (
-              <div className="mobile-sleep-dropdown">
-                <ul>
-                  <li onClick={() => handleSleepTimerSelect("0")}>Tắt hẹn giờ</li>
-                  <li onClick={() => handleSleepTimerSelect("15")}>15 phút</li>
-                  <li onClick={() => handleSleepTimerSelect("30")}>30 phút</li>
-                  <li onClick={() => handleSleepTimerSelect("45")}>45 phút</li>
-                  <li onClick={() => handleSleepTimerSelect("60")}>60 phút</li>
-                  <li onClick={() => handleSleepTimerSelect("end")}>Hết bài</li>
-                </ul>
-              </div>
-            )}
+
+            <div className="mobile-sleep-timer-container">
+              <button
+                onClick={() => setMobileSleepDropdownOpen(!mobileSleepDropdownOpen)}
+                className={`mobile-sleep-btn ${timerActive ? "active-timer" : ""}`}
+                aria-label="Hẹn giờ tắt"
+                title={sleepText}
+              >
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                  <circle cx="12" cy="12" r="10" />
+                  <polyline points="12 6 12 12 16 14" />
+                </svg>
+              </button>
+              {mobileSleepDropdownOpen && (
+                <div className="mobile-sleep-dropdown">
+                  <ul>
+                    <li onClick={() => handleSleepTimerSelect("0")}>Tắt hẹn giờ</li>
+                    <li onClick={() => handleSleepTimerSelect("15")}>15 phút</li>
+                    <li onClick={() => handleSleepTimerSelect("30")}>30 phút</li>
+                    <li onClick={() => handleSleepTimerSelect("45")}>45 phút</li>
+                    <li onClick={() => handleSleepTimerSelect("60")}>60 phút</li>
+                    <li onClick={() => handleSleepTimerSelect("end")}>Hết bài</li>
+                  </ul>
+                </div>
+              )}
+            </div>
           </div>
         </div>
         <div className="mobile-progress-row">
@@ -818,43 +837,45 @@ export default function RadioPlayer() {
 
             {/* Speed, timer status */}
             <div className="custom-utilities-row">
-              <button onClick={changeSpeed} className="utility-btn speed-btn" title="Tốc độ phát" aria-label={`Tốc độ phát ${SPEEDS[speedIndex]}x`}>
-                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" style={{ marginRight: 4, verticalAlign: "middle" }}>
-                  <circle cx="12" cy="12" r="10" />
-                  <path d="M12 6v6l4 2" />
-                </svg>
-                <span style={{ verticalAlign: "middle" }}>{SPEEDS[speedIndex]}x</span>
-              </button>
-
               <div className="custom-status-indicator">
                 <span className={`status-dot ${isPlaying ? "playing" : ""}`}></span>
                 <span className="status-text">{isPlaying ? "Đang phát" : "Đang dừng"}</span>
               </div>
 
-              <div className="sleep-timer-container">
-                <button
-                  onClick={() => setSleepDropdownOpen(!sleepDropdownOpen)}
-                  className={`utility-btn sleep-btn ${timerActive ? "active-timer" : ""}`}
-                  title="Hẹn giờ tắt"
-                  aria-label="Hẹn giờ tắt"
-                >
+              <div className="custom-utilities-right" style={{ display: "flex", gap: "8px", alignItems: "center" }}>
+                <button onClick={changeSpeed} className="utility-btn speed-btn" title="Tốc độ phát" aria-label={`Tốc độ phát ${SPEEDS[speedIndex]}x`}>
                   <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" style={{ marginRight: 4, verticalAlign: "middle" }}>
-                    <path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z" />
+                    <circle cx="12" cy="12" r="10" />
+                    <path d="M12 6v6l4 2" />
                   </svg>
-                  <span style={{ verticalAlign: "middle" }}>{sleepText}</span>
+                  <span style={{ verticalAlign: "middle" }}>{SPEEDS[speedIndex]}x</span>
                 </button>
-                {sleepDropdownOpen && (
-                  <div className="sleep-timer-dropdown">
-                    <ul>
-                      <li onClick={() => handleSleepTimerSelect("0")}>Tắt hẹn giờ</li>
-                      <li onClick={() => handleSleepTimerSelect("15")}>15 phút</li>
-                      <li onClick={() => handleSleepTimerSelect("30")}>30 phút</li>
-                      <li onClick={() => handleSleepTimerSelect("45")}>45 phút</li>
-                      <li onClick={() => handleSleepTimerSelect("60")}>60 phút</li>
-                      <li onClick={() => handleSleepTimerSelect("end")}>Hết bài</li>
-                    </ul>
-                  </div>
-                )}
+
+                <div className="sleep-timer-container">
+                  <button
+                    onClick={() => setSleepDropdownOpen(!sleepDropdownOpen)}
+                    className={`utility-btn sleep-btn ${timerActive ? "active-timer" : ""}`}
+                    title="Hẹn giờ tắt"
+                    aria-label="Hẹn giờ tắt"
+                  >
+                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" style={{ marginRight: 4, verticalAlign: "middle" }}>
+                      <path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z" />
+                    </svg>
+                    <span style={{ verticalAlign: "middle" }}>{sleepText}</span>
+                  </button>
+                  {sleepDropdownOpen && (
+                    <div className="sleep-timer-dropdown">
+                      <ul>
+                        <li onClick={() => handleSleepTimerSelect("0")}>Tắt hẹn giờ</li>
+                        <li onClick={() => handleSleepTimerSelect("15")}>15 phút</li>
+                        <li onClick={() => handleSleepTimerSelect("30")}>30 phút</li>
+                        <li onClick={() => handleSleepTimerSelect("45")}>45 phút</li>
+                        <li onClick={() => handleSleepTimerSelect("60")}>60 phút</li>
+                        <li onClick={() => handleSleepTimerSelect("end")}>Hết bài</li>
+                      </ul>
+                    </div>
+                  )}
+                </div>
               </div>
             </div>
           </div>
@@ -953,11 +974,11 @@ export default function RadioPlayer() {
                 <button
                   onClick={() => {
                     if (filteredAndOrderedTracks.length > 0) {
-                      const randomIdx = Math.floor(Math.random() * filteredAndOrderedTracks.length);
+                      const randomIdx = getRandomIndex(filteredAndOrderedTracks.length);
                       playTrack(filteredAndOrderedTracks[randomIdx]);
                     }
                   }}
-                  className="action-btn"
+                  className="action-btn random-action-btn"
                   title="Phát bài ngẫu nhiên ngay"
                   aria-label="Phát bài ngẫu nhiên ngay"
                 >
@@ -968,7 +989,7 @@ export default function RadioPlayer() {
                     <line x1="15" y1="15" x2="21" y2="21" />
                     <line x1="4" y1="4" x2="9" y2="9" />
                   </svg>
-                  Ngẫu nhiên
+                  <span className="random-btn-text">Ngẫu nhiên</span>
                 </button>
 
                 <button

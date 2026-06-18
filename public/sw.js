@@ -1,19 +1,32 @@
-const CACHE_NAME = "minhhue-radio-v1";
+const CACHE_NAME = "minhhue-radio-v2";
 const ASSETS = [
   "/",
   "/manifest.json",
-  "/radio.css",
-  "/globals.css",
   "/icons/icon-192.png",
   "/icons/icon-512.png",
   "/apple-touch-icon.png"
 ];
 
 self.addEventListener("install", (e) => {
+  self.skipWaiting();
   e.waitUntil(
     caches.open(CACHE_NAME).then((cache) => {
       return cache.addAll(ASSETS);
     })
+  );
+});
+
+self.addEventListener("activate", (e) => {
+  e.waitUntil(
+    caches.keys().then((keys) => {
+      return Promise.all(
+        keys.map((key) => {
+          if (key !== CACHE_NAME) {
+            return caches.delete(key);
+          }
+        })
+      );
+    }).then(() => self.clients.claim())
   );
 });
 

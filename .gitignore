@@ -44,3 +44,7 @@ next-env.d.ts
 /performance_trace.json
 /report.json
 /report.html
+
+# temp and screenshots
+/temp_audio/
+/*.png
