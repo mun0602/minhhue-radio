@@ -791,9 +791,8 @@ export default function RadioPlayer() {
             <div className="custom-controls-row">
               <div className="custom-center-controls">
                 <button onClick={rewind10s} className="custom-player-btn control-secondary-btn" title="Lùi 10 giây" aria-label="Lùi 10 giây">
-                  <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                    <polygon points="11 19 2 12 11 5 11 19" />
-                    <polygon points="22 19 13 12 22 5 22 19" />
+                  <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+                    <polygon points="16 19 6 12 16 5" />
                   </svg>
                 </button>
 
@@ -810,9 +809,8 @@ export default function RadioPlayer() {
                 </button>
 
                 <button onClick={forward30s} className="custom-player-btn control-secondary-btn" title="Tiến 30 giây" aria-label="Tiến 30 giây">
-                  <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                    <polygon points="13 19 22 12 13 5 13 19" />
-                    <polygon points="2 19 11 12 2 5 2 19" />
+                  <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+                    <polygon points="8 19 18 12 8 5" />
                   </svg>
                 </button>
               </div>
