@@ -48,3 +48,5 @@ next-env.d.ts
 # temp and screenshots
 /temp_audio/
 /*.png
+.wrangler/
+*.bak
