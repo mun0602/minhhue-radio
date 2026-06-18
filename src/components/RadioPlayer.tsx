@@ -296,12 +296,25 @@ export default function RadioPlayer() {
           if (savedStateStr) {
             const s = JSON.parse(savedStateStr);
             if (s.url && s.title) {
-              const track = tracks.find(t => t.url === s.url);
+              let track = tracks.find(t => t.url === s.url);
+              if (!track) {
+                // Fallback to title matching in case of URL changes (like R2 migration)
+                track = tracks.find(t => t.title === s.title);
+              }
+
               if (track) {
                 setCurrentTrack(track);
+                // Automatically activate correct category and tab so the track is rendered and scrolled to
+                const catObj = CATEGORIES.find(c => c.id === track.category);
+                if (catObj) {
+                  setSelectedCategory(track.category);
+                  setActiveTab(catObj.group as "minh-hue" | "tu-kiem");
+                  localStorage.setItem("minhhue_selected_category", track.category);
+                }
               } else {
                 setCurrentTrack({ title: s.title, url: s.url, category: s.category || "", originalIndex: 0 });
               }
+
               if (s.time) {
                 setPendingRestoreTime(s.time);
                 setCurrentTime(s.time);
@@ -309,14 +322,6 @@ export default function RadioPlayer() {
               } else {
                 setIsRestoreCompleted(true);
               }
-              // Smooth scroll to the current track
-              setTimeout(() => {
-                const targetIdx = tracks.findIndex(t => t.url === s.url);
-                if (targetIdx >= 0 && scrollContainerRef.current) {
-                  const targetTop = targetIdx * ITEM_HEIGHT - scrollContainerRef.current.clientHeight / 2 + ITEM_HEIGHT / 2;
-                  scrollContainerRef.current.scrollTop = Math.max(0, targetTop);
-                }
-              }, 300);
             } else {
               setIsRestoreCompleted(true);
             }
@@ -605,7 +610,10 @@ export default function RadioPlayer() {
 
   useEffect(() => {
     if (isMounted && filteredAndOrderedTracks.length > 0) {
-      scrollToActiveTrack();
+      const timer = setTimeout(() => {
+        scrollToActiveTrack();
+      }, 100);
+      return () => clearTimeout(timer);
     }
   }, [isMounted, filteredAndOrderedTracks.length, scrollToActiveTrack]);
 
