@@ -123,6 +123,10 @@ export default function RadioPlayer() {
   const [stopAtTrackEnd, setStopAtTrackEnd] = useState(false);
   const sleepTimerRef = useRef<NodeJS.Timeout | null>(null);
 
+  // Speed Dropdown state
+  const [speedDropdownOpen, setSpeedDropdownOpen] = useState(false);
+  const [mobileSpeedDropdownOpen, setMobileSpeedDropdownOpen] = useState(false);
+
   // Restore state flags
   const [pendingRestoreTime, setPendingRestoreTime] = useState<number | null>(null);
   const [isRestoreCompleted, setIsRestoreCompleted] = useState(false);
@@ -722,18 +726,44 @@ export default function RadioPlayer() {
             </span>
           </div>
           <div className="mobile-right-actions" style={{ display: "flex", alignItems: "center", gap: "8px" }}>
-            <button
-              onClick={changeSpeed}
-              className="mobile-speed-btn"
-              title="Tốc độ phát"
-              aria-label={`Tốc độ phát ${SPEEDS[speedIndex]}x`}
-            >
-              <span>{SPEEDS[speedIndex]}x</span>
-            </button>
+            <div className="mobile-speed-timer-container">
+              <button
+                onClick={() => {
+                  setMobileSpeedDropdownOpen(!mobileSpeedDropdownOpen);
+                  setMobileSleepDropdownOpen(false);
+                }}
+                className="mobile-speed-btn"
+                title="Tốc độ phát"
+                aria-label={`Tốc độ phát ${SPEEDS[speedIndex]}x`}
+              >
+                <span>{SPEEDS[speedIndex]}x</span>
+              </button>
+              {mobileSpeedDropdownOpen && (
+                <div className="mobile-speed-dropdown">
+                  <ul>
+                    {SPEEDS.map((speed, idx) => (
+                      <li
+                        key={speed}
+                        onClick={() => {
+                          setSpeedIndex(idx);
+                          setMobileSpeedDropdownOpen(false);
+                        }}
+                        style={{ fontWeight: speedIndex === idx ? "700" : "500" }}
+                      >
+                        {speed === 1.0 ? "Thường" : `${speed}x`}
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              )}
+            </div>
 
             <div className="mobile-sleep-timer-container">
               <button
-                onClick={() => setMobileSleepDropdownOpen(!mobileSleepDropdownOpen)}
+                onClick={() => {
+                  setMobileSleepDropdownOpen(!mobileSleepDropdownOpen);
+                  setMobileSpeedDropdownOpen(false);
+                }}
                 className={`mobile-sleep-btn ${timerActive ? "active-timer" : ""}`}
                 aria-label="Hẹn giờ tắt"
                 title={sleepText}
@@ -851,17 +881,48 @@ export default function RadioPlayer() {
               </div>
 
               <div className="custom-utilities-right" style={{ display: "flex", gap: "8px", alignItems: "center" }}>
-                <button onClick={changeSpeed} className="utility-btn speed-btn" title="Tốc độ phát" aria-label={`Tốc độ phát ${SPEEDS[speedIndex]}x`}>
-                  <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" style={{ marginRight: 4, verticalAlign: "middle" }}>
-                    <circle cx="12" cy="12" r="10" />
-                    <path d="M12 6v6l4 2" />
-                  </svg>
-                  <span style={{ verticalAlign: "middle" }}>{SPEEDS[speedIndex]}x</span>
-                </button>
+                <div className="speed-dropdown-container">
+                  <button
+                    onClick={() => {
+                      setSpeedDropdownOpen(!speedDropdownOpen);
+                      setSleepDropdownOpen(false);
+                    }}
+                    className="utility-btn speed-btn"
+                    title="Tốc độ phát"
+                    aria-label={`Tốc độ phát ${SPEEDS[speedIndex]}x`}
+                  >
+                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" style={{ marginRight: 4, verticalAlign: "middle" }}>
+                      <circle cx="12" cy="12" r="10" />
+                      <path d="M12 6v6l4 2" />
+                    </svg>
+                    <span style={{ verticalAlign: "middle" }}>{SPEEDS[speedIndex]}x</span>
+                  </button>
+                  {speedDropdownOpen && (
+                    <div className="speed-dropdown">
+                      <ul>
+                        {SPEEDS.map((speed, idx) => (
+                          <li
+                            key={speed}
+                            onClick={() => {
+                              setSpeedIndex(idx);
+                              setSpeedDropdownOpen(false);
+                            }}
+                            style={{ fontWeight: speedIndex === idx ? "700" : "600" }}
+                          >
+                            {speed === 1.0 ? "Thường" : `${speed}x`}
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                  )}
+                </div>
 
                 <div className="sleep-timer-container">
                   <button
-                    onClick={() => setSleepDropdownOpen(!sleepDropdownOpen)}
+                    onClick={() => {
+                      setSleepDropdownOpen(!sleepDropdownOpen);
+                      setSpeedDropdownOpen(false);
+                    }}
                     className={`utility-btn sleep-btn ${timerActive ? "active-timer" : ""}`}
                     title="Hẹn giờ tắt"
                     aria-label="Hẹn giờ tắt"

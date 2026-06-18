@@ -1631,3 +1631,90 @@
 	background: rgba(0, 0, 0, 0.08);
 	color: #334155;
 }
+
+/* Trình chọn tốc độ phát (Speed selector) Dropdown */
+.speed-dropdown-container {
+	position: relative;
+}
+
+.speed-dropdown {
+	position: absolute;
+	bottom: calc(100% + 8px);
+	right: 0;
+	background: #ffffff;
+	border: 1px solid rgba(0, 0, 0, 0.05);
+	border-radius: var(--radius-sm);
+	box-shadow: 0 -10px 30px rgba(0, 0, 0, 0.08);
+	z-index: 30;
+	width: 100px;
+	animation: slideUpTimer 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.speed-dropdown ul {
+	list-style: none;
+	padding: 6px 0;
+	margin: 0;
+}
+
+.speed-dropdown li {
+	padding: 8px 16px;
+	font-family: var(--font-sans);
+	font-size: 12px;
+	font-weight: 600;
+	color: #475569;
+	cursor: pointer;
+	transition: all var(--transition-fast);
+	text-align: center;
+}
+
+@media (hover: hover) {
+	.speed-dropdown li:hover {
+		background: rgba(240, 249, 255, 1);
+		color: #0ea5e9;
+	}
+}
+
+/* Mobile Speed Dropdown */
+@media (max-width: 899px) {
+	.mobile-speed-timer-container {
+		position: relative;
+	}
+
+	.mobile-speed-dropdown {
+		position: absolute;
+		bottom: calc(100% + 8px);
+		right: 0;
+		background: rgba(253, 251, 247, 0.95);
+		backdrop-filter: blur(12px);
+		-webkit-backdrop-filter: blur(12px);
+		border: 1px solid rgba(180, 83, 9, 0.1);
+		border-radius: 12px;
+		box-shadow: 0 10px 25px rgba(120, 53, 15, 0.08);
+		z-index: 10000;
+		width: 100px;
+		overflow: hidden;
+		animation: slideDownMobile 0.25s ease;
+	}
+
+	.mobile-speed-dropdown ul {
+		list-style: none;
+		margin: 0;
+		padding: 4px 0;
+	}
+
+	.mobile-speed-dropdown li {
+		padding: 10px 16px;
+		font-size: 13px;
+		color: var(--text-primary);
+		cursor: pointer;
+		transition: background 0.15s;
+		font-weight: 500;
+		text-align: center;
+	}
+
+	.mobile-speed-dropdown li:hover,
+	.mobile-speed-dropdown li:active {
+		background: rgba(217, 119, 6, 0.08);
+		color: var(--color-accent);
+	}
+}
