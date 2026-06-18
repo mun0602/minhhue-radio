@@ -870,7 +870,7 @@ export default function RadioPlayer() {
         <div className="radio-glow-border"></div>
         <div className="radio-right-panel-premium">
           <div className="playlist-section">
-            <div className="playlist-header">
+            <div className="playlist-tabs-row">
               <div className="playlist-tabs">
                 <button
                   className={`playlist-tab-btn ${activeTab === "minh-hue" ? "active" : ""}`}
@@ -901,6 +901,58 @@ export default function RadioPlayer() {
                   Tứ kiếm
                 </button>
               </div>
+            </div>
+
+            <div className="playlist-sub-header">
+              {/* Categories filter selector */}
+              <div className="categories-filter-wrapper" style={{ flex: 1, marginBottom: 0 }}>
+                <div
+                  onClick={() => setCategoryDropdownOpen(!categoryDropdownOpen)}
+                  className={`sub-categories-nav-toggle ${categoryDropdownOpen ? "open" : ""}`}
+                  role="button"
+                  aria-haspopup="listbox"
+                  aria-expanded={categoryDropdownOpen}
+                  aria-label="Chọn chuyên mục phát thanh"
+                >
+                  <span>{currentCategoryName}</span>
+                  <i className="sub-categories-nav-icon"></i>
+                </div>
+
+                {categoryDropdownOpen && (
+                  <>
+                    <div className="category-dropdown-backdrop" onClick={() => setCategoryDropdownOpen(false)}></div>
+                    <div className="sub-categories-nav-items">
+                      <div className="bottom-sheet-handle"></div>
+                      <div className="bottom-sheet-header">
+                        <h3>Chọn chuyên mục</h3>
+                        <button className="bottom-sheet-close" onClick={() => setCategoryDropdownOpen(false)} aria-label="Đóng bảng chọn">
+                          <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                            <line x1="18" y1="6" x2="6" y2="18" />
+                            <line x1="6" y1="6" x2="18" y2="18" />
+                          </svg>
+                        </button>
+                      </div>
+                      <ul>
+                        {CATEGORIES.filter(cat => cat.group === activeTab).map((cat) => (
+                          <li
+                            key={cat.id}
+                            onClick={() => selectCategoryFilter(cat.id)}
+                            className={`sub-category-nav-item ${selectedCategory === cat.id ? "active-category" : ""}`}
+                          >
+                            <div>
+                              <a href="#" onClick={(e) => e.preventDefault()}>
+                                {cat.name}
+                              </a>
+                            </div>
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                  </>
+                )}
+              </div>
+
+              {/* Playlist Actions */}
               <div className="playlist-actions">
                 <button
                   onClick={() => {
@@ -962,54 +1014,6 @@ export default function RadioPlayer() {
                 </div>
               </div>
             )}
-
-            {/* Categories filter selector */}
-            <div className="categories-filter-wrapper">
-              <div
-                onClick={() => setCategoryDropdownOpen(!categoryDropdownOpen)}
-                className={`sub-categories-nav-toggle ${categoryDropdownOpen ? "open" : ""}`}
-                role="button"
-                aria-haspopup="listbox"
-                aria-expanded={categoryDropdownOpen}
-                aria-label="Chọn chuyên mục phát thanh"
-              >
-                <span>{currentCategoryName}</span>
-                <i className="sub-categories-nav-icon"></i>
-              </div>
-
-              {categoryDropdownOpen && (
-                <>
-                  <div className="category-dropdown-backdrop" onClick={() => setCategoryDropdownOpen(false)}></div>
-                  <div className="sub-categories-nav-items">
-                    <div className="bottom-sheet-handle"></div>
-                    <div className="bottom-sheet-header">
-                      <h3>Chọn chuyên mục</h3>
-                      <button className="bottom-sheet-close" onClick={() => setCategoryDropdownOpen(false)} aria-label="Đóng bảng chọn">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                          <line x1="18" y1="6" x2="6" y2="18" />
-                          <line x1="6" y1="6" x2="18" y2="18" />
-                        </svg>
-                      </button>
-                    </div>
-                    <ul>
-                      {CATEGORIES.filter(cat => cat.group === activeTab).map((cat) => (
-                        <li
-                          key={cat.id}
-                          onClick={() => selectCategoryFilter(cat.id)}
-                          className={`sub-category-nav-item ${selectedCategory === cat.id ? "active-category" : ""}`}
-                        >
-                          <div>
-                            <a href="#" onClick={(e) => e.preventDefault()}>
-                              {cat.name}
-                            </a>
-                          </div>
-                        </li>
-                      ))}
-                    </ul>
-                  </div>
-                </>
-              )}
-            </div>
 
             {/* Playlist Scroll Container */}
             <div
