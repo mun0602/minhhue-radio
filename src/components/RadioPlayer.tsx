@@ -27,11 +27,12 @@ const CATEGORIES: Category[] = [
   { id: "kien-tri-hoc-thuoc-phap", name: "Kiên trì học thuộc Pháp", path: "/news/category/kien-tri-hoc-thuoc-phap", group: "minh-hue" },
   { id: "tin-tuc-tong-hop", name: "Tin tức tổng hợp", path: "/news/category/tin-tuc", group: "minh-hue" },
   { id: "cau-chuyen-tu-luyen", name: "Câu chuyện tu luyện", path: "/news/category/cau-chuyen-tu-luyen", group: "minh-hue" },
+  { id: "giai-the-van-hoa-dang", name: "Giải thể văn hóa đảng (Số 25)", path: "/news/category/giai-the-van-hoa-dang", group: "minh-hue" },
   
   // Nhóm Tứ kiếm
   { id: "all-tu-kiem", name: "Tất cả sách Tứ kiếm", path: "#", group: "tu-kiem" },
   { id: "cuu-binh", name: "Cửu Bình - Chín bài bình luận về ĐCS", path: "/news/category/cuu-binh", group: "tu-kiem" },
-  { id: "giai-the-van-hoa-dang", name: "Giải thể văn hóa đảng", path: "/news/category/giai-the-van-hoa-dang", group: "tu-kiem" },
+  { id: "giai-the-van-hoa-dang-sach", name: "Giải thể văn hóa đảng (Sách)", path: "/news/category/giai-the-van-hoa-dang-sach", group: "tu-kiem" },
   { id: "muc-dich-cuoi-cung-cua-chu-nghia-cong-san", name: "Mục đích cuối cùng của CNCS", path: "/news/category/muc-dich-cuoi-cung-cua-chu-nghia-cong-san", group: "tu-kiem" },
   { id: "ma-quy-dang-thong-tri-the-gioi-cua-chung-ta", name: "Ma quỷ đang thống trị thế giới của chúng ta", path: "/news/category/ma-quy-dang-thong-tri-the-gioi-cua-chung-ta", group: "tu-kiem" },
   
