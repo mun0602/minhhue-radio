@@ -81,10 +81,6 @@ const formatTime = (secs: number) => {
   return `${String(m).padStart(2, "0")}:${String(s).padStart(2, "0")}`;
 };
 
-const getRandomIndex = (length: number) => {
-  return Math.floor(Math.random() * length);
-};
-
 function getYoutubeId(url: string) {
   const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=)([^#\&\?]*).*/;
   const match = url.match(regExp);
@@ -100,7 +96,7 @@ const MarqueeTitle = ({ title, className }: { title: string; className?: string 
   }
 
   return (
-    <div className="marquee-container">
+    <div className="marquee-container" style={{ flex: 1, minWidth: 0 }}>
       <div className="marquee-content">
         <span className={className}>{clean}</span>
         <span className={className} style={{ paddingLeft: "50px" }}>{clean}</span>
@@ -137,8 +133,6 @@ export default function RadioPlayer() {
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [isReverted, setIsReverted] = useState(false);
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const [isRandomMode, setIsRandomMode] = useState(false);
   const [listenedTracks, setListenedTracks] = useState<string[]>([]);
 
   // Sleep Timer state
@@ -259,19 +253,13 @@ export default function RadioPlayer() {
       return;
     }
 
-    if (isRandomMode && filteredAndOrderedTracks.length > 0) {
-      const randomIdx = getRandomIndex(filteredAndOrderedTracks.length);
-      playTrack(filteredAndOrderedTracks[randomIdx]);
-      return;
-    }
-
     const idx = filteredAndOrderedTracks.findIndex(t => t.url === currentTrack.url);
     if (idx >= 0 && idx < filteredAndOrderedTracks.length - 1) {
       playTrack(filteredAndOrderedTracks[idx + 1]);
     } else if (filteredAndOrderedTracks.length > 0) {
       playTrack(filteredAndOrderedTracks[0]);
     }
-  }, [stopAtTrackEnd, isRandomMode, filteredAndOrderedTracks, currentTrack, playTrack]);
+  }, [stopAtTrackEnd, filteredAndOrderedTracks, currentTrack, playTrack]);
 
   // Đăng ký Service Worker kích hoạt PWA
   useEffect(() => {
@@ -1164,9 +1152,13 @@ export default function RadioPlayer() {
                           className={cssClass}
                         >
                           <span className="track-number">{num}</span>
-                          <span className="track-name" title={track.title}>
-                            {cleanTitle(track.title)}
-                          </span>
+                          {isActive ? (
+                            <MarqueeTitle title={track.title} className="track-name" />
+                          ) : (
+                            <span className="track-name" title={track.title}>
+                              {cleanTitle(track.title)}
+                            </span>
+                          )}
                         </li>
                       );
                     })}
