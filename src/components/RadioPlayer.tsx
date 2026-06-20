@@ -54,7 +54,7 @@ export default function RadioPlayer() {
   const [isMobile, setIsMobile] = useState(false);
 
   useEffect(() => {
-    const handleResize = () => setIsMobile(window.innerWidth < 900);
+    const handleResize = () => setIsMobile(window.innerWidth < 1200);
     if (typeof window !== "undefined") {
       handleResize();
       window.addEventListener("resize", handleResize);
@@ -320,6 +320,22 @@ export default function RadioPlayer() {
         audio.playbackRate = SPEEDS[speedIndexRef.current];
       }
     };
+    const handlePlaying = () => {
+      if (audio.playbackRate !== SPEEDS[speedIndexRef.current]) {
+        audio.playbackRate = SPEEDS[speedIndexRef.current];
+      }
+    };
+    const handleCanPlay = () => {
+      if (audio.playbackRate !== SPEEDS[speedIndexRef.current]) {
+        audio.playbackRate = SPEEDS[speedIndexRef.current];
+      }
+    };
+    const handleRateChange = () => {
+      const targetSpeed = SPEEDS[speedIndexRef.current];
+      if (audio.playbackRate !== targetSpeed) {
+        audio.playbackRate = targetSpeed;
+      }
+    };
     const handlePause = () => setIsPlaying(false);
     const handleTimeUpdate = () => {
       // Chỉ cập nhật currentTime khi không có tiến trình chờ khôi phục để tránh việc ghi đè thời gian 0s
@@ -329,12 +345,18 @@ export default function RadioPlayer() {
     };
     const handleLoadedMetadata = () => {
       setDuration(audio.duration);
+      if (audio.playbackRate !== SPEEDS[speedIndexRef.current]) {
+        audio.playbackRate = SPEEDS[speedIndexRef.current];
+      }
     };
     const handleEnded = () => {
       handleTrackEnded();
     };
 
     audio.addEventListener("play", handlePlay);
+    audio.addEventListener("playing", handlePlaying);
+    audio.addEventListener("canplay", handleCanPlay);
+    audio.addEventListener("ratechange", handleRateChange);
     audio.addEventListener("pause", handlePause);
     audio.addEventListener("timeupdate", handleTimeUpdate);
     audio.addEventListener("loadedmetadata", handleLoadedMetadata);
@@ -343,6 +365,9 @@ export default function RadioPlayer() {
     return () => {
       audio.pause();
       audio.removeEventListener("play", handlePlay);
+      audio.removeEventListener("playing", handlePlaying);
+      audio.removeEventListener("canplay", handleCanPlay);
+      audio.removeEventListener("ratechange", handleRateChange);
       audio.removeEventListener("pause", handlePause);
       audio.removeEventListener("timeupdate", handleTimeUpdate);
       audio.removeEventListener("loadedmetadata", handleLoadedMetadata);

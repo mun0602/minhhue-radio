@@ -43,7 +43,7 @@
 	box-sizing: border-box;
 }
 
-@media (min-width: 900px) {
+@media (min-width: 1200px) {
 	.emdash-radio-layout-container {
 		display: grid;
 		grid-template-columns: 1.15fr 0.85fr;
@@ -96,7 +96,7 @@
 	transform: translate3d(0, 0, 0);
 }
 
-@media (min-width: 900px) {
+@media (min-width: 1200px) {
 	.emdash-player-card-premium,
 	.emdash-playlist-card-premium {
 		background: transparent;
@@ -128,7 +128,7 @@
 }
 
 /* Chỉ kích hoạt hiệu ứng hover dịch chuyển trên Desktop để tránh lỗi Touch trên Mobile */
-@media (hover: hover) and (max-width: 899px) {
+@media (hover: hover) and (max-width: 1199px) {
 	.emdash-player-card-premium:hover,
 	.emdash-playlist-card-premium:hover {
 		transform: translateY(-4px);
@@ -165,7 +165,7 @@
 	z-index: 3;
 }
 
-@media (min-width: 900px) {
+@media (min-width: 1200px) {
 	.radio-left-panel-premium,
 	.radio-right-panel-premium {
 		height: 100%;
@@ -233,7 +233,7 @@
 	overflow: hidden;
 }
 
-@media (min-width: 900px) {
+@media (min-width: 1200px) {
 	.now-playing-box {
 		background: rgba(255, 255, 255, 0.3) !important;
 		border: none !important;
@@ -286,7 +286,7 @@
 	transition: all var(--transition-base);
 }
 
-@media (min-width: 900px) {
+@media (min-width: 1200px) {
 	.custom-player-premium {
 		flex: 1;
 		justify-content: space-evenly;
@@ -688,7 +688,7 @@
 	white-space: nowrap;
 }
 
-@media (min-width: 900px) {
+@media (min-width: 1200px) {
 	.action-btn {
 		padding: 10px 14px;
 		font-size: 11px;
@@ -810,7 +810,7 @@
 	user-select: none;
 }
 
-@media (min-width: 900px) {
+@media (min-width: 1200px) {
 	.sub-categories-nav-toggle {
 		padding: 10px 16px;
 	}
@@ -954,7 +954,7 @@
 	-webkit-overflow-scrolling: touch;
 }
 
-@media (min-width: 900px) {
+@media (min-width: 1200px) {
 	.playlist-scroll-container {
 		max-height: none !important;
 		height: 0;
@@ -1675,7 +1675,7 @@
 }
 
 /* Mobile Speed Dropdown */
-@media (max-width: 899px) {
+@media (max-width: 1199px) {
 	.mobile-speed-timer-container {
 		position: relative;
 	}
@@ -1727,13 +1727,13 @@
 	display: block;
 }
 
-@media (min-width: 900px) {
+@media (min-width: 1200px) {
 	.mobile-youtube-player {
 		display: none !important;
 	}
 }
 
-@media (max-width: 899px) {
+@media (max-width: 1199px) {
 	.desktop-youtube-player {
 		display: none !important;
 	}
