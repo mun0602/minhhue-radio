@@ -1152,7 +1152,7 @@ export default function RadioPlayer() {
 
                       return (
                         <li
-                          key={track.url}
+                          key={originalIdx}
                           onClick={() => playTrack(track)}
                           style={{
                             position: "absolute",
