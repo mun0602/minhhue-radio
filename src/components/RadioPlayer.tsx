@@ -2,108 +2,21 @@
 
 import React, { useState, useEffect, useRef, useMemo, useCallback } from "react";
 
-interface Track {
-  title: string;
-  url: string;
-  category: string;
-  originalIndex?: number;
-}
-
-interface Category {
-  id: string;
-  name: string;
-  path: string;
-  group: "minh-hue" | "tu-kiem";
-}
-
-const CATEGORIES: Category[] = [
-  { id: "all", name: "Tất cả phát thanh", path: "#", group: "minh-hue" },
-  { id: "tru-bo-chap-truoc-vao-dien-thoai", name: "Trừ bỏ chấp trước vào điện thoại", path: "/news/category/tru-bo-chap-truoc-vao-dien-thoai", group: "minh-hue" },
-  { id: "ngay-phap-luan-dai-phap-the-gioi-radio", name: "Ngày Pháp Luân Đại Pháp Thế giới", path: "/news/category/ngay-phap-luan-dai-phap-the-gioi", group: "minh-hue" },
-  { id: "phap-hoi-trung-quoc-radio", name: "Pháp hội Trung Quốc", path: "/news/category/phap-hoi-trung-quoc", group: "minh-hue" },
-  { id: "tin-tuc-tai-dai-luc", name: "Tin tức tại Đại Lục", path: "/news/category/tin-tuc-tai-dai-luc", group: "minh-hue" },
-  { id: "tin-tuc-tren-the-gioi", name: "Tin tức trên thế giới", path: "/news/category/tin-tuc-tren-the-gioi", group: "minh-hue" },
-  { id: "thien-am-tinh-nhac", name: "Thiên Âm Tịnh Nhạc", path: "/news/category/thien-am-tinh-nhac", group: "minh-hue" },
-  { id: "kien-tri-hoc-thuoc-phap", name: "Kiên trì học thuộc Pháp", path: "/news/category/kien-tri-hoc-thuoc-phap", group: "minh-hue" },
-  { id: "tin-tuc-tong-hop", name: "Tin tức tổng hợp", path: "/news/category/tin-tuc", group: "minh-hue" },
-  { id: "cau-chuyen-tu-luyen", name: "Câu chuyện tu luyện", path: "/news/category/cau-chuyen-tu-luyen", group: "minh-hue" },
-  { id: "giai-the-van-hoa-dang", name: "Giải thể văn hóa đảng (Số 25)", path: "/news/category/giai-the-van-hoa-dang", group: "minh-hue" },
-  
-  // Nhóm Tứ kiếm
-  { id: "all-tu-kiem", name: "Tất cả sách Tứ kiếm", path: "#", group: "tu-kiem" },
-  { id: "cuu-binh", name: "Cửu Bình - Chín bài bình luận về ĐCS", path: "/news/category/cuu-binh", group: "tu-kiem" },
-  { id: "giai-the-van-hoa-dang-sach", name: "Giải thể văn hóa đảng (Sách)", path: "/news/category/giai-the-van-hoa-dang-sach", group: "tu-kiem" },
-  { id: "muc-dich-cuoi-cung-cua-chu-nghia-cong-san", name: "Mục đích cuối cùng của CNCS (Audio)", path: "/news/category/muc-dich-cuoi-cung-cua-chu-nghia-cong-san", group: "tu-kiem" },
-  { id: "muc-dich-cuoi-cung-cua-chu-nghia-cong-san-video", name: "Mục đích cuối cùng của CNCS (Video)", path: "/news/category/muc-dich-cuoi-cung-cua-chu-nghia-cong-san-video", group: "tu-kiem" },
-  { id: "ma-quy-dang-thong-tri-the-gioi-cua-chung-ta", name: "Ma quỷ đang thống trị thế giới của chúng ta", path: "/news/category/ma-quy-dang-thong-tri-the-gioi-cua-chung-ta", group: "tu-kiem" },
-  
-  { id: "radio-hoi-uc-ve-su-phu", name: "Hồi ức về Sư Phụ", path: "/news/category/radio-hoi-uc-ve-su-phu", group: "minh-hue" },
-  { id: "tuyen-tap-bai-chia-se-cua-tieu-de-tu-dai-phap", name: "Tiểu đệ tử Đại Pháp", path: "/news/category/tuyen-tap-bai-chia-se-cua-tieu-de-tu-dai-phap", group: "minh-hue" },
-  { id: "tuyen-tap-cac-bai-chia-se-cua-de-tu-dai-phap-tre-tuoi", name: "Đệ tử Đại Pháp trẻ tuổi", path: "/news/category/tuyen-tap-cac-bai-chia-se-cua-de-tu-dai-phap-tre-tuoi", group: "minh-hue" },
-  { id: "tuyen-tap-cac-bai-chia-se-tu-luyen-chinh-phap", name: "Tu luyện Chính Pháp", path: "/news/category/tuyen-tap-cac-bai-chia-se-tu-luyen-chinh-phap", group: "minh-hue" },
-  { id: "dot-pha-gia-tuong-nghiep-benh", name: "Đột phá giả tướng nghiệp bệnh", path: "/news/category/dot-pha-gia-tuong-nghiep-benh", group: "minh-hue" },
-  { id: "mot-niem-giua-thien-va-ac", name: "Một niệm giữa thiện và ác", path: "/news/category/mot-niem-giua-thien-va-ac", group: "minh-hue" },
-  { id: "cuoc-song-va-hy-vong-da-quay-tro-lai", name: "Cuộc sống và hy vọng đã quay trở lại", path: "/news/category/cuoc-song-va-hy-vong-da-quay-tro-lai", group: "minh-hue" },
-  { id: "bai-chia-se-co-loi-binh-cua-su-phu", name: "Bài chia sẻ có lời bình của Sư phụ", path: "/news/category/bai-chia-se-co-loi-binh-cua-su-phu", group: "minh-hue" }
-];
-
-const SPEEDS = [1.0, 1.25, 1.5];
-const ITEM_HEIGHT = 52;
-const BUFFER = 10;
-
-function removeTones(str: string) {
-  return str
-    .normalize("NFD")
-    .replace(/[\u0300-\u036f]/g, "")
-    .replace(/đ/g, "d")
-    .replace(/Đ/g, "d")
-    .replace(/[àáạảãâầấậẩẫăằắặẳẵ]/g, "a")
-    .replace(/[èéẹẻẽêềếệểễ]/g, "e")
-    .replace(/[ìíịỉĩ]/g, "i")
-    .replace(/[òóọỏõôồốộổỗơờớợởỡ]/g, "o")
-    .replace(/[ùúụủũưừứựửữ]/g, "u")
-    .replace(/[ỳýỵỷỹ]/g, "y")
-    .toLowerCase();
-}
-
-function cleanTitle(title: string) {
-  return title
-    .replace(/\[\d{2}-\d{2}-\d{4}\]/g, "")
-    .replace(/Phát thanh Minh Huệ:\s*/g, "")
-    .replace(/Phát thanh Minh Huệ\s*\(.*?\):\s*/g, "")
-    .trim();
-}
-
-const formatTime = (secs: number) => {
-  if (isNaN(secs) || !isFinite(secs)) return "00:00";
-  const m = Math.floor(secs / 60);
-  const s = Math.floor(secs % 60);
-  return `${String(m).padStart(2, "0")}:${String(s).padStart(2, "0")}`;
-};
-
-function getYoutubeId(url: string) {
-  const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=)([^#\&\?]*).*/;
-  const match = url.match(regExp);
-  return (match && match[2].length === 11) ? match[2] : "";
-}
-
-const MarqueeTitle = ({ title, className }: { title: string; className?: string }) => {
-  const clean = cleanTitle(title);
-  const shouldScroll = clean.length > 25;
-
-  if (!shouldScroll) {
-    return <span className={className}>{clean}</span>;
-  }
-
-  return (
-    <div className="marquee-container" style={{ flex: 1, minWidth: 0 }}>
-      <div className="marquee-content">
-        <span className={className}>{clean}</span>
-        <span className={className} style={{ paddingLeft: "50px" }}>{clean}</span>
-      </div>
-    </div>
-  );
-};
+import { Track } from "../types/radio";
+import { 
+  CATEGORIES, 
+  SPEEDS, 
+  ITEM_HEIGHT, 
+  BUFFER, 
+  removeTones, 
+  cleanTitle, 
+  formatTime, 
+  getYoutubeId 
+} from "../utils/radioUtils";
+import { MarqueeTitle } from "./Radio/MarqueeTitle";
+import { MobilePlayer } from "./Radio/MobilePlayer";
+import { DesktopPlayer } from "./Radio/DesktopPlayer";
+import { PlaylistPanel } from "./Radio/PlaylistPanel";
 
 export default function RadioPlayer() {
   "use no memo";
@@ -124,6 +37,10 @@ export default function RadioPlayer() {
   const [currentTime, setCurrentTime] = useState(0);
   const [duration, setDuration] = useState(0);
   const [speedIndex, setSpeedIndex] = useState(0);
+  const speedIndexRef = useRef(speedIndex);
+  useEffect(() => {
+    speedIndexRef.current = speedIndex;
+  }, [speedIndex]);
 
   // Playlist options
   const [selectedCategory, setSelectedCategory] = useState("all");
@@ -396,7 +313,13 @@ export default function RadioPlayer() {
     audio.src = currentTrack.url;
 
     // Event listeners
-    const handlePlay = () => setIsPlaying(true);
+    const handlePlay = () => {
+      setIsPlaying(true);
+      // Ensure playbackRate is preserved on iOS/Android after play starts
+      if (audio.playbackRate !== SPEEDS[speedIndexRef.current]) {
+        audio.playbackRate = SPEEDS[speedIndexRef.current];
+      }
+    };
     const handlePause = () => setIsPlaying(false);
     const handleTimeUpdate = () => {
       // Chỉ cập nhật currentTime khi không có tiến trình chờ khôi phục để tránh việc ghi đè thời gian 0s
@@ -755,432 +678,74 @@ export default function RadioPlayer() {
       )}
 
       {/* Mobile Top Bar */}
-      <div className="mobile-bottom-bar">
-        <div className="mobile-top-row">
-          {!isYouTubeTrack && (
-            <button onClick={togglePlay} className="mobile-play-btn" aria-label={isPlaying ? "Tạm dừng" : "Phát nhạc"}>
-              {!isPlaying ? (
-                <svg className="mobile-play-icon" xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="currentColor">
-                  <path d="M8 5v14l11-7z" />
-                </svg>
-              ) : (
-                <svg className="mobile-pause-icon" xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="currentColor">
-                  <path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z" />
-                </svg>
-              )}
-            </button>
-          )}
-          <div className="mobile-track-info" style={{ marginLeft: isYouTubeTrack ? 0 : undefined, overflow: "hidden" }}>
-            <MarqueeTitle title={currentTrack.title} className="mobile-track-title-marquee" />
-            {!isYouTubeTrack && (
-              <span className="mobile-time">
-                {formatTime(currentTime)} / {formatTime(duration)}
-              </span>
-            )}
-          </div>
-          <div className="mobile-right-actions" style={{ display: "flex", alignItems: "center", gap: "8px" }}>
-            {!isYouTubeTrack && (
-              <>
-                <div className="mobile-speed-timer-container">
-                  <button
-                    onClick={changeSpeed}
-                    className="mobile-speed-btn"
-                    title="Tốc độ phát"
-                    aria-label={`Tốc độ phát ${SPEEDS[speedIndex]}x`}
-                  >
-                    <span>{SPEEDS[speedIndex]}x</span>
-                  </button>
-                </div>
-
-                <div className="mobile-sleep-timer-container">
-                  <button
-                    onClick={() => {
-                      setMobileSleepDropdownOpen(!mobileSleepDropdownOpen);
-                    }}
-                    className={`mobile-sleep-btn ${timerActive ? "active-timer" : ""}`}
-                    aria-label="Hẹn giờ tắt"
-                    title={sleepText}
-                  >
-                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                      <circle cx="12" cy="12" r="10" />
-                      <polyline points="12 6 12 12 16 14" />
-                    </svg>
-                  </button>
-                  {mobileSleepDropdownOpen && (
-                    <div className="mobile-sleep-dropdown">
-                      <ul>
-                        <li onClick={() => handleSleepTimerSelect("0")}>Tắt hẹn giờ</li>
-                        <li onClick={() => handleSleepTimerSelect("15")}>15 phút</li>
-                        <li onClick={() => handleSleepTimerSelect("30")}>30 phút</li>
-                        <li onClick={() => handleSleepTimerSelect("45")}>45 phút</li>
-                        <li onClick={() => handleSleepTimerSelect("60")}>60 phút</li>
-                        <li onClick={() => handleSleepTimerSelect("end")}>Hết bài</li>
-                      </ul>
-                    </div>
-                  )}
-                </div>
-              </>
-            )}
-          </div>
-        </div>
-        {!isYouTubeTrack && (
-          <div className="mobile-progress-row">
-            <input
-              type="range"
-              className="mobile-seek-slider"
-              min="0"
-              max="100"
-              value={progressPct}
-              onChange={handleSeek}
-              step="0.1"
-              aria-label="Thanh trượt tiến trình di động"
-              style={{
-                background: `linear-gradient(to right, var(--color-accent) ${progressPct}%, rgba(148, 163, 184, 0.2) ${progressPct}%)`
-              }}
-            />
-          </div>
-        )}
-      </div>
+      <MobilePlayer
+        isYouTubeTrack={isYouTubeTrack}
+        isPlaying={isPlaying}
+        togglePlay={togglePlay}
+        currentTrack={currentTrack}
+        currentTime={currentTime}
+        duration={duration}
+        changeSpeed={changeSpeed}
+        speedIndex={speedIndex}
+        mobileSleepDropdownOpen={mobileSleepDropdownOpen}
+        setMobileSleepDropdownOpen={setMobileSleepDropdownOpen}
+        timerActive={timerActive}
+        sleepText={sleepText}
+        handleSleepTimerSelect={handleSleepTimerSelect}
+        progressPct={progressPct}
+        handleSeek={handleSeek}
+      />
 
       {/* Desktop Main Player Panel */}
-      <div className="emdash-player-card-premium">
-        <div className="radio-glow-border"></div>
-        <div className="radio-left-panel-premium">
-          <header className="radio-header">
-            <div className="radio-live-tag">
-              <span className="live-pulse"></span>
-              RADIO
-            </div>
-            <h1 className="radio-main-title">Phát Thanh Minh Huệ</h1>
-          </header>
-
-          <div className="now-playing-box">
-            <span className="now-playing-label">Đang phát:</span>
-            <MarqueeTitle title={currentTrack.title} className="current-track-title-marquee" />
-          </div>
-
-          {isYouTubeTrack ? (
-            !isMobile && (
-              <div className="desktop-youtube-player" style={{ width: "100%", marginTop: "16px", aspectRatio: "16/9", overflow: "hidden", borderRadius: "12px", background: "#000" }}>
-                <iframe
-                  width="100%"
-                  height="100%"
-                  src={`https://www.youtube.com/embed/${getYoutubeId(currentTrack.url)}?autoplay=1`}
-                  title={currentTrack.title}
-                  frameBorder="0"
-                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                  allowFullScreen
-                ></iframe>
-              </div>
-            )
-          ) : (
-            <div className="custom-player-premium">
-              {/* Progress Slider */}
-              <div className="custom-progress-area">
-                <input
-                  type="range"
-                  className="custom-seek-slider"
-                  min="0"
-                  max="100"
-                  value={progressPct}
-                  onChange={handleSeek}
-                  step="0.1"
-                  aria-label="Thanh trượt tiến trình"
-                  style={{
-                    background: `linear-gradient(to right, var(--color-accent) ${progressPct}%, rgba(148, 163, 184, 0.2) ${progressPct}%)`
-                  }}
-                />
-                <div className="custom-time-display">
-                  <span>{formatTime(currentTime)}</span>
-                  <span>{formatTime(duration)}</span>
-                </div>
-              </div>
-
-              {/* Main Controls */}
-              <div className="custom-controls-row">
-                <div className="custom-center-controls">
-                  <button onClick={rewind10s} className="custom-player-btn control-secondary-btn" title="Lùi 10 giây" aria-label="Lùi 10 giây">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
-                      <polygon points="16 19 6 12 16 5" />
-                    </svg>
-                  </button>
-
-                  <button onClick={togglePlay} className={`custom-play-main-btn ${isPlaying ? "playing" : ""}`} title="Phát / Tạm dừng" aria-label={isPlaying ? "Tạm dừng" : "Phát nhạc"}>
-                    {!isPlaying ? (
-                      <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
-                        <path d="M8 5v14l11-7z" />
-                      </svg>
-                    ) : (
-                      <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
-                        <path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z" />
-                      </svg>
-                    )}
-                  </button>
-
-                  <button onClick={forward30s} className="custom-player-btn control-secondary-btn" title="Tiến 30 giây" aria-label="Tiến 30 giây">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
-                      <polygon points="8 19 18 12 8 5" />
-                    </svg>
-                  </button>
-                </div>
-              </div>
-
-              {/* Speed, timer status */}
-              <div className="custom-utilities-row">
-                <div className="custom-status-indicator">
-                  <span className={`status-dot ${isPlaying ? "playing" : ""}`}></span>
-                  <span className="status-text">{isPlaying ? "Đang phát" : "Đang dừng"}</span>
-                </div>
-
-                <div className="custom-utilities-right" style={{ display: "flex", gap: "8px", alignItems: "center" }}>
-                  <div className="speed-dropdown-container">
-                    <button
-                      onClick={changeSpeed}
-                      className="utility-btn speed-btn"
-                      title="Tốc độ phát"
-                      aria-label={`Tốc độ phát ${SPEEDS[speedIndex]}x`}
-                    >
-                      <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" style={{ marginRight: 4, verticalAlign: "middle" }}>
-                        <circle cx="12" cy="12" r="10" />
-                        <path d="M12 6v6l4 2" />
-                      </svg>
-                      <span style={{ verticalAlign: "middle" }}>{SPEEDS[speedIndex]}x</span>
-                    </button>
-                  </div>
-
-                  <div className="sleep-timer-container">
-                    <button
-                      onClick={() => {
-                        setSleepDropdownOpen(!sleepDropdownOpen);
-                      }}
-                      className={`utility-btn sleep-btn ${timerActive ? "active-timer" : ""}`}
-                      title="Hẹn giờ tắt"
-                      aria-label="Hẹn giờ tắt"
-                    >
-                      <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" style={{ marginRight: 4, verticalAlign: "middle" }}>
-                        <path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z" />
-                      </svg>
-                      <span style={{ verticalAlign: "middle" }}>{sleepText}</span>
-                    </button>
-                    {sleepDropdownOpen && (
-                      <div className="sleep-timer-dropdown">
-                        <ul>
-                          <li onClick={() => handleSleepTimerSelect("0")}>Tắt hẹn giờ</li>
-                          <li onClick={() => handleSleepTimerSelect("15")}>15 phút</li>
-                          <li onClick={() => handleSleepTimerSelect("30")}>30 phút</li>
-                          <li onClick={() => handleSleepTimerSelect("45")}>45 phút</li>
-                          <li onClick={() => handleSleepTimerSelect("60")}>60 phút</li>
-                          <li onClick={() => handleSleepTimerSelect("end")}>Hết bài</li>
-                        </ul>
-                      </div>
-                    )}
-                  </div>
-                </div>
-              </div>
-            </div>
-          )}
-        </div>
-      </div>
+      <DesktopPlayer
+        isYouTubeTrack={isYouTubeTrack}
+        isMobile={isMobile}
+        currentTrack={currentTrack}
+        progressPct={progressPct}
+        handleSeek={handleSeek}
+        currentTime={currentTime}
+        duration={duration}
+        rewind10s={rewind10s}
+        togglePlay={togglePlay}
+        isPlaying={isPlaying}
+        forward30s={forward30s}
+        changeSpeed={changeSpeed}
+        speedIndex={speedIndex}
+        sleepDropdownOpen={sleepDropdownOpen}
+        setSleepDropdownOpen={setSleepDropdownOpen}
+        timerActive={timerActive}
+        sleepText={sleepText}
+        handleSleepTimerSelect={handleSleepTimerSelect}
+      />
 
       {/* Playlist Panel */}
-      <div className="emdash-playlist-card-premium">
-        <div className="radio-glow-border"></div>
-        <div className="radio-right-panel-premium">
-          <div className="playlist-section">
-            {isYouTubeTrack && isMobile && (
-              <div className="mobile-youtube-player" style={{ marginBottom: "16px", aspectRatio: "16/9", overflow: "hidden", borderRadius: "12px", background: "#000" }}>
-                <iframe
-                  width="100%"
-                  height="100%"
-                  src={`https://www.youtube.com/embed/${getYoutubeId(currentTrack.url)}?autoplay=1`}
-                  title={currentTrack.title}
-                  frameBorder="0"
-                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                  allowFullScreen
-                ></iframe>
-              </div>
-            )}
-            <div className="playlist-tabs-row">
-              <div className="playlist-tabs">
-                <button
-                  className={`playlist-tab-btn ${activeTab === "minh-hue" ? "active" : ""}`}
-                  onClick={() => {
-                    setActiveTab("minh-hue");
-                    setSelectedCategory("all");
-                    localStorage.setItem("minhhue_selected_category", "all");
-                    setScrollTop(0);
-                    if (scrollContainerRef.current) {
-                      scrollContainerRef.current.scrollTop = 0;
-                    }
-                  }}
-                >
-                  Phát thanh Minh Huệ
-                </button>
-                <button
-                  className={`playlist-tab-btn ${activeTab === "tu-kiem" ? "active" : ""}`}
-                  onClick={() => {
-                    setActiveTab("tu-kiem");
-                    setSelectedCategory("all-tu-kiem");
-                    localStorage.setItem("minhhue_selected_category", "all-tu-kiem");
-                    setScrollTop(0);
-                    if (scrollContainerRef.current) {
-                      scrollContainerRef.current.scrollTop = 0;
-                    }
-                  }}
-                >
-                  Tứ kiếm
-                </button>
-              </div>
-            </div>
-
-            <div className="playlist-sub-header">
-              {/* Categories filter selector */}
-              <div className="categories-filter-wrapper" style={{ flex: 1, marginBottom: 0 }}>
-                <div
-                  onClick={() => setCategoryDropdownOpen(!categoryDropdownOpen)}
-                  className={`sub-categories-nav-toggle ${categoryDropdownOpen ? "open" : ""}`}
-                  role="button"
-                  aria-haspopup="listbox"
-                  aria-expanded={categoryDropdownOpen}
-                  aria-label="Chọn chuyên mục phát thanh"
-                >
-                  <span>{currentCategoryName}</span>
-                  <i className="sub-categories-nav-icon"></i>
-                </div>
-
-                {categoryDropdownOpen && (
-                  <>
-                    <div className="category-dropdown-backdrop" onClick={() => setCategoryDropdownOpen(false)}></div>
-                    <div className="sub-categories-nav-items">
-                      <div className="bottom-sheet-handle"></div>
-                      <div className="bottom-sheet-header">
-                        <h3>Chọn chuyên mục</h3>
-                        <button className="bottom-sheet-close" onClick={() => setCategoryDropdownOpen(false)} aria-label="Đóng bảng chọn">
-                          <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                            <line x1="18" y1="6" x2="6" y2="18" />
-                            <line x1="6" y1="6" x2="18" y2="18" />
-                          </svg>
-                        </button>
-                      </div>
-                      <ul>
-                        {CATEGORIES.filter(cat => cat.group === activeTab).map((cat) => (
-                          <li
-                            key={cat.id}
-                            onClick={() => selectCategoryFilter(cat.id)}
-                            className={`sub-category-nav-item ${selectedCategory === cat.id ? "active-category" : ""}`}
-                          >
-                            <div>
-                              <a href="#" onClick={(e) => e.preventDefault()}>
-                                {cat.name}
-                              </a>
-                            </div>
-                          </li>
-                        ))}
-                      </ul>
-                    </div>
-                  </>
-                )}
-              </div>
-
-              {/* Playlist Actions */}
-              <div className="playlist-actions">
-                <button
-                  onClick={() => {
-                    setIsSearchOpen(!isSearchOpen);
-                    if (isSearchOpen) setSearchQuery("");
-                  }}
-                  className={`action-btn ${isSearchOpen ? "active-mode" : ""}`}
-                  title="Tìm kiếm phát thanh"
-                  aria-label="Tìm kiếm phát thanh"
-                >
-                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                    <circle cx="11" cy="11" r="8" />
-                    <path d="m21 21-4.3-4.3" />
-                  </svg>
-                  <span className="search-btn-text">Tìm kiếm</span>
-                </button>
-              </div>
-            </div>
-
-            {/* Search Input Box */}
-            {isSearchOpen && (
-              <div className="search-bar-wrapper">
-                <div className="search-input-container">
-                  <input
-                    type="text"
-                    placeholder="Tìm kiếm trong 3,400+ phát thanh..."
-                    className="playlist-search-input"
-                    value={searchQuery}
-                    onChange={(e) => setSearchQuery(e.target.value)}
-                    autoFocus
-                    aria-label="Nhập từ khóa tìm kiếm bài"
-                  />
-                  {searchQuery && (
-                    <button onClick={() => setSearchQuery("")} className="clear-search-btn" aria-label="Xóa ô tìm kiếm">
-                      &times;
-                    </button>
-                  )}
-                </div>
-              </div>
-            )}
-
-            {/* Playlist Scroll Container */}
-            <div
-              ref={scrollContainerRef}
-              onScroll={handleScroll}
-              className="playlist-scroll-container"
-            >
-              {isLoadingPlaylist ? (
-                <div style={{ textAlign: "center", color: "#64748b", padding: "40px 0", fontSize: 13, fontWeight: 600 }}>
-                  <span className="status-dot playing" style={{ display: "inline-block", marginRight: 8, width: 6, height: 6 }}></span>
-                  Đang tải 3,400+ phát thanh...
-                </div>
-              ) : filteredAndOrderedTracks.length === 0 ? (
-                <p className="empty-playlist-msg" style={{ display: "block" }}>
-                  Không có phát thanh nào thuộc chuyên mục này.
-                </p>
-              ) : (
-                <div style={{ position: "relative", height: totalHeight }}>
-                  <ul id="playlist">
-                    {filteredAndOrderedTracks.slice(startIdx, endIdx).map((track, relativeIdx) => {
-                      const idx = startIdx + relativeIdx;
-                      const originalIdx = track.originalIndex ?? idx;
-                      const num = String(originalIdx + 1).padStart(2, "0");
-                      const isActive = track.url === currentTrack.url;
-                      const isListened = listenedTracks.includes(track.url);
-                      const cssClass = `${isActive ? "active" : ""} ${isListened ? "listened" : ""}`.trim();
-
-                      return (
-                        <li
-                          key={originalIdx}
-                          onClick={() => playTrack(track)}
-                          style={{
-                            position: "absolute",
-                            top: idx * ITEM_HEIGHT,
-                            left: 0,
-                            right: 0,
-                            height: ITEM_HEIGHT
-                          }}
-                          className={cssClass}
-                        >
-                          <span className="track-number">{num}</span>
-                          {isActive ? (
-                            <MarqueeTitle title={track.title} className="track-name" />
-                          ) : (
-                            <span className="track-name" title={track.title}>
-                              {cleanTitle(track.title)}
-                            </span>
-                          )}
-                        </li>
-                      );
-                    })}
-                  </ul>
-                </div>
-              )}
-            </div>
-          </div>
-        </div>
-      </div>
+      <PlaylistPanel
+        isYouTubeTrack={isYouTubeTrack}
+        isMobile={isMobile}
+        currentTrack={currentTrack}
+        activeTab={activeTab}
+        setActiveTab={setActiveTab}
+        selectedCategory={selectedCategory}
+        setSelectedCategory={setSelectedCategory}
+        setScrollTop={setScrollTop}
+        scrollContainerRef={scrollContainerRef}
+        currentCategoryName={currentCategoryName}
+        categoryDropdownOpen={categoryDropdownOpen}
+        setCategoryDropdownOpen={setCategoryDropdownOpen}
+        selectCategoryFilter={selectCategoryFilter}
+        isSearchOpen={isSearchOpen}
+        setIsSearchOpen={setIsSearchOpen}
+        searchQuery={searchQuery}
+        setSearchQuery={setSearchQuery}
+        handleScroll={handleScroll}
+        isLoadingPlaylist={isLoadingPlaylist}
+        filteredAndOrderedTracks={filteredAndOrderedTracks}
+        startIdx={startIdx}
+        endIdx={endIdx}
+        listenedTracks={listenedTracks}
+        playTrack={playTrack}
+        totalHeight={totalHeight}
+      />
     </div>
   );
 }
