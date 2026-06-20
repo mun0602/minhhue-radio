@@ -134,6 +134,16 @@ export default function RadioPlayer() {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [isReverted, setIsReverted] = useState(false);
   const [listenedTracks, setListenedTracks] = useState<string[]>([]);
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    const handleResize = () => setIsMobile(window.innerWidth < 900);
+    if (typeof window !== "undefined") {
+      handleResize();
+      window.addEventListener("resize", handleResize);
+      return () => window.removeEventListener("resize", handleResize);
+    }
+  }, []);
 
   // Sleep Timer state
   const [sleepDropdownOpen, setSleepDropdownOpen] = useState(false);
@@ -850,17 +860,19 @@ export default function RadioPlayer() {
           </div>
 
           {isYouTubeTrack ? (
-            <div className="desktop-youtube-player" style={{ width: "100%", marginTop: "16px", aspectRatio: "16/9", overflow: "hidden", borderRadius: "12px", background: "#000" }}>
-              <iframe
-                width="100%"
-                height="100%"
-                src={`https://www.youtube.com/embed/${getYoutubeId(currentTrack.url)}?autoplay=1`}
-                title={currentTrack.title}
-                frameBorder="0"
-                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                allowFullScreen
-              ></iframe>
-            </div>
+            !isMobile && (
+              <div className="desktop-youtube-player" style={{ width: "100%", marginTop: "16px", aspectRatio: "16/9", overflow: "hidden", borderRadius: "12px", background: "#000" }}>
+                <iframe
+                  width="100%"
+                  height="100%"
+                  src={`https://www.youtube.com/embed/${getYoutubeId(currentTrack.url)}?autoplay=1`}
+                  title={currentTrack.title}
+                  frameBorder="0"
+                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                  allowFullScreen
+                ></iframe>
+              </div>
+            )
           ) : (
             <div className="custom-player-premium">
               {/* Progress Slider */}
@@ -975,7 +987,7 @@ export default function RadioPlayer() {
         <div className="radio-glow-border"></div>
         <div className="radio-right-panel-premium">
           <div className="playlist-section">
-            {isYouTubeTrack && (
+            {isYouTubeTrack && isMobile && (
               <div className="mobile-youtube-player" style={{ marginBottom: "16px", aspectRatio: "16/9", overflow: "hidden", borderRadius: "12px", background: "#000" }}>
                 <iframe
                   width="100%"
