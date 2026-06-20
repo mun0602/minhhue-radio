@@ -91,6 +91,24 @@ function getYoutubeId(url: string) {
   return (match && match[2].length === 11) ? match[2] : "";
 }
 
+const MarqueeTitle = ({ title, className }: { title: string; className?: string }) => {
+  const clean = cleanTitle(title);
+  const shouldScroll = clean.length > 25;
+
+  if (!shouldScroll) {
+    return <span className={className}>{clean}</span>;
+  }
+
+  return (
+    <div className="marquee-container">
+      <div className="marquee-content">
+        <span className={className}>{clean}</span>
+        <span className={className} style={{ paddingLeft: "50px" }}>{clean}</span>
+      </div>
+    </div>
+  );
+};
+
 export default function RadioPlayer() {
   "use no memo";
   const [isMounted, setIsMounted] = useState(false);
@@ -754,8 +772,8 @@ export default function RadioPlayer() {
               )}
             </button>
           )}
-          <div className="mobile-track-info" style={{ marginLeft: isYouTubeTrack ? 0 : undefined }}>
-            <span className="mobile-track-title">{cleanTitle(currentTrack.title)}</span>
+          <div className="mobile-track-info" style={{ marginLeft: isYouTubeTrack ? 0 : undefined, overflow: "hidden" }}>
+            <MarqueeTitle title={currentTrack.title} className="mobile-track-title-marquee" />
             {!isYouTubeTrack && (
               <span className="mobile-time">
                 {formatTime(currentTime)} / {formatTime(duration)}
@@ -840,7 +858,7 @@ export default function RadioPlayer() {
 
           <div className="now-playing-box">
             <span className="now-playing-label">Đang phát:</span>
-            <h2 className="current-track-title" style={{ fontSize: "20px", fontWeight: "700", margin: 0 }}>{currentTrack.title}</h2>
+            <MarqueeTitle title={currentTrack.title} className="current-track-title-marquee" />
           </div>
 
           {isYouTubeTrack ? (
@@ -1066,27 +1084,6 @@ export default function RadioPlayer() {
 
               {/* Playlist Actions */}
               <div className="playlist-actions">
-                <button
-                  onClick={() => {
-                    if (filteredAndOrderedTracks.length > 0) {
-                      const randomIdx = getRandomIndex(filteredAndOrderedTracks.length);
-                      playTrack(filteredAndOrderedTracks[randomIdx]);
-                    }
-                  }}
-                  className="action-btn random-action-btn"
-                  title="Phát bài ngẫu nhiên ngay"
-                  aria-label="Phát bài ngẫu nhiên ngay"
-                >
-                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                    <polyline points="16 3 21 3 21 8" />
-                    <line x1="4" y1="20" x2="21" y2="3" />
-                    <polyline points="21 16 21 21 16 21" />
-                    <line x1="15" y1="15" x2="21" y2="21" />
-                    <line x1="4" y1="4" x2="9" y2="9" />
-                  </svg>
-                  <span className="random-btn-text">Ngẫu nhiên</span>
-                </button>
-
                 <button
                   onClick={() => {
                     setIsSearchOpen(!isSearchOpen);

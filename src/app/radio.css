@@ -1738,3 +1738,47 @@
 		display: none !important;
 	}
 }
+
+/* Marquee Animation for Scrolling Titles */
+.marquee-container {
+	display: block;
+	width: 100%;
+	overflow: hidden;
+	white-space: nowrap;
+}
+
+.marquee-content {
+	display: inline-block;
+	white-space: nowrap;
+	animation: marquee-scroll 25s linear infinite;
+}
+
+.marquee-content:hover {
+	animation-play-state: paused;
+}
+
+@keyframes marquee-scroll {
+	0% {
+		transform: translate3d(0, 0, 0);
+	}
+	100% {
+		transform: translate3d(-50%, 0, 0);
+	}
+}
+
+.current-track-title-marquee {
+	font-family: var(--font-serif);
+	font-size: 20px;
+	font-weight: 700;
+	color: #0f172a;
+	line-height: 1.4;
+	margin: 0;
+	display: inline-block;
+}
+
+.mobile-track-title-marquee {
+	font-size: 13px;
+	font-weight: 600;
+	color: var(--text-primary);
+	display: inline-block;
+}
