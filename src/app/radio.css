@@ -1718,3 +1718,23 @@
 		color: var(--color-accent);
 	}
 }
+
+/* YouTube Player Responsive Rules */
+.mobile-youtube-player {
+	display: block;
+}
+.desktop-youtube-player {
+	display: block;
+}
+
+@media (min-width: 900px) {
+	.mobile-youtube-player {
+		display: none !important;
+	}
+}
+
+@media (max-width: 899px) {
+	.desktop-youtube-player {
+		display: none !important;
+	}
+}

@@ -33,7 +33,8 @@ const CATEGORIES: Category[] = [
   { id: "all-tu-kiem", name: "Tất cả sách Tứ kiếm", path: "#", group: "tu-kiem" },
   { id: "cuu-binh", name: "Cửu Bình - Chín bài bình luận về ĐCS", path: "/news/category/cuu-binh", group: "tu-kiem" },
   { id: "giai-the-van-hoa-dang-sach", name: "Giải thể văn hóa đảng (Sách)", path: "/news/category/giai-the-van-hoa-dang-sach", group: "tu-kiem" },
-  { id: "muc-dich-cuoi-cung-cua-chu-nghia-cong-san", name: "Mục đích cuối cùng của CNCS", path: "/news/category/muc-dich-cuoi-cung-cua-chu-nghia-cong-san", group: "tu-kiem" },
+  { id: "muc-dich-cuoi-cung-cua-chu-nghia-cong-san", name: "Mục đích cuối cùng của CNCS (Audio)", path: "/news/category/muc-dich-cuoi-cung-cua-chu-nghia-cong-san", group: "tu-kiem" },
+  { id: "muc-dich-cuoi-cung-cua-chu-nghia-cong-san-video", name: "Mục đích cuối cùng của CNCS (Video)", path: "/news/category/muc-dich-cuoi-cung-cua-chu-nghia-cong-san-video", group: "tu-kiem" },
   { id: "ma-quy-dang-thong-tri-the-gioi-cua-chung-ta", name: "Ma quỷ đang thống trị thế giới của chúng ta", path: "/news/category/ma-quy-dang-thong-tri-the-gioi-cua-chung-ta", group: "tu-kiem" },
   
   { id: "radio-hoi-uc-ve-su-phu", name: "Hồi ức về Sư Phụ", path: "/news/category/radio-hoi-uc-ve-su-phu", group: "minh-hue" },
@@ -83,6 +84,12 @@ const formatTime = (secs: number) => {
 const getRandomIndex = (length: number) => {
   return Math.floor(Math.random() * length);
 };
+
+function getYoutubeId(url: string) {
+  const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=)([^#\&\?]*).*/;
+  const match = url.match(regExp);
+  return (match && match[2].length === 11) ? match[2] : "";
+}
 
 export default function RadioPlayer() {
   "use no memo";
@@ -192,19 +199,26 @@ export default function RadioPlayer() {
   const playTrack = useCallback((track: Track) => {
     if (!audioRef.current) return;
 
-    audioRef.current.src = track.url;
-    audioRef.current.playbackRate = SPEEDS[speedIndex];
-    audioRef.current.load();
+    const isYT = track.url.includes("youtube.com") || track.url.includes("youtu.be");
 
-    const playPromise = audioRef.current.play();
-    if (playPromise !== undefined) {
-      playPromise.catch(error => {
-        console.warn("Autoplay blocked or failed:", error);
-      });
+    if (isYT) {
+      audioRef.current.pause();
+      setIsPlaying(false);
+    } else {
+      audioRef.current.src = track.url;
+      audioRef.current.playbackRate = SPEEDS[speedIndex];
+      audioRef.current.load();
+
+      const playPromise = audioRef.current.play();
+      if (playPromise !== undefined) {
+        playPromise.catch(error => {
+          console.warn("Autoplay blocked or failed:", error);
+        });
+      }
+      setIsPlaying(true);
     }
 
     setCurrentTrack(track);
-    setIsPlaying(true);
 
     if (!listenedTracks.includes(track.url)) {
       const updated = [...listenedTracks, track.url];
@@ -403,6 +417,14 @@ export default function RadioPlayer() {
   useEffect(() => {
     if (!isMounted || !audioRef.current) return;
     const audio = audioRef.current;
+
+    const isYT = currentTrack.url.includes("youtube.com") || currentTrack.url.includes("youtu.be");
+    if (isYT) {
+      audio.pause();
+      setPendingRestoreTime(null);
+      setIsRestoreCompleted(true);
+      return;
+    }
 
     // Nếu source thay đổi
     if (!audio.src.includes(currentTrack.url)) {
@@ -663,6 +685,7 @@ export default function RadioPlayer() {
     );
   }
 
+  const isYouTubeTrack = currentTrack.url.includes("youtube.com") || currentTrack.url.includes("youtu.be");
   const progressPct = duration > 0 ? (currentTime / duration) * 100 : 0;
   const timerActive = sleepTimeRemaining > 0 || stopAtTrackEnd;
   const sleepText = stopAtTrackEnd
@@ -718,79 +741,89 @@ export default function RadioPlayer() {
       {/* Mobile Top Bar */}
       <div className="mobile-bottom-bar">
         <div className="mobile-top-row">
-          <button onClick={togglePlay} className="mobile-play-btn" aria-label={isPlaying ? "Tạm dừng" : "Phát nhạc"}>
-            {!isPlaying ? (
-              <svg className="mobile-play-icon" xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="currentColor">
-                <path d="M8 5v14l11-7z" />
-              </svg>
-            ) : (
-              <svg className="mobile-pause-icon" xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="currentColor">
-                <path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z" />
-              </svg>
-            )}
-          </button>
-          <div className="mobile-track-info">
+          {!isYouTubeTrack && (
+            <button onClick={togglePlay} className="mobile-play-btn" aria-label={isPlaying ? "Tạm dừng" : "Phát nhạc"}>
+              {!isPlaying ? (
+                <svg className="mobile-play-icon" xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="currentColor">
+                  <path d="M8 5v14l11-7z" />
+                </svg>
+              ) : (
+                <svg className="mobile-pause-icon" xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="currentColor">
+                  <path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z" />
+                </svg>
+              )}
+            </button>
+          )}
+          <div className="mobile-track-info" style={{ marginLeft: isYouTubeTrack ? 0 : undefined }}>
             <span className="mobile-track-title">{cleanTitle(currentTrack.title)}</span>
-            <span className="mobile-time">
-              {formatTime(currentTime)} / {formatTime(duration)}
-            </span>
+            {!isYouTubeTrack && (
+              <span className="mobile-time">
+                {formatTime(currentTime)} / {formatTime(duration)}
+              </span>
+            )}
           </div>
           <div className="mobile-right-actions" style={{ display: "flex", alignItems: "center", gap: "8px" }}>
-            <div className="mobile-speed-timer-container">
-              <button
-                onClick={changeSpeed}
-                className="mobile-speed-btn"
-                title="Tốc độ phát"
-                aria-label={`Tốc độ phát ${SPEEDS[speedIndex]}x`}
-              >
-                <span>{SPEEDS[speedIndex]}x</span>
-              </button>
-            </div>
-
-            <div className="mobile-sleep-timer-container">
-              <button
-                onClick={() => {
-                  setMobileSleepDropdownOpen(!mobileSleepDropdownOpen);
-                }}
-                className={`mobile-sleep-btn ${timerActive ? "active-timer" : ""}`}
-                aria-label="Hẹn giờ tắt"
-                title={sleepText}
-              >
-                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                  <circle cx="12" cy="12" r="10" />
-                  <polyline points="12 6 12 12 16 14" />
-                </svg>
-              </button>
-              {mobileSleepDropdownOpen && (
-                <div className="mobile-sleep-dropdown">
-                  <ul>
-                    <li onClick={() => handleSleepTimerSelect("0")}>Tắt hẹn giờ</li>
-                    <li onClick={() => handleSleepTimerSelect("15")}>15 phút</li>
-                    <li onClick={() => handleSleepTimerSelect("30")}>30 phút</li>
-                    <li onClick={() => handleSleepTimerSelect("45")}>45 phút</li>
-                    <li onClick={() => handleSleepTimerSelect("60")}>60 phút</li>
-                    <li onClick={() => handleSleepTimerSelect("end")}>Hết bài</li>
-                  </ul>
+            {!isYouTubeTrack && (
+              <>
+                <div className="mobile-speed-timer-container">
+                  <button
+                    onClick={changeSpeed}
+                    className="mobile-speed-btn"
+                    title="Tốc độ phát"
+                    aria-label={`Tốc độ phát ${SPEEDS[speedIndex]}x`}
+                  >
+                    <span>{SPEEDS[speedIndex]}x</span>
+                  </button>
                 </div>
-              )}
-            </div>
+
+                <div className="mobile-sleep-timer-container">
+                  <button
+                    onClick={() => {
+                      setMobileSleepDropdownOpen(!mobileSleepDropdownOpen);
+                    }}
+                    className={`mobile-sleep-btn ${timerActive ? "active-timer" : ""}`}
+                    aria-label="Hẹn giờ tắt"
+                    title={sleepText}
+                  >
+                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                      <circle cx="12" cy="12" r="10" />
+                      <polyline points="12 6 12 12 16 14" />
+                    </svg>
+                  </button>
+                  {mobileSleepDropdownOpen && (
+                    <div className="mobile-sleep-dropdown">
+                      <ul>
+                        <li onClick={() => handleSleepTimerSelect("0")}>Tắt hẹn giờ</li>
+                        <li onClick={() => handleSleepTimerSelect("15")}>15 phút</li>
+                        <li onClick={() => handleSleepTimerSelect("30")}>30 phút</li>
+                        <li onClick={() => handleSleepTimerSelect("45")}>45 phút</li>
+                        <li onClick={() => handleSleepTimerSelect("60")}>60 phút</li>
+                        <li onClick={() => handleSleepTimerSelect("end")}>Hết bài</li>
+                      </ul>
+                    </div>
+                  )}
+                </div>
+              </>
+            )}
           </div>
         </div>
-        <div className="mobile-progress-row">
-          <input
-            type="range"
-            className="mobile-seek-slider"
-            min="0"
-            max="100"
-            value={progressPct}
-            onChange={handleSeek}
-            step="0.1"
-            aria-label="Thanh trượt tiến trình di động"
-            style={{
-              background: `linear-gradient(to right, var(--color-accent) ${progressPct}%, rgba(148, 163, 184, 0.2) ${progressPct}%)`
-            }}
-          />
-        </div>
+        {!isYouTubeTrack && (
+          <div className="mobile-progress-row">
+            <input
+              type="range"
+              className="mobile-seek-slider"
+              min="0"
+              max="100"
+              value={progressPct}
+              onChange={handleSeek}
+              step="0.1"
+              aria-label="Thanh trượt tiến trình di động"
+              style={{
+                background: `linear-gradient(to right, var(--color-accent) ${progressPct}%, rgba(148, 163, 184, 0.2) ${progressPct}%)`
+              }}
+            />
+          </div>
+        )}
       </div>
 
       {/* Desktop Main Player Panel */}
@@ -810,110 +843,124 @@ export default function RadioPlayer() {
             <h2 className="current-track-title" style={{ fontSize: "20px", fontWeight: "700", margin: 0 }}>{currentTrack.title}</h2>
           </div>
 
-          <div className="custom-player-premium">
-            {/* Progress Slider */}
-            <div className="custom-progress-area">
-              <input
-                type="range"
-                className="custom-seek-slider"
-                min="0"
-                max="100"
-                value={progressPct}
-                onChange={handleSeek}
-                step="0.1"
-                aria-label="Thanh trượt tiến trình"
-                style={{
-                  background: `linear-gradient(to right, var(--color-accent) ${progressPct}%, rgba(148, 163, 184, 0.2) ${progressPct}%)`
-                }}
-              />
-              <div className="custom-time-display">
-                <span>{formatTime(currentTime)}</span>
-                <span>{formatTime(duration)}</span>
-              </div>
+          {isYouTubeTrack ? (
+            <div className="desktop-youtube-player" style={{ width: "100%", marginTop: "16px", aspectRatio: "16/9", overflow: "hidden", borderRadius: "12px", background: "#000" }}>
+              <iframe
+                width="100%"
+                height="100%"
+                src={`https://www.youtube.com/embed/${getYoutubeId(currentTrack.url)}?autoplay=1`}
+                title={currentTrack.title}
+                frameBorder="0"
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                allowFullScreen
+              ></iframe>
             </div>
-
-            {/* Main Controls */}
-            <div className="custom-controls-row">
-              <div className="custom-center-controls">
-                <button onClick={rewind10s} className="custom-player-btn control-secondary-btn" title="Lùi 10 giây" aria-label="Lùi 10 giây">
-                  <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
-                    <polygon points="16 19 6 12 16 5" />
-                  </svg>
-                </button>
-
-                <button onClick={togglePlay} className={`custom-play-main-btn ${isPlaying ? "playing" : ""}`} title="Phát / Tạm dừng" aria-label={isPlaying ? "Tạm dừng" : "Phát nhạc"}>
-                  {!isPlaying ? (
-                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
-                      <path d="M8 5v14l11-7z" />
-                    </svg>
-                  ) : (
-                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
-                      <path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z" />
-                    </svg>
-                  )}
-                </button>
-
-                <button onClick={forward30s} className="custom-player-btn control-secondary-btn" title="Tiến 30 giây" aria-label="Tiến 30 giây">
-                  <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
-                    <polygon points="8 19 18 12 8 5" />
-                  </svg>
-                </button>
-              </div>
-            </div>
-
-            {/* Speed, timer status */}
-            <div className="custom-utilities-row">
-              <div className="custom-status-indicator">
-                <span className={`status-dot ${isPlaying ? "playing" : ""}`}></span>
-                <span className="status-text">{isPlaying ? "Đang phát" : "Đang dừng"}</span>
-              </div>
-
-              <div className="custom-utilities-right" style={{ display: "flex", gap: "8px", alignItems: "center" }}>
-                <div className="speed-dropdown-container">
-                  <button
-                    onClick={changeSpeed}
-                    className="utility-btn speed-btn"
-                    title="Tốc độ phát"
-                    aria-label={`Tốc độ phát ${SPEEDS[speedIndex]}x`}
-                  >
-                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" style={{ marginRight: 4, verticalAlign: "middle" }}>
-                      <circle cx="12" cy="12" r="10" />
-                      <path d="M12 6v6l4 2" />
-                    </svg>
-                    <span style={{ verticalAlign: "middle" }}>{SPEEDS[speedIndex]}x</span>
-                  </button>
-                </div>
-
-                <div className="sleep-timer-container">
-                  <button
-                    onClick={() => {
-                      setSleepDropdownOpen(!sleepDropdownOpen);
-                    }}
-                    className={`utility-btn sleep-btn ${timerActive ? "active-timer" : ""}`}
-                    title="Hẹn giờ tắt"
-                    aria-label="Hẹn giờ tắt"
-                  >
-                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" style={{ marginRight: 4, verticalAlign: "middle" }}>
-                      <path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z" />
-                    </svg>
-                    <span style={{ verticalAlign: "middle" }}>{sleepText}</span>
-                  </button>
-                  {sleepDropdownOpen && (
-                    <div className="sleep-timer-dropdown">
-                      <ul>
-                        <li onClick={() => handleSleepTimerSelect("0")}>Tắt hẹn giờ</li>
-                        <li onClick={() => handleSleepTimerSelect("15")}>15 phút</li>
-                        <li onClick={() => handleSleepTimerSelect("30")}>30 phút</li>
-                        <li onClick={() => handleSleepTimerSelect("45")}>45 phút</li>
-                        <li onClick={() => handleSleepTimerSelect("60")}>60 phút</li>
-                        <li onClick={() => handleSleepTimerSelect("end")}>Hết bài</li>
-                      </ul>
-                    </div>
-                  )}
+          ) : (
+            <div className="custom-player-premium">
+              {/* Progress Slider */}
+              <div className="custom-progress-area">
+                <input
+                  type="range"
+                  className="custom-seek-slider"
+                  min="0"
+                  max="100"
+                  value={progressPct}
+                  onChange={handleSeek}
+                  step="0.1"
+                  aria-label="Thanh trượt tiến trình"
+                  style={{
+                    background: `linear-gradient(to right, var(--color-accent) ${progressPct}%, rgba(148, 163, 184, 0.2) ${progressPct}%)`
+                  }}
+                />
+                <div className="custom-time-display">
+                  <span>{formatTime(currentTime)}</span>
+                  <span>{formatTime(duration)}</span>
                 </div>
               </div>
+
+              {/* Main Controls */}
+              <div className="custom-controls-row">
+                <div className="custom-center-controls">
+                  <button onClick={rewind10s} className="custom-player-btn control-secondary-btn" title="Lùi 10 giây" aria-label="Lùi 10 giây">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+                      <polygon points="16 19 6 12 16 5" />
+                    </svg>
+                  </button>
+
+                  <button onClick={togglePlay} className={`custom-play-main-btn ${isPlaying ? "playing" : ""}`} title="Phát / Tạm dừng" aria-label={isPlaying ? "Tạm dừng" : "Phát nhạc"}>
+                    {!isPlaying ? (
+                      <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M8 5v14l11-7z" />
+                      </svg>
+                    ) : (
+                      <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z" />
+                      </svg>
+                    )}
+                  </button>
+
+                  <button onClick={forward30s} className="custom-player-btn control-secondary-btn" title="Tiến 30 giây" aria-label="Tiến 30 giây">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+                      <polygon points="8 19 18 12 8 5" />
+                    </svg>
+                  </button>
+                </div>
+              </div>
+
+              {/* Speed, timer status */}
+              <div className="custom-utilities-row">
+                <div className="custom-status-indicator">
+                  <span className={`status-dot ${isPlaying ? "playing" : ""}`}></span>
+                  <span className="status-text">{isPlaying ? "Đang phát" : "Đang dừng"}</span>
+                </div>
+
+                <div className="custom-utilities-right" style={{ display: "flex", gap: "8px", alignItems: "center" }}>
+                  <div className="speed-dropdown-container">
+                    <button
+                      onClick={changeSpeed}
+                      className="utility-btn speed-btn"
+                      title="Tốc độ phát"
+                      aria-label={`Tốc độ phát ${SPEEDS[speedIndex]}x`}
+                    >
+                      <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" style={{ marginRight: 4, verticalAlign: "middle" }}>
+                        <circle cx="12" cy="12" r="10" />
+                        <path d="M12 6v6l4 2" />
+                      </svg>
+                      <span style={{ verticalAlign: "middle" }}>{SPEEDS[speedIndex]}x</span>
+                    </button>
+                  </div>
+
+                  <div className="sleep-timer-container">
+                    <button
+                      onClick={() => {
+                        setSleepDropdownOpen(!sleepDropdownOpen);
+                      }}
+                      className={`utility-btn sleep-btn ${timerActive ? "active-timer" : ""}`}
+                      title="Hẹn giờ tắt"
+                      aria-label="Hẹn giờ tắt"
+                    >
+                      <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" style={{ marginRight: 4, verticalAlign: "middle" }}>
+                        <path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z" />
+                      </svg>
+                      <span style={{ verticalAlign: "middle" }}>{sleepText}</span>
+                    </button>
+                    {sleepDropdownOpen && (
+                      <div className="sleep-timer-dropdown">
+                        <ul>
+                          <li onClick={() => handleSleepTimerSelect("0")}>Tắt hẹn giờ</li>
+                          <li onClick={() => handleSleepTimerSelect("15")}>15 phút</li>
+                          <li onClick={() => handleSleepTimerSelect("30")}>30 phút</li>
+                          <li onClick={() => handleSleepTimerSelect("45")}>45 phút</li>
+                          <li onClick={() => handleSleepTimerSelect("60")}>60 phút</li>
+                          <li onClick={() => handleSleepTimerSelect("end")}>Hết bài</li>
+                        </ul>
+                      </div>
+                    )}
+                  </div>
+                </div>
+              </div>
             </div>
-          </div>
+          )}
         </div>
       </div>
 
@@ -922,6 +969,19 @@ export default function RadioPlayer() {
         <div className="radio-glow-border"></div>
         <div className="radio-right-panel-premium">
           <div className="playlist-section">
+            {isYouTubeTrack && (
+              <div className="mobile-youtube-player" style={{ marginBottom: "16px", aspectRatio: "16/9", overflow: "hidden", borderRadius: "12px", background: "#000" }}>
+                <iframe
+                  width="100%"
+                  height="100%"
+                  src={`https://www.youtube.com/embed/${getYoutubeId(currentTrack.url)}?autoplay=1`}
+                  title={currentTrack.title}
+                  frameBorder="0"
+                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                  allowFullScreen
+                ></iframe>
+              </div>
+            )}
             <div className="playlist-tabs-row">
               <div className="playlist-tabs">
                 <button
