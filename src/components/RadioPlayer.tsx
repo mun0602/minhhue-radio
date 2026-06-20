@@ -282,6 +282,15 @@ export default function RadioPlayer() {
           setActiveTab(catObj.group as "minh-hue" | "tu-kiem");
         }
       }
+
+      // Load speed preference
+      const savedSpeed = localStorage.getItem("minhhue_speed_index");
+      if (savedSpeed) {
+        const idx = parseInt(savedSpeed, 10);
+        if (idx >= 0 && idx < SPEEDS.length) {
+          setSpeedIndex(idx);
+        }
+      }
     }, 0);
 
     // Fetch radio playlist asynchronously (keeps JS bundle extremely lightweight)
@@ -439,7 +448,10 @@ export default function RadioPlayer() {
     if (audioRef.current) {
       audioRef.current.playbackRate = SPEEDS[speedIndex];
     }
-  }, [speedIndex]);
+    if (isMounted) {
+      localStorage.setItem("minhhue_speed_index", String(speedIndex));
+    }
+  }, [speedIndex, isMounted]);
 
   // Save current radio state
   useEffect(() => {
